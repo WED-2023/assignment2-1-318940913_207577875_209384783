@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" id="nav">
-      <img src="/path/to/your/image.png" alt="Logo" class="navbar-logo" />   Rachel's recipes 
+      <img src="Rachel.png" alt="Logo" class="navbar-logo" />   Rachel's recipes 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="defaultNav">
           <b-nav-item :to="{ name: 'main' }">Main</b-nav-item> 
