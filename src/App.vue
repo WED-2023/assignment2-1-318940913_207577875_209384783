@@ -1,14 +1,23 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" id="nav">
-      <img src="Rachel.png" alt="Logo" class="navbar-logo" />   Rachel's recipes 
+      <img src="assignment2-1-318940913_207577875_209384783/Rachel.png" alt="Logo" class="navbar-logo" />   Rachel's recipes 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="defaultNav">
           <b-nav-item :to="{ name: 'main' }">Main</b-nav-item> 
           <b-nav-item :to="{ name: 'search' }">Search</b-nav-item> 
           <b-nav-item :to="{ name: 'about' }">About</b-nav-item> 
-          <b-nav-item v-if="$root.store.username" :to="{ name: 'create' }">Create</b-nav-item> 
+          <b-nav-item v-if="$root.store.username" @click="toggleModal">Add Recipe
+            <CreateNewRecipe @close="toggleModal" :modalActive="modalActive">
+            </CreateNewRecipe>
+            <!-- <b-nav-item @click="toggleModal" type="button">Add Recipe</b-nav-item> -->
+        </b-nav-item>
+        <b-navbar-nav>
+          <b-form-input v-model="searchText" placeholder="Search..." />
         </b-navbar-nav>
+        </b-navbar-nav>
+
+
         <b-navbar-nav class="ml-auto User-section" v-if="!$root.store.username">
           <b-nav-item :to="{ name: 'login' }">Login</b-nav-item>
           <b-nav-item :to="{ name: 'register' }">Register</b-nav-item>
@@ -18,23 +27,41 @@
             <template #button-content>
               Hello {{ $root.store.username }}
             </template>
-            <b-dropdown-item :to="{ name: 'profile' }">Profile</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'settings' }">Settings</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'FavoriteRecipes' }">Favorite Recipes</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'MyRecipes' }">My Recipes </b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'FamilyRecipes' }">Family Recipes</b-dropdown-item>
             <b-dropdown-item @click="Logout">Logout</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <router-view />
+
+
+
   </div>
 </template>
 
 <script>
+import CreateNewRecipe from '@/components/CreateNewRecipe.vue';
+import { ref } from "vue";
 export default {
   data() {
     return {
-      showDropdown: false
+      showDropdown: false,
     };
+  },
+  components:{
+    CreateNewRecipe,
+  },
+  setup() {
+    const modalActive = ref(false);
+
+    const toggleModal = () => {
+      modalActive.value = !modalActive.value;
+    };
+
+    return { modalActive, toggleModal };
   },
   methods: {
     Logout() {
@@ -43,14 +70,21 @@ export default {
       this.$router.push("/").catch(() => {
         this.$forceUpdate();
       });
-    }
-
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "@/scss/form-style.scss";
+// @import "@/scss/form-style.scss";
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@300;400&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Karla", sans-serif;
+}
+
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -58,6 +92,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   min-height: 100vh;
+  .dropdown-item {
+    color: white;
+    background-color: #2f2626;; /* Change the color here */
+    border-color: #2f2626;
+  }
+  .dropdown-item:hover {
+    color: #42b983; /* Change the hover color here */
+  }
 }
 
 #nav {
@@ -73,6 +115,7 @@ export default {
   width: auto;
   margin-right: 8px;
   gap: 10px;
+  margin-left: 15px;
 }
 
 .defaultNav {
@@ -85,7 +128,7 @@ export default {
   align-items: center;
   position: relative;
   gap: 25px;
-  margin-right: 50px;
+  margin-right: 15px;
 }
 
 #nav a {
@@ -96,4 +139,6 @@ export default {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+
 </style>
