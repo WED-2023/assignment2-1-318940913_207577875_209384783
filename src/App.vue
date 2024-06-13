@@ -8,12 +8,11 @@
           <b-nav-item :to="{ name: 'search' }">Search</b-nav-item> 
           <b-nav-item :to="{ name: 'about' }">About</b-nav-item> 
           <b-nav-item v-if="$root.store.username" @click="toggleModal">Add Recipe
-            <CreateNewRecipe @close="toggleModal" :modalActive="modalActive">
-            </CreateNewRecipe>
-            <!-- <b-nav-item @click="toggleModal" type="button">Add Recipe</b-nav-item> -->
+            <CreateNewRecipe @close="toggleModal" :modalActive="modalActive"></CreateNewRecipe>
         </b-nav-item>
         <b-navbar-nav>
           <b-form-input v-model="searchText" placeholder="Search..." />
+          <b-button @click="search" variant="primary" class="nav-item">Search</b-button>
         </b-navbar-nav>
         </b-navbar-nav>
 
@@ -92,14 +91,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   min-height: 100vh;
-  .dropdown-item {
-    color: white;
-    background-color: #2f2626;; /* Change the color here */
-    border-color: #2f2626;
-  }
-  .dropdown-item:hover {
-    color: #42b983; /* Change the hover color here */
-  }
+    .dropdown-item, .nav-item {
+      color: white;
+      background-color: #2f2626;; /* Change the color here */
+      border-color: #2f2626;
+    }
+    .dropdown-item:hover, .nav-item:hover {
+      color: #42b983; /* Change the hover color here */
+    }
 }
 
 #nav {

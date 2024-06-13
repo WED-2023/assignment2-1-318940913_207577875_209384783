@@ -39,6 +39,9 @@ import {
 ].forEach((x) => Vue.use(x));
 Vue.use(Vuelidate);
 
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@fortawesome/fontawesome-free/js/all.js';
+
 axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
