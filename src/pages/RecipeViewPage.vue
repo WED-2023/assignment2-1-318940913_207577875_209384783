@@ -1,49 +1,69 @@
 <template>
-  <div class="container">
-    <div v-if="recipe">
-      <div class="recipe-header mt-3 mb-4">
-        <h1>{{ recipe.title }}</h1>
-        <img :src="recipe.image" class="center" />
+  <div class="container mt-4">
+    <div v-if="recipe" class="card">
+      <div class="card-header text-center">
+        <h1 class="card-title">{{ recipe.title }}</h1>
       </div>
-      <div class="recipe-body">
-        <div class="wrapper">
-          <div class="wrapped">
-            <div class="mb-3">
-              <div>Ready in {{ recipe.readyInMinutes }} minutes</div>
-              <div>Likes: {{ recipe.aggregateLikes }} likes</div>
-            </div>
-            Ingredients:
-            <ul>
+      <img :src="recipe.image" class="card-img-top" alt="Recipe Image" />
+      <div class="card-body">
+        <div class="text-left mb-3">
+          <div class="d-inline-block mr-3">
+            <i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} Minutes
+          </div>
+          <div class="d-inline-block mr-3">
+            <i class="fas fa-heart red"></i> {{ recipe.aggregateLikes }} Likes
+          </div>
+          <div class="d-inline-block mr-3">
+            <i class="fas fa-utensils"></i> {{ recipe.servings }} Servings
+          </div>
+          <div class="d-inline-block ml-auto">
+            <span v-if="recipe.vegetarian" class="mr-2 green" data-toggle="tooltip" title="Vegetarian">
+              <i class="fas fa-seedling text-success"></i>
+            </span>
+            <span v-if="recipe.vegan" class="mr-2" data-toggle="tooltip" title="Vegan">
+              <i class="fas fa-leaf text-success"></i>
+            </span>
+            <span v-if="recipe.glutenFree" class="mr-2 brown" data-toggle="tooltip" title="Gluten Free">
+              <i class="fas fa-bread-slice"></i>
+            </span>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <h5>Ingredients</h5>
+            <ul class="list-group list-group-flush custom-list">
               <li
                 v-for="(r, index) in recipe.extendedIngredients"
                 :key="index + '_' + r.id"
+                class="list-group-item"
               >
-                {{ r.original }}
+              {{ r.original }}
               </li>
             </ul>
           </div>
-          <div class="wrapped">
-            Instructions:
-            <ol>
-              <li v-for="s in recipe._instructions" :key="s.number">
-                {{ s.step }}
+          <div class="col-md-6">
+            <h5>Instructions</h5>
+            <ol class="list-group list-group-flush custom-list">
+              <li v-for="(s, index) in recipe.instructions" :key="index" class="list-group-item">
+                {{ s }}
               </li>
             </ol>
           </div>
         </div>
       </div>
-      <!-- <pre>
-      {{ $route.params }}
-      {{ recipe }}
-    </pre
-      > -->
     </div>
+    <div class="text-center mt-4">
+      <router-link :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="btn btn-primary">Add To Meal And Start Cook</router-link>
+    </div>
+    <br>
   </div>
 </template>
 
 <script>
 import { mockGetRecipeFullDetails } from "../services/recipes.js";
+
 export default {
+  name: "recipe",
   data() {
     return {
       recipe: null
@@ -51,77 +71,103 @@ export default {
   },
   async created() {
     try {
-      let response;
-      // response = this.$route.params.response;
+      const response = mockGetRecipeFullDetails(this.$route.params.recipeId);
 
-      try {
-        // response = await this.axios.get(
-        //   this.$root.store.server_domain + "/recipes/" + this.$route.params.recipeId,
-        //   {
-        //     withCredentials: true
-        //   }
-        // );
+      console.log("response.status", response.status);
+      if (response.status !== 200) this.$router.replace("/NotFound");
 
-        response = mockGetRecipeFullDetails(this.$route.params.recipeId);
-
-        // console.log("response.status", response.status);
-        if (response.status !== 200) this.$router.replace("/NotFound");
-      } catch (error) {
-        console.log("error.response.status", error.response.status);
-        this.$router.replace("/NotFound");
-        return;
-      }
-
-      let {
-        analyzedInstructions,
+      const {
         instructions,
         extendedIngredients,
         aggregateLikes,
         readyInMinutes,
         image,
-        title
+        title,
+        vegetarian,
+        vegan,
+        glutenFree,
+        servings,
+        id
       } = response.data.recipe;
 
-      let _instructions = analyzedInstructions
-        .map((fstep) => {
-          fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-          return fstep.steps;
-        })
-        .reduce((a, b) => [...a, ...b], []);
+      // const _instructions = analyzedInstructions
+      //   .map((fstep) => {
+      //     fstep.steps[0].step = fstep.name + fstep.steps[0].step;
+      //     return fstep.steps;
+      //   })
+      //   .reduce((a, b) => [...a, ...b], []);
 
-      let _recipe = {
+      this.recipe = {
         instructions,
-        _instructions,
-        analyzedInstructions,
         extendedIngredients,
         aggregateLikes,
         readyInMinutes,
         image,
-        title
+        title,
+        vegetarian,
+        vegan,
+        glutenFree,
+        servings,
+        id
       };
-
-      this.recipe = _recipe;
     } catch (error) {
       console.log(error);
+      this.$router.replace("/NotFound");
     }
   }
 };
 </script>
 
 <style scoped>
-.wrapper {
-  display: flex;
+.card-img-top {
+  max-height: 400px;
+  object-fit: cover;
 }
-.wrapped {
-  width: 50%;
-}
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
-/* .recipe-header{
 
-} */
+.list-group-item {
+  border: none;
+  padding-left: 0;
+  margin-left: 20px; /* Ensure consistent margin for text alignment */
+  position: relative;
+}
+
+.custom-list {
+  list-style-type: none;
+  padding-left: 0; /* Reset padding to 0 to apply custom padding */
+}
+
+.custom-list li:before {
+  content: "\2022"; /* Unicode character for bullet (•) */
+  color: #00ff00; /* Custom color */
+  font-size: 1.5em; /* Adjust size if needed */
+  margin-right: 5px; /* Space between bullet and text */
+  position: absolute;
+  left: -20px; /* Adjust based on your design */
+  top:5px;
+}
+
+.fas {
+  margin-right: 5px;
+}
+
+.d-inline-block.ml-auto {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.brown {
+  color: rgb(184, 168, 147)
+}
+
+.red {
+  color: red
+}
+
+
+[data-toggle="tooltip"] {
+  cursor: default
+}
+
+
 </style>
