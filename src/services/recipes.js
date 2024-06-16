@@ -2,12 +2,13 @@
 import recipe_full_view from "../assets/mocks/recipe_full_view.json";
 import recipe_preview from "../assets/mocks/recipe_preview.json";
 import multiple_recipes_full_view from "../assets/mocks/multiple_recipes_full_view.json";
+import multiple_recipe_preview from "../assets/mocks/multiple_recipe_preview.json";
 
 
 export function mockGetRecipesPreview(amount = 1) {
   let recipes = [];
   for(let i = 0; i < amount; i++){
-    recipes.push(recipe_preview);
+    recipes.push(multiple_recipe_preview[i]);
   }
 
   return { data: { recipes: recipes } };
