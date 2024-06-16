@@ -85,6 +85,16 @@ const shared_data = {
     localStorage.removeItem("username");
     this.username = undefined;
   },
+  saveRecipeProgress(recipeId, progress) {
+    const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
+    userProgress[this.username] = userProgress[this.username] || {};
+    userProgress[this.username][recipeId] = progress;
+    localStorage.setItem("userProgress", JSON.stringify(userProgress));
+  },
+  getRecipeProgress(recipeId) {
+    const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
+    return (userProgress[this.username] && userProgress[this.username][recipeId]) || [];
+  },
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;

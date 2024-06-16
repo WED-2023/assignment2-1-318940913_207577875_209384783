@@ -5,8 +5,8 @@
     "readyInMinutes": 45,
     "aggregateLikes": 209,
     "vegetarian": true,
-    "vegan": true,
-    "glutenFree": false,
+    "vegan": false,
+    "glutenFree": true,
     "summary": "You can never have too many main course recipes, so give Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs a try.",
     "analyzedInstructions": [],
     "instructions": [
