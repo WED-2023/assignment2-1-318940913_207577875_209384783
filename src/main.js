@@ -22,6 +22,9 @@ import Vuelidate from "vuelidate";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
 import {
   FormGroupPlugin,
   FormPlugin,
@@ -87,6 +90,16 @@ const shared_data = {
     console.log("logout");
     localStorage.removeItem("username");
     this.username = undefined;
+  },
+  saveRecipeProgress(recipeId, progress) {
+    const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
+    userProgress[this.username] = userProgress[this.username] || {};
+    userProgress[this.username][recipeId] = progress;
+    localStorage.setItem("userProgress", JSON.stringify(userProgress));
+  },
+  getRecipeProgress(recipeId) {
+    const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
+    return (userProgress[this.username] && userProgress[this.username][recipeId]) || [];
   },
 };
 console.log(shared_data);

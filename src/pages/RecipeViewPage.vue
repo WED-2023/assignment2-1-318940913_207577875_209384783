@@ -168,4 +168,6 @@ export default {
 [data-toggle="tooltip"] {
   cursor: default
 }
+
+
 </style>
