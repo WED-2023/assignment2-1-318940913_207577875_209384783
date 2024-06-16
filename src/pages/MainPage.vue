@@ -1,45 +1,69 @@
 <template>
   <div class="container">
-    <h1 class="title">Main Page</h1>
-    <RecipePreviewList title="Randome Recipes" class="RandomRecipes center" />
-    <router-link v-if="!$root.store.username" to="/login" tag="button">You need to Login to vue this</router-link>
-    {{ !$root.store.username }}
-    <RecipePreviewList
-      title="Last Viewed Recipes"
-      :class="{
-        RandomRecipes: true,
-        blur: !$root.store.username,
-        center: true
-      }"
-      disabled
-    ></RecipePreviewList>
-    <!-- <div
-      style="position: absolute;top: 70%;left: 50%;transform: translate(-50%, -50%);"
-    >
-      Centeredasdasdad
-    </div>-->
+    <b-row>
+      <!-- Left Column -->
+      <b-col cols="12" md="6">
+        <!-- Random Recipes List -->
+        <RecipePreviewList title="Explore these Recipes" :recipes="randomRecipes"/>
+        <div class="random-button-container"><b-button id="random-button">Random</b-button></div>
+      </b-col>
+      <!-- Right Column -->
+      <b-col cols="12" md="6">
+        <!-- Show Last Viewed Recipes if user is logged in -->
+        <div v-if="$root.store.username" class="container-user">
+          <RecipePreviewList :recipes="lastUserRecipes" title="Last Viewed Recipes" class="RandomRecipes center"/> </div>
+        <!-- Show LoginPage if user is not logged in -->
+        <div v-else class="login-container">
+          <LoginPage />
+        </div>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
 <script>
-import RecipePreviewList from "../components/RecipePreviewList";
+import RecipePreviewList from "@/components/RecipePreviewList.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import { mockGetRecipesPreview } from "../services/recipes.js"; 
+
 export default {
+
+  data() {
+    return {
+      randomRecipes: [], 
+      lastUserRecipes: [] 
+    };
+  },
   components: {
-    RecipePreviewList
+    RecipePreviewList,
+    LoginPage
+  },
+  mounted() {
+    this.fetchRandomRecipes(3);
+    if (this.$root.store.username)
+    {
+      this.fetchLastViewedRecipes(3);}
+  },
+  watch: {
+    '$root.store.username': function(newVal) {
+      if (newVal) {
+        this.fetchLastViewedRecipes(3);
+      }
+    }
+  },
+  methods: {
+    fetchRandomRecipes(amountToFetch){
+      const response = mockGetRecipesPreview(amountToFetch);
+      this.randomRecipes = response.data.recipes;},
+    fetchLastViewedRecipes(amountToFetch){
+      const response = mockGetRecipesPreview(amountToFetch);
+      this.lastUserRecipes = response.data.recipes;}
   }
 };
 </script>
 
-<style lang="scss" scoped>
-.RandomRecipes {
-  margin: 10px 0 10px;
-}
-.blur {
-  -webkit-filter: blur(5px); /* Safari 6.0 - 9.0 */
-  filter: blur(2px);
-}
-::v-deep .blur .recipe-preview {
-  pointer-events: none;
-  cursor: default;
+<style scoped>
+.container {
+  padding: 20px;
 }
 </style>

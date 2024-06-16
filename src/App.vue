@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" id="nav">
-      <img src="src/assets/Rachel.png" alt="Logo" class="navbar-logo" />   Rachel's recipes 
+      <img src="@/assets/Rachel.png" alt="Logo" class="navbar-logo" /> Rachel's recipes 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="defaultNav">
           <b-nav-item :to="{ name: 'main' }">Main</b-nav-item> 
@@ -12,11 +12,10 @@
         </b-nav-item>
         <b-navbar-nav>
           <b-form-input v-model="searchText" placeholder="Search..." />
-          <b-button @click="search" variant="primary" class="nav-item">Search</b-button>
+          <!-- <b-button @click="search" variant="primary" class="nav-item">Search</b-button> -->
+          <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item>
         </b-navbar-nav>
         </b-navbar-nav>
-
-
         <b-navbar-nav class="ml-auto User-section" v-if="!$root.store.username">
           <b-nav-item :to="{ name: 'login' }">Login</b-nav-item>
           <b-nav-item :to="{ name: 'register' }">Register</b-nav-item>
@@ -35,9 +34,6 @@
       </b-collapse>
     </b-navbar>
     <router-view />
-
-
-
   </div>
 </template>
 
@@ -111,10 +107,13 @@ export default {
 }
 
 .navbar-logo {
-  width: auto;
-  margin-right: 8px;
+  width: 50px; /* Set the fixed width */
+  height: 50px; /* Set the fixed height */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  margin-right: 25px;
   gap: 10px;
   margin-left: 15px;
+  border-radius: 8px;
 }
 
 .defaultNav {

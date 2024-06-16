@@ -55,11 +55,17 @@
       dismissible
       show
     >
-      Login failed: {{ form.submitError }}
+    Login failed: {{ form.submitError }}
     </b-alert>
-    <!-- <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card> -->
+    <b-alert
+      class="mt-2"
+      v-if="form.submitSuccess"
+      variant="success"
+      dismissible
+      show
+    >
+      Login succeeded!
+    </b-alert>
   </div>
 </template>
 
@@ -70,10 +76,12 @@ export default {
   name: "Login",
   data() {
     return {
+      success: true,
       form: {
         username: "",
         password: "",
-        submitError: undefined
+        submitError: undefined,
+        submitSuccess: undefined
       }
     };
   },
@@ -94,7 +102,19 @@ export default {
     },
     async Login() {
       try {
-        
+        const response = await mockLogin(this.form.username, this.form.password, this.success);
+        if (response.status === 200 && response.response.data.success) {
+          this.form.submitSuccess = true;
+          this.$root.store.login(this.form.username);
+          this.$router.push("/");
+        }
+        else{
+          this.form.submitError = response.response.data.message;
+        }
+      } catch (err) {
+        // console.log(err.response);
+        this.form.submitError = err.response.data.message;
+      }
         // const response = await this.axios.post(
         //   this.$root.store.server_domain +"/Login",
 
@@ -105,23 +125,23 @@ export default {
         //   }
         // );
 
-        const success = true; // modify this to test the error handling
-        const response = mockLogin(this.form.username, this.form.password, success);
-
+        // const success = true; // modify this to test the error handling
+       
         // console.log(response);
         // this.$root.loggedIn = true;
-        console.log(this.$root.store.login);
-        this.$root.store.login(this.form.username);
-        this.$router.push("/");
-      } catch (err) {
-        console.log(err.response);
-        this.form.submitError = err.response.data.message;
-      }
+        // console.log(this.$root.store.login);
+        // this.$root.store.login(this.form.username);
+        // this.$router.push("/");
+      // } catch (err) {
+      //   // console.log(err.response);
+      //   this.form.submitError = err.response.data.message;
+      // }
     },
 
     onLogin() {
       // console.log("login method called");
       this.form.submitError = undefined;
+      this.form.submitSuccess = undefined;
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;

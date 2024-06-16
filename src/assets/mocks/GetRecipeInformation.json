@@ -1,7 +1,7 @@
 {
-    "vegetarian": false,
-    "vegan": false,
-    "glutenFree": false,
+    "vegetarian": true,
+    "vegan": true,
+    "glutenFree": true,
     "dairyFree": false,
     "veryHealthy": false,
     "cheap": false,

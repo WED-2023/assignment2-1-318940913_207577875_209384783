@@ -1,237 +1,411 @@
 <template>
-  <transition name="create-recipe">
-    <div v-show="modalActive" class="modal" @click="close">
-      <transition name="create-recipe-inner">
-        <div v-show="modalActive" class="modal-inner">
-          <button class="buttonExit" @click="close" type="button">
-            <i class="far fa-times-circle"></i>
-          </button>
-          <h1>Come on, let's add a new recipe</h1>
-          <div class="fields-group">
-            <label for="recipeName">Recipe Name :  </label>
-            <input type="text" placeholder="Recipe Name" v-model="recipeName">
-            <label for="amountOfTime">Amount of Time (in minutes):</label>
-            <input id="amountOfTime" type="number" placeholder="Amount of Time" v-model="amountOfTime">
-            <label for="description">Description:</label>
-            <textarea id="description" placeholder="Description" v-model="description" maxlength="100"></textarea>
+  <b-modal v-model="modalActive" @hide="close" size="lg" hide-footer title="Come on, let's add a new recipe">
+    <div class="modal-inner">
+      <div class="modal-body">
+        <!-- Left Column: Recipe Details -->
+        <div class="left-column">
+          <h1>Recipe Details</h1>
+          <input type="text" placeholder="Recipe Name" required v-model="title" :class="{ 'input-error': isFormSubmitted && !title }" class="input-style">
+          <div class="time-servings-container">
+            <div class="field-readyInMinutes">
+              <select v-model.number="readyInMinutes" required class="styled-select" :class="{ 'input-error': isFormSubmitted && !readyInMinutes }">
+                <option disabled value="" class="placeholder">Cooking Time</option>
+                <option v-for="time in cookingTimes" :key="time" :value="time">{{ time }} minutes</option>
+              </select>
+            </div>
+            <div class="field-servings">
+              <select v-model.number="servings" required class="styled-select" :class="{ 'input-error': isFormSubmitted && !servings }">
+                <option disabled value="">Number of diners</option>
+                <option v-for="serving in servingsOptions" :key="serving" :value="serving">{{ serving }} diners</option>
+              </select>
+            </div>
+          </div>
 
-            <label for="servings">Enough for (number of diners):</label>
-            <input id="servings" type="number" placeholder="Number of diners" v-model="servings">
+          <textarea id="summary" class="summary-textarea" placeholder="Description" v-model="summary"  maxlength="100" required :class="{ 'input-error': isFormSubmitted && !summary }"></textarea>
+          <div class="form-check">
+            <b-form-checkbox v-model="vegan" id="inlineCheckbox1" name="inline-checkbox" switch style="margin-bottom: 10px;"> Vegan </b-form-checkbox>
           </div>
-          <div class="radio-group">
-          <label>Recipe Type:</label>
-          <label><input type="radio" value="vegan" v-model="recipeType"> Vegan</label>
-          <label><input type="radio" value="vegetarian" v-model="recipeType"> Vegetarian</label>
-          <label><input type="radio" value="regular" v-model="recipeType"> Regular</label>
+          <div class="form-check">
+            <b-form-checkbox v-model="vegetarian" id="inlineCheckbox2" name="inline-checkbox" switch style="margin-bottom: 10px;"> Vegetarian </b-form-checkbox>
           </div>
-          <div class="checkbox-group">
-            <label>Gluten Free:</label>
-            <label><input type="radio" value="yes" v-model="isGlutenFree"> Yes</label>
-            <!-- <label><input type="radio" value="no" v-model="isGlutenFree"> No</label> -->
+          <div class="form-check">
+            <b-form-checkbox v-model="isGlutenFree" id="inlineCheckbox3" name="inline-checkbox" switch style="margin-bottom: 15px;">Gluten Free </b-form-checkbox>
           </div>
+          <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }"></b-form-file>
+        </div>
+        <!-- --------------------------------------------------------------------------------------------------------------------------------------- -->
+
+        <!-- Right Column: Ingredients and Instructions -->
+        <div class="right-column">
+          <h1>Ingredients:</h1>
           <div class="ingredients-container">
-            <label>Add ingredients </label>
             <div v-for="(ingredient, index) in ingredients" :key="index" class="ingredients-group">
-            <input type="text" placeholder="Ingredient" v-model="ingredient.name">
-            <input type="number" placeholder="Quantity" v-model="ingredient.quantity">
-            <select v-model="ingredient.unit">
-              <option value="Unit" disabled selected>Select Unit</option>
-              <option value="KG">KG</option>
-              <option value="L">L</option>
-              <option value="ML">ML</option>
-              <option value="Tbsp">Tbsp</option>
+              <input type="text" :placeholder="'Ingredient...'" v-model="ingredient.name" required 
+                :class="{ 'input-error': isFormSubmitted && !ingredient.name }" >
+              <input type="number" :placeholder="'Quantity...'" step="0.5" min="0.5" v-model="ingredient.quantity" required 
+                :class="{ 'input-error': isFormSubmitted && !ingredient.quantity }" >
+              <select v-model="ingredient.unit" class="select-unit" required 
+                :class="{ 'input-error': isFormSubmitted && !ingredient.unit }">
+                <option value="" disabled selected>Unit</option>
+                <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
+              </select>
+              <b-icon variant="danger" icon="dash" @click="removeIngredient(index)" 
+                :class="{ 'disabled-icon': ingredients.length == 1 }"></b-icon>
+            </div>
+          </div>
+          <b-icon variant="success" icon="plus" @click="addIngredient"></b-icon>
 
-              
-            </select>
+          <h1>Instructions</h1>
+          <div class="instructions-container">
+            <div v-for="(instruction, index) in instructions" :key="index" class="instructions-group">
+              <input type="text" :placeholder="'Enter instruction...'" v-model="instruction.name" required  :class="{ 'input-error': isFormSubmitted && !instruction.name }">
+              <b-icon variant="danger" icon="dash" @click="removeInstruction(index)"  :class="{ 'disabled-icon': instructions.length === 1 }"></b-icon>
+            </div>
           </div>
-          <button @click="addIngredient" type="button">Add Ingredient</button>
-          </div>
-          <div class="fields-group">
-            <label>Instructions:</label>
-            <textarea id="Instructions" placeholder="Instructions" v-model="instructions"></textarea>
-          </div>
-          <div class="buttons-group">
-            <button @click="resetFields" type="button" class="reset-button">Reset</button>
-            <button @click="addRecipe" type="button">Create and Save</button>
-          </div>
-
-          
-        </div>  
-      </transition>
+          <b-icon variant="success" icon="plus" @click="addInstruction"></b-icon>
+        </div>
+        <!-- --------------------------------------------------------------------------------------------------------------------------------------- -->
+      </div>
     </div>
-  </transition> 
+
+    <div class="buttons-group">
+      <button @click="resetFields" type="button" class="reset-button">Clear</button>
+      <button @click="submitForm" >Create</button>
+    </div>
+  </b-modal>
 </template>
 
 <script>
-export default {
-  props: ["modalActive"],
-  setup(props, { emit }) {
-    const close = () => {
-      emit("close");
-    };
-    return { close };
-  },
-  data(){
-    return {
-      recipeName: '',
-      amountOfTime: '',
-      description: '',
-      servings: '',
-      recipeType: '',
-      isGlutenFree: false,
-      ingredients: [],
-      instructions: '',
-    };
+import { BFormFile, BFormCheckbox, BModal } from 'bootstrap-vue';
+import { BFormSpinbutton } from 'bootstrap-vue';
+import { mockAddUserRecipe } from "../services/user.js";
 
+export default {
+  components: {
+    BFormFile,
+    BFormCheckbox,
+    BModal,
+    BFormSpinbutton
   },
-  methods:{
+  props: {
+    modalActive: Boolean,
+  },
+  data() {
+    return {
+      title: '',
+      image: null,
+      readyInMinutes: '',
+      summary: '',
+      servings: '',
+      vegan: false,
+      vegetarian: false,
+      isGlutenFree: false,
+      ingredients: [{ name: '', quantity: '', unit: '' }],
+      instructions: [{ name: '' }],
+      cookingTimes: [
+        5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
+        55, 60, 75, 90, 105, 120, 135, 150,
+        165, 180, 210, 240, 270, 300, 330, 360
+      ],
+      servingsOptions: [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+        11, 12, 13, 14, 15
+      ],
+      units: [
+        'Gram', 'Kilogram', 'Milliliter',
+        'Liter', 'Curt', 'Teaspoon', 'Spoon', 'Cup'
+      ],
+      isFormSubmitted: false,
+    };
+  },
+  computed:{
+    canAddIngredient() {
+      const lastIngredient = this.ingredients[this.ingredients.length - 1];
+      return lastIngredient.name && lastIngredient.quantity && lastIngredient.unit;
+    },
+    canAddInstruction() {
+      const lastInstruction = this.instructions[this.instructions.length - 1];
+      return !!(lastInstruction && lastInstruction.name.trim());
+    }
+  },
+  methods: {
+    close() {
+      this.$emit('close');
+    },
     addIngredient() {
-      this.ingredients.push({ name: '', quantity: '', unit: '' });
+      if (this.canAddIngredient) {
+        this.ingredients.push({ name: '', quantity: '', unit: '' });
+        this.$root.toast("Ingredient added!", "A new ingredient has been included in your recipe", "success");
+      } else {
+        this.$root.toast("Cannot add ingredient!", "Please fill in all fields for the current ingredient before adding a new one.", "danger");
+      }
+    },
+    removeIngredient(index) {
+      if (this.ingredients.length > 1) {
+        this.ingredients.splice(index, 1);
+        this.$root.toast("Ingredient removed!", "The selected ingredient has been deleted from your recipe", "warning");
+      }
+    },
+    addInstruction() {
+      if (this.canAddInstruction) {
+        this.instructions.push({ name: '' });
+        this.$root.toast("Instruction added!", "A new instruction has been added to your recipe", "success");
+      } else {
+        this.$root.toast("Cannot add instruction!", "Please fill in the instruction field before adding a new one.", "danger");
+      }
+    },
+    removeInstruction(index) {
+      if (this.instructions.length > 1) {
+        this.instructions.splice(index, 1);
+        this.$root.toast("Instruction removed!", "The selected instruction has been deleted from your recipe", "warning");
+      }
     },
     resetFields() {
-      this.recipeName = '';
-      this.amountOfTime = '';
-      this.description = '';
+      this.title = '';
+      this.readyInMinutes = '';
+      this.summary = '';
       this.servings = '';
-      this.recipeType = '';
+      this.vegan = false;
+      this.vegetarian = false;
       this.isGlutenFree = false;
-      this.ingredients = [];
-      this.instructions = '';
+      this.ingredients = [{ name: '', quantity: '', unit: '' }];
+      this.instructions = [{ name: '' }];
+      this.image = null;
+      this.isFormSubmitted = false; 
+    },
+    submitForm() {
+      this.isFormSubmitted = true; 
+      if (this.isFormValid()) {
+        const recipeContent = {
+          title: this.title,
+          image: this.image,
+          readyInMinutes: this.readyInMinutes,
+          summary: this.summary,
+          servings: this.servings,
+          vegan: this.vegan,
+          vegetarian: this.vegetarian,
+          isGlutenFree: this.isGlutenFree,
+          ingredients: this.ingredients,
+          instructions: this.instructions
+        };
+        const response = mockAddUserRecipe(recipeContent);
+        if (response.status === 200 && response.response.data.success) {
+          this.$root.toast('Success!', 'Recipe added successfully.', 'success');
+          this.modalActive = false;
+          this.resetFields();
+        } else {
+          this.$root.toast('Failed!', 'Failed to add the recipe. Please try again.', 'danger');
+        }
+      } else {
+        this.$root.toast("Fields are missing!", 'Please fill in all the required fields.', "danger");
+      }
+    },
+    isFormValid() {
+      return (
+        this.title &&
+        this.image &&
+        this.readyInMinutes &&
+        this.summary &&
+        this.servings &&
+        this.ingredients.every(ingredient => ingredient.name && ingredient.quantity && ingredient.unit) &&
+        this.instructions.every(instruction => instruction.name)
+      );
+    },
   },
-  addRecipe() {
-      // Logic to save the recipe
-    }
-  }
 };
 </script>
 
 <style lang="scss" scoped>
-.modal {
+.input-style {
+  width: 325px;
+  height: 30px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+h1 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #42b983;
+  padding-bottom: 10px;
+}
+
+.modal-body {
+  width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  gap: 15px;
+  padding: 0.1rem;
+}
 
-  .modal-inner {
-    position: relative;
-    max-width: 640px;
-    width: 80%;
-    max-height: 80vh; 
-    overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    padding: 20px 20px;
+.left-column {
+  width: 55%;
+}
+
+.right-column {
+  width: 65%;
+}
+.disabled-button {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.summary-textarea{
+  width: 325px;
+  height: 90px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.time-servings-container {
+  display: flex;
+  gap: 4px;
+}
+
+.styled-select {
+  width: 160px;
+  height: 30px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: gray;
+}
+
+.styled-select option:checked {
+  color: black;
+  background-color: #f0f0f0;
+}
 
 
+.input-field {
+  width: 100%;
+  height: 30px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
 
-    .buttonExit {
-    position: absolute;
-    top: 20px; 
-    right: 20px; 
-    padding: 3px 3px;
-    border: none;
-    font-size: 18px;
-    color: rgb(246, 0, 0);
-    cursor: pointer;
-    background-color: transparent;
-  }
+.select-unit {
+  width: 80px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  color: #898989;
+}
 
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
+.ingredients-container {
+  max-height: 150px;
+  overflow-y: auto;
+  
+
+  .ingredients-group {
+    display: flex;
+    gap: 6px;
+    input[type="text"].input-error,
+    input[type="number"].input-error,
+    select.input-error {
+      border-color: red; 
     }
-
-    .fields-group {
-      margin-bottom: 20px;
-
-      label {
-        margin-bottom: 15px;
-        font-weight: bold;
-      }
-
-      input[type="text"],
-      input[type="number"],
-      textarea,
-      select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-      align-items: center;
-
-      label {
-        font-size: 16px;
-      }
-    }
-
-    .ingredients-container {
-      max-height: 150px;
-      overflow-y: auto;
-      margin-bottom: 15px;
-
-      .ingredients-group {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 10px;
-
-        input[type="text"],
-        input[type="number"] {
-          width: 50%; // Adjust the width as needed
-        }
-
-        select {
-          width: 30%; // Adjust the width as needed
-        }
-      }
-    }
-
-    .buttons-group {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px; // Add more space between buttons
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
+    input[type="text"] {
+      width: 175px; 
+      height: 30px;
+      padding: 10px;
+      border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #42b983;
-      color: white;
-      transition: background-color 0.3s ease;
-      flex: 1; // Make buttons fill available space evenly
-      margin-left: 10px;
-      margin-right: 10px;
+      font-size: 15px;
+      margin-bottom: 4px;
 
-      &:hover {
-        background-color: #36a372;
-      }
     }
-      .reset-button {
-      background-color: #f44336;
-
-        &:hover {
-          background-color: #d32f2f;
-        }
+    input[type="number"] {
+      width: 100px; 
+      height: 30px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+      margin-bottom: 4px;
     }
-
+    select {
+      width: 95px; 
+      height: 30px;
+      padding: 1px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
   }
 }
+
+.instructions-container {
+  max-height: 150px;
+  overflow-y: auto;
+
+  .instructions-group {
+    display: flex;
+    align-items: center;
+    input[type="text"].input-error,
+    input[type="number"].input-error,
+    select.input-error {
+      border-color: red; /* Add border-color styling for .input-error */
+    }
+
+    input[type="text"] {
+      width: 390px; 
+      height: 30px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.buttons-group {
+  margin-top: 10px;
+  margin-left: 75%;
+  
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #42b983;
+    color: white;
+    transition: background-color 0.3s ease;
+    flex: 1;
+    margin-right: 10px;
+    &:hover {
+      background-color: #36a372;
+    }
+  }
+
+  .reset-button {
+    background-color: grey;
+    &:hover {
+      background-color: #4f4c4c;
+    }
+  }
+}
+.input-error {
+  border-color: red;
+}
+// פה זה לא עובד עדיין צריך לבדוק איך להפוך את הגבולות של זה לאדום כמו של שאר השדות
+#file-default.input-error .form-control-file {
+  border-color: red;
+}
+
+
 </style>

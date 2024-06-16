@@ -2,17 +2,26 @@ import Vue from "vue";
 import App from "./App.vue";
 import VueAxios from "vue-axios";
 import axios from "axios";
+import { BootstrapVue, IconsPlugin, BootstrapVueIcons } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
+Vue.use(BootstrapVueIcons)
+
 
 import routes from "./routes";
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
-const router = new VueRouter({
+const router = new VueRouter({ 
   routes,
 });
 
 import Vuelidate from "vuelidate";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+
 import {
   FormGroupPlugin,
   FormPlugin,
@@ -38,9 +47,6 @@ import {
   LayoutPlugin,
 ].forEach((x) => Vue.use(x));
 Vue.use(Vuelidate);
-
-import '@fortawesome/fontawesome-free/css/all.css';
-import '@fortawesome/fontawesome-free/js/all.js';
 
 axios.interceptors.request.use(
   function(config) {

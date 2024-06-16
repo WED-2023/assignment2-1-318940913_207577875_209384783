@@ -1,141 +1,146 @@
 <template>
-  <router-link
-    :to="{ name: 'recipe', params: { recipeId: recipe.id } }"
-    class="recipe-preview"
-  >
-    <div class="recipe-body">
-      <img :src="recipe.image" class="recipe-image" />
-    </div>
-    <div class="recipe-footer">
-      <div :title="recipe.title" class="recipe-title">
-        {{ recipe.title }}
+  <div class="recipe-preview-container">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }" class="recipe-preview">
+      <div class="recipe-image-container">
+        <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
       </div>
-      <ul class="recipe-overview">
-        <li>{{ recipe.readyInMinutes }} minutes</li>
-        <li>{{ recipe.aggregateLikes }} likes</li>
-      </ul>
-    </div>
-  </router-link>
+      <div class="recipe-footer">
+        <div class="recipe-title">{{ recipe.title }}</div>
+        <ul class="recipe-overview">
+          <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
+          <li><i class="bi bi-heart-fill"></i>{{ recipe.aggregateLikes }} likes</li>
+        </ul>
+      </div>
+    </router-link>
+    <ul class="recipe-type-Like d-flex align-items-center list-unstyled mb-0">
+      <li v-if="recipe.vegetarian" class="mr-2" data-toggle="tooltip" title="Vegetarian"><i class="fas fa-seedling text-success"></i></li>
+      <li v-if="recipe.vegan" class="mr-2" data-toggle="tooltip" title="Vegan"><i class="fas fa-leaf text-success"></i></li>
+      <li v-if="recipe.glutenFree" class="mr-2" data-toggle="tooltip" title="Gluten Free"><i class="fas fa-bread-slice"></i></li>
+      <li class="like-container" v-if="$root.store.username">
+        <b-button variant="outline-danger" @click="toggleLike">
+          <i v-if="!isLiked" class="bi bi-heart"></i>
+          <i v-else class="bi bi-heart-fill"></i>
+        </b-button>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
+import { mockAddFavorite } from "../services/user.js";
+import { BButton } from 'bootstrap-vue';
+
 export default {
-  // mounted() {
-  //   this.axios.get(this.recipe.image).then((i) => {
-  //     this.image_load = true;
-  //   });
-  // },
+  components: {
+    BButton
+  },
   data() {
     return {
-      // image_load: false
+      image_load: true,
+      isLiked: false 
     };
   },
   props: {
     recipe: {
       type: Object,
       required: true
+    },
+  },
+  methods: {
+    async toggleLike() {
+      try {
+        const response = await mockAddFavorite(this.recipe.id);
+        if (response.status === 200 && response.response.data.success) {
+          this.isLiked = true; 
+          this.$root.toast("Liked!", "This recipe is now in your favorites", "success");
+        } else {
+          this.isLiked = false; 
+          this.$root.toast("Already Liked", "You've already liked this recipe", "info");
+        }
+      } catch (err) {
+        this.isLiked = false; 
+        this.$root.toast("Error", "Failed to like this recipe. Please try again later", "danger");
+      }
     }
-
-    // id: {
-    //   type: Number,
-    //   required: true
-    // },
-    // title: {
-    //   type: String,
-    //   required: true
-    // },
-    // readyInMinutes: {
-    //   type: Number,
-    //   required: true
-    // },
-    // image: {
-    //   type: String,
-    //   required: true
-    // },
-    // aggregateLikes: {
-    //   type: Number,
-    //   required: false,
-    //   default() {
-    //     return undefined;
-    //   }
-    // }
   }
 };
 </script>
 
 <style scoped>
+.recipe-preview-container {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .recipe-preview {
-  display: inline-block;
-  width: 90%;
-  height: 100%;
-  position: relative;
-  margin: 10px 10px;
-}
-.recipe-preview > .recipe-body {
-  width: 100%;
-  height: 200px;
-  position: relative;
-}
-
-.recipe-preview .recipe-body .recipe-image {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
-  margin-bottom: auto;
   display: block;
-  width: 98%;
-  height: auto;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  background-size: cover;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 0;
 }
 
-.recipe-preview .recipe-footer {
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
+.recipe-image-container {
+  overflow: hidden; 
 }
 
-.recipe-preview .recipe-footer .recipe-title {
-  padding: 10px 10px;
+.recipe-image {
   width: 100%;
-  font-size: 12pt;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
+  height: 100%; 
+  border: #ddd;
 }
 
-.recipe-preview .recipe-footer ul.recipe-overview {
-  padding: 5px 10px;
-  width: 100%;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
+.recipe-footer {
+  padding: 10px 0;
+}
+
+.recipe-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.recipe-overview {
   display: flex;
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -o-box-flex: 1;
-  box-flex: 1;
-  -webkit-flex: 1 auto;
-  -ms-flex: 1 auto;
-  flex: 1 auto;
-  table-layout: fixed;
-  margin-bottom: 0px;
+  gap: 15px;
+  margin: 0 50px 0 50px;
 }
 
-.recipe-preview .recipe-footer ul.recipe-overview li {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -o-box-flex: 1;
-  -ms-box-flex: 1;
-  box-flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  width: 90px;
-  display: table-cell;
-  text-align: center;
+.recipe-overview li {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 4px;
+}
+
+.recipe-type-Like {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0 0 0 0;
+  list-style: none;
+}
+
+.recipe-type-Like li {
+  margin-right: 10px;
+}
+
+.like-container {
+  margin-top: 5px;
+  background-color: white ;
+}
+
+.like-container .btn-outline-danger {
+  border-color: transparent; 
+}
+
+.card-body {
+  margin: 0;
+  padding: 0;
 }
 </style>
