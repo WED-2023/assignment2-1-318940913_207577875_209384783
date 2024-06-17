@@ -3,8 +3,9 @@
     <h3 class="mb-4">{{ title }} :<slot></slot> </h3>
     <b-row>
       <b-col v-for="recipe in recipes" :key="recipe.id" cols="15" md="6" lg="8" class="mb-4">
-        <RecipePreview class="recipePreview" :recipe="recipe"/>
-        <!-- <RecipeInMealPreview class="recipePreview" :recipe="recipe"/> -->
+        <!-- <RecipePreview class="recipePreview" :recipe="recipe"/> -->
+        <RecipeInMealPreview v-if="meal" class="recipePreview" :recipe="recipe"/>
+        <RecipePreview v-else class="recipePreview" :recipe="recipe"/>
       </b-col>
     </b-row>
   </b-container>
@@ -12,14 +13,14 @@
 
 <script>
 import RecipePreview from "./RecipePreview.vue";
-// import RecipeInMealPreview from "./RecipeInMealPreview.vue";
+import RecipeInMealPreview from "./RecipeInMealPreview.vue";
 
 
 export default {
   name: "RecipePreviewList",
   components: {
     RecipePreview,
-    // RecipeInMealPreview
+    RecipeInMealPreview
   },
   props: {
     title: {
@@ -29,6 +30,11 @@ export default {
     recipes: {
       type: Array,
       required: true
+    },
+    meal: {
+      type: Boolean,
+      required: false,
+      default: false
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RecipePreviewList title="My Meal" :recipes="mealRecipes" meal=false></RecipePreviewList>    
+        <RecipePreviewList title="My Meal" :recipes="mealRecipes" :meal='false'></RecipePreviewList>    
     </div>
 </template>
 
