@@ -85,7 +85,6 @@ export default {
     BFormFile,
     BFormCheckbox,
     BModal,
-    BFormSpinbutton
   },
   props: {
     modalActive: Boolean,

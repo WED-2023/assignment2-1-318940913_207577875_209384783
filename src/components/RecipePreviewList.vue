@@ -4,6 +4,7 @@
     <b-row>
       <b-col v-for="recipe in recipes" :key="recipe.id" cols="15" md="6" lg="8" class="mb-4">
         <RecipePreview class="recipePreview" :recipe="recipe"/>
+        <!-- <RecipeInMealPreview class="recipePreview" :recipe="recipe"/> -->
       </b-col>
     </b-row>
   </b-container>
@@ -11,11 +12,14 @@
 
 <script>
 import RecipePreview from "./RecipePreview.vue";
+// import RecipeInMealPreview from "./RecipeInMealPreview.vue";
+
 
 export default {
   name: "RecipePreviewList",
   components: {
-    RecipePreview
+    RecipePreview,
+    // RecipeInMealPreview
   },
   props: {
     title: {
