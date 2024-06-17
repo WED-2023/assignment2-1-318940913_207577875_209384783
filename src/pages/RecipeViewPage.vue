@@ -53,7 +53,9 @@
       </div>
     </div>
     <div class="text-center mt-4">
-      <router-link :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="btn btn-primary">Add To Meal And Start Cook</router-link>
+      <router-link :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="btn btn-primary">Let's Start Cooking This Recipe</router-link>
+      <br>
+      <button @click="addToMeal" class="btn btn-primary mt-2" :disabled="!$root.store.username">Add To My Meal</button>
     </div>
     <br>
   </div>
@@ -68,6 +70,13 @@ export default {
     return {
       recipe: null
     };
+  },
+  methods: {
+    addToMeal() {
+      const user = this.$root.store.username;
+      this.$root.store.addRecipeToMeal(user, this.recipe.id);
+      this.$router.push({ name: 'MealMaking', params: { recipeId: this.recipe.id } });
+    }
   },
   async created() {
     try {
@@ -164,10 +173,8 @@ export default {
   color: red
 }
 
-
 [data-toggle="tooltip"] {
   cursor: default
 }
-
 
 </style>

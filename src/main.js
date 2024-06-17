@@ -102,6 +102,22 @@ const shared_data = {
     const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
     return (userProgress[this.username] && userProgress[this.username][recipeId]) || [];
   },
+  addRecipeToMeal(username, recipeId) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipe will not be added to the meal.");
+      return;
+    }
+    const userMeals = JSON.parse(localStorage.getItem("userMeals")) || {};
+    userMeals[username] = userMeals[username] || [];
+    if (!userMeals[username].includes(recipeId)) {
+      userMeals[username].push(recipeId);
+    }
+    localStorage.setItem("userMeals", JSON.stringify(userMeals));
+  },
+  getUserMeals(username) {
+    const userMeals = JSON.parse(localStorage.getItem("userMeals")) || {};
+    return userMeals[username] || [];
+  }
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;

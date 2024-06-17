@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div v-if="recipe" class="card">
       <div class="card-header text-center">
-        <h1 class="card-title">{{ recipe.title }}</h1>
+        <h5>{{ recipe.title }}</h5>
       </div>
       <img :src="recipe.image" class="card-img-top" alt="Recipe Image" />
       <div class="card-body">
@@ -35,6 +35,10 @@
                 <span :class="{ 'checked-text': checkedInstructions[index] }">{{ s }}</span>
               </li>
             </ol>
+            <div class="mt-1">
+              <b-button class="mr-1" size="sm" variant="" @click="resetAllRecipeProgress" style="border-radius: 5px;">Clear</b-button>
+              <b-button size="sm" variant="success" @click="markAsDone" style="border-radius: 5px;" >Mark As Done</b-button>
+            </div>
             <div class="mt-3">
               <h5>Recipe Progress</h5>
               <b-progress :value="checkedCount" :max="recipe.instructions.length" variant="success" animated show-progress>
@@ -73,6 +77,9 @@ export default {
     }
   },
   methods: {
+    markAsDone() {
+      this.checkedInstructions = this.checkedInstructions.map(() => true);
+    },
     calculateAdjustedAmount(ingredient) {
       return ingredient.amount * (this.recipe.servings / this.originalServings);
     },
@@ -117,7 +124,14 @@ export default {
         this.$set(ingredient, 'adjustedAmount', this.calculateAdjustedAmount(ingredient));
       });
     },
+    resetAllRecipeProgress() {
+      this.checkedInstructions = this.checkedInstructions.map(() => false);
+    },
     saveProgress() {
+      if (!this.$root.store.username) {
+      console.warn("No user logged in. Progress will not be saved.");
+      return;
+    }
       this.$root.store.saveRecipeProgress(this.$route.params.recipeId, this.checkedInstructions);
     }
   },
@@ -195,4 +209,13 @@ export default {
 [data-toggle="tooltip"] {
   cursor: default;
 }
+
+#override h5 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #42b983;
+  padding-bottom: 10px;
+}
+
 </style>

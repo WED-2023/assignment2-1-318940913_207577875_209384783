@@ -14,6 +14,10 @@ export function mockGetRecipesPreview(amount = 1) {
   return { data: { recipes: recipes } };
 }
 
+export function mockGetRecipePreviewById(id) {
+  return { data: { recipe: multiple_recipe_preview.find(recipe => recipe.id === id) } } ;
+}
+
 export function mockGetRecipeFullDetails(recipeId) {
   // const recipe = multiple_recipes_full_view.find(r => r.id === recipeId);
 
