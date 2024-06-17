@@ -2,7 +2,7 @@
   <b-container>
     <h3 class="mb-4">{{ title }} :<slot></slot> </h3>
     <b-row>
-      <b-col v-for="recipe in recipes" :key="recipe.id" cols="15" md="6" lg="8" class="mb-4">
+      <b-col v-for="recipe in recipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
         <!-- <RecipePreview class="recipePreview" :recipe="recipe"/> -->
         <RecipeInMealPreview v-if="meal" class="recipePreview" :recipe="recipe"/>
         <RecipePreview v-else class="recipePreview" :recipe="recipe"/>
