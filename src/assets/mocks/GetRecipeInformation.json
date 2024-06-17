@@ -348,7 +348,8 @@
         "pairingText": "No one wine will suit every pasta dish. Pasta in a tomato-based sauce will usually work well with a medium-bodied red, such as a montepulciano or chianti. Pasta with seafood or pesto will fare better with a light-bodied white, such as a pinot grigio. Cheese-heavy pasta can pair well with red or white - you might try a sangiovese wine for hard cheeses and a chardonnay for soft cheeses. We may be able to make a better recommendation if you ask again with a specific pasta dish.",
         "productMatches": []
     },
-    "instructions": "",
+    "instructions": ["test1",
+    "test2"],
     "analyzedInstructions": [],
     "originalId": null,
     "spoonacularScore": 83.83710479736328,

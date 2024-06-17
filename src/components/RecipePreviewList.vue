@@ -2,24 +2,19 @@
   <b-container>
     <h3 class="mb-4">{{ title }} :<slot></slot> </h3>
     <b-row>
-      <b-col v-for="recipe in recipes" :key="recipe.id" cols="15" md="6" lg="8">
+      <b-col v-for="recipe in recipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
         <RecipePreview class="recipePreview" :recipe="recipe"/>
-        <!-- <RecipeInMealPreview class="recipePreview" :recipe="recipe"/> -->
       </b-col>
     </b-row>
   </b-container>
 </template>
-
 <script>
 import RecipePreview from "./RecipePreview.vue";
-// import RecipeInMealPreview from "./RecipeInMealPreview.vue";
-
 
 export default {
   name: "RecipePreviewList",
   components: {
     RecipePreview,
-    // RecipeInMealPreview
   },
   props: {
     title: {
@@ -35,7 +30,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  min-height: 400px;
+.recipe-col {
+  margin-bottom: 20px;
 }
 </style>
