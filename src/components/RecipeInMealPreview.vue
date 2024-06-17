@@ -13,6 +13,7 @@
 
 <script>
 import RecipePreview from "./RecipePreview.vue";
+import { mockGetRecipeFullDetails } from "../services/recipes";
     export default {
         name: "RecipeInMealPreview",
         extends: RecipePreview,
