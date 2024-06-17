@@ -14,15 +14,17 @@
       </div>
     </router-link>
     <ul class="recipe-type-Like d-flex align-items-center list-unstyled mb-0">
-      <li v-if="recipe.vegetarian" class="mr-2" data-toggle="tooltip" title="Vegetarian"><i class="fas fa-seedling text-success"></i></li>
-      <li v-if="recipe.vegan" class="mr-2" data-toggle="tooltip" title="Vegan"><i class="fas fa-leaf text-success"></i></li>
-      <li v-if="recipe.glutenFree" class="mr-2" data-toggle="tooltip" title="Gluten Free"><i class="fas fa-bread-slice"></i></li>
       <li class="like-container" v-if="$root.store.username">
-        <b-button variant="outline-danger" @click="toggleLike">
-          <i v-if="!isLiked" class="bi bi-heart"></i>
-          <i v-else class="bi bi-heart-fill"></i>
+        <b-button @click="toggleLike" class="custom-button">
+          <!-- <i v-if="!isLiked" class="bi bi-heart"></i>
+          <i v-else class="bi bi-heart-fill"></i> -->
+          <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
         </b-button>
       </li>
+      <li v-if="recipe.vegetarian"  data-toggle="tooltip" title="Vegetarian"><i class="fas fa-seedling text-success"></i></li>
+      <li v-if="recipe.vegan" data-toggle="tooltip" title="Vegan"><i class="fas fa-leaf text-success"></i></li>
+      <li v-if="recipe.glutenFree" data-toggle="tooltip" title="Gluten Free"><i class="fas fa-bread-slice"></i></li>
+
     </ul>
   </div>
 </template>
@@ -53,17 +55,21 @@ export default {
         const response = await mockAddFavorite(this.recipe.id);
         if (response.status === 200 && response.response.data.success) {
           this.isLiked = true; 
-          this.$root.toast("Liked!", "This recipe is now in your favorites", "success");
-        } else {
+        } 
+        else {
           this.isLiked = false; 
-          this.$root.toast("Already Liked", "You've already liked this recipe", "info");
         }
       } catch (err) {
         this.isLiked = false; 
-        this.$root.toast("Error", "Failed to like this recipe. Please try again later", "danger");
+        this.$root.toast("Error", err, "danger");
+        
       }
-    }
-  }
+    },
+
+  },
+  mounted() {
+  this.isLiked = this.$root.store.getRecipeLike(this.recipe.id);
+}
 };
 </script>
 
@@ -102,6 +108,7 @@ export default {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
+  margin-left: 10%;
 }
 
 .recipe-overview {
@@ -120,27 +127,40 @@ export default {
 .recipe-type-Like {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  margin: 0 0 0 0;
-  list-style: none;
+  margin-left: 65px;
 }
 
 .recipe-type-Like li {
-  margin-right: 10px;
+  margin-left: 15px;
 }
 
-.like-container {
-  margin-top: 5px;
-  background-color: white ;
+.custom-button {
+  background-color: white; 
+  border-color: white;
+  padding: 0;
+  min-width: 18px; 
+  min-height: 15px; 
+  display: flex;
+
+  
 }
 
-.like-container .btn-outline-danger {
-  border-color: transparent; 
+.custom-button .bi-heart,
+.custom-button .bi-heart-fill {
+  color: #ff0000; 
 }
 
+.btn.custom-button.btn-secondary:hover,
+.btn.custom-button.btn-secondary:focus,
+.btn.custom-button.btn-secondary:active {
+  border: none;
+  background: transparent; 
+  box-shadow: none; 
+  outline: none; 
+}
 .card-body {
   margin: 0;
   padding: 0;
 }
+
 </style>

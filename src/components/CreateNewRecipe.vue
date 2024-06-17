@@ -9,7 +9,7 @@
           <div class="time-servings-container">
             <div class="field-readyInMinutes">
               <select v-model.number="readyInMinutes" required class="styled-select" :class="{ 'input-error': isFormSubmitted && !readyInMinutes }">
-                <option disabled value="" class="placeholder">Cooking Time</option>
+                <option  disabled value="" class="placeholder">Cooking Time </option>
                 <option v-for="time in cookingTimes" :key="time" :value="time">{{ time }} minutes</option>
               </select>
             </div>
@@ -31,10 +31,16 @@
           <div class="form-check">
             <b-form-checkbox v-model="isGlutenFree" id="inlineCheckbox3" name="inline-checkbox" switch style="margin-bottom: 15px;">Gluten Free </b-form-checkbox>
           </div>
-          <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }"></b-form-file>
+          <div class="image-form">
+        <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }" accept="image/*" @change="handleFileUpload" ></b-form-file>
+        <div class="image-preview" v-if="image">
+              <img :src="imageUrl" alt="Selected Image" class="img-fluid" />
+          </div>    
+      </div >
+          
+          
         </div>
         <!-- --------------------------------------------------------------------------------------------------------------------------------------- -->
-
         <!-- Right Column: Ingredients and Instructions -->
         <div class="right-column">
           <h1>Ingredients:</h1>
@@ -49,12 +55,10 @@
                 <option value="" disabled selected>Unit</option>
                 <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
               </select>
-              <b-icon variant="danger" icon="dash" @click="removeIngredient(index)" 
-                :class="{ 'disabled-icon': ingredients.length == 1 }"></b-icon>
+              <b-icon variant="danger" icon="dash" @click="removeIngredient(index)" :class="{ 'disabled-icon': ingredients.length == 1 }" style="margin-top: 5px;"></b-icon>
             </div>
           </div>
           <b-icon variant="success" icon="plus" @click="addIngredient"></b-icon>
-
           <h1>Instructions</h1>
           <div class="instructions-container">
             <div v-for="(instruction, index) in instructions" :key="index" class="instructions-group">
@@ -76,8 +80,8 @@
 </template>
 
 <script>
-import { BFormFile, BFormCheckbox, BModal } from 'bootstrap-vue';
-import { BFormSpinbutton } from 'bootstrap-vue';
+import { BFormFile, BFormCheckbox, BModal ,BToast} from 'bootstrap-vue';
+// import { BFormSpinbutton } from 'bootstrap-vue';
 import { mockAddUserRecipe } from "../services/user.js";
 
 export default {
@@ -85,6 +89,8 @@ export default {
     BFormFile,
     BFormCheckbox,
     BModal,
+    // BFormSpinbutton,
+    BToast
   },
   props: {
     modalActive: Boolean,
@@ -125,6 +131,10 @@ export default {
     canAddInstruction() {
       const lastInstruction = this.instructions[this.instructions.length - 1];
       return !!(lastInstruction && lastInstruction.name.trim());
+    },
+    imageUrl() {
+      // Compute the URL for displaying the image preview
+      return this.image ? URL.createObjectURL(this.image) : '';
     }
   },
   methods: {
@@ -134,29 +144,31 @@ export default {
     addIngredient() {
       if (this.canAddIngredient) {
         this.ingredients.push({ name: '', quantity: '', unit: '' });
-        this.$root.toast("Ingredient added!", "A new ingredient has been included in your recipe", "success");
+        // this.$root.$bvToast.toast("A new ingredient has been included in your recipe",{title:"Ingredient added!" ,variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       } else {
-        this.$root.toast("Cannot add ingredient!", "Please fill in all fields for the current ingredient before adding a new one.", "danger");
+        this.$root.$bvToast.toast("Please fill in all fields for the current ingredient before adding a new one.",{title:"Cannot add ingredient!" ,variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       }
     },
     removeIngredient(index) {
       if (this.ingredients.length > 1) {
         this.ingredients.splice(index, 1);
-        this.$root.toast("Ingredient removed!", "The selected ingredient has been deleted from your recipe", "warning");
+        // this.$root.$bvToast.toast("Ingredient removed!",{title: 'The selected ingredient has been deleted from your recipe',variant: 'warning',toaster: 'b-toaster-top-right',solid: true,
+        // autoHideDelay: 2000, appendToast: true,});
       }
     },
     addInstruction() {
       if (this.canAddInstruction) {
         this.instructions.push({ name: '' });
-        this.$root.toast("Instruction added!", "A new instruction has been added to your recipe", "success");
+        // this.$root.$bvToast.toast("A new instruction has been added to your recipe",{title:"Instruction added!" ,variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       } else {
-        this.$root.toast("Cannot add instruction!", "Please fill in the instruction field before adding a new one.", "danger");
+        this.$root.$bvToast.toast("Please fill in the instruction field before adding a new one.",{title:"Cannot add instruction!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       }
     },
     removeInstruction(index) {
       if (this.instructions.length > 1) {
         this.instructions.splice(index, 1);
-        this.$root.toast("Instruction removed!", "The selected instruction has been deleted from your recipe", "warning");
+        // this.$root.$bvToast.toast("The selected instruction has been deleted from your recipe",{title:"Instruction removed!",variant: 'warning',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+
       }
     },
     resetFields() {
@@ -189,14 +201,17 @@ export default {
         };
         const response = mockAddUserRecipe(recipeContent);
         if (response.status === 200 && response.response.data.success) {
-          this.$root.toast('Success!', 'Recipe added successfully.', 'success');
+          this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+
           this.modalActive = false;
           this.resetFields();
         } else {
-          this.$root.toast('Failed!', 'Failed to add the recipe. Please try again.', 'danger');
+          this.$root.$bvToast.toast("Failed to add the recipe. Please try again.",{title:"Failed!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+
         }
       } else {
-        this.$root.toast("Fields are missing!", 'Please fill in all the required fields.', "danger");
+        this.$root.$bvToast.toast('Please fill in all the required fields.',{title:"Fields are missing!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+
       }
     },
     isFormValid() {
@@ -210,6 +225,9 @@ export default {
         this.instructions.every(instruction => instruction.name)
       );
     },
+    handleFileUpload(event) {
+      this.image = event.target.files[0];
+    }
   },
 };
 </script>
@@ -230,6 +248,7 @@ h1 {
   color: #333;
   margin-bottom: 5px;
   border-bottom: 2px solid #42b983;
+
   padding-bottom: 10px;
 }
 
@@ -238,6 +257,7 @@ h1 {
   display: flex;
   gap: 15px;
   padding: 0.1rem;
+  height: 500px;
 }
 
 .left-column {
@@ -303,7 +323,7 @@ h1 {
 }
 
 .ingredients-container {
-  max-height: 150px;
+  max-height: 200px;
   overflow-y: auto;
   
 
@@ -347,7 +367,7 @@ h1 {
 }
 
 .instructions-container {
-  max-height: 150px;
+  max-height: 200px;
   overflow-y: auto;
 
   .instructions-group {
@@ -356,7 +376,7 @@ h1 {
     input[type="text"].input-error,
     input[type="number"].input-error,
     select.input-error {
-      border-color: red; /* Add border-color styling for .input-error */
+      border-color: red; 
     }
 
     input[type="text"] {
@@ -398,13 +418,21 @@ h1 {
     }
   }
 }
+.image-form{
+  width: 100%;
+}
+.image-form .input-error{
+  height: 32.5px;
+  border: 1px solid red;
+  border-radius: 5px;
+
+}
 .input-error {
-  border-color: red;
+  border-color: red ;
 }
-// פה זה לא עובד עדיין צריך לבדוק איך להפוך את הגבולות של זה לאדום כמו של שאר השדות
-#file-default.input-error .form-control-file {
-  border-color: red;
+.image-preview img {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 160px;
+  width: 100%;
 }
-
-
 </style>
