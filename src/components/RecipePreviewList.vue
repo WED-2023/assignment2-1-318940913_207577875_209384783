@@ -21,7 +21,6 @@
     </div>
   </b-container>
 </template>
-
 <script>
 import draggable from 'vuedraggable';
 import RecipePreview from "./RecipePreview.vue";

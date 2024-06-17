@@ -9,7 +9,7 @@
         <div class="recipe-title">{{ recipe.title }}</div>
         <ul class="recipe-overview">
           <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
-          <li><i class="bi bi-heart-fill"></i>{{ recipe.aggregateLikes }} likes</li>
+          <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
         </ul>
       </div>
     </router-link>
@@ -21,23 +21,31 @@
         <div class="recipe-title">{{ recipe.title }}</div>
         <ul class="recipe-overview">
           <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
-          <li><i class="bi bi-heart-fill"></i>{{ recipe.aggregateLikes }} likes</li>
+          <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
         </ul>
       </div>
     </router-link>
-    <ul class="recipe-type-Like d-flex align-items-center list-unstyled mb-0">
-      <li class="like-container" v-if="$root.store.username">
-        <b-button @click="toggleLike" class="custom-button">
-          <!-- <i v-if="!isLiked" class="bi bi-heart"></i>
-          <i v-else class="bi bi-heart-fill"></i> -->
-          <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-        </b-button>
-      </li>
-      <li v-if="recipe.vegetarian"  data-toggle="tooltip" title="Vegetarian"><i class="fas fa-seedling text-success"></i></li>
-      <li v-if="recipe.vegan" data-toggle="tooltip" title="Vegan"><i class="fas fa-leaf text-success"></i></li>
-      <li v-if="recipe.glutenFree" data-toggle="tooltip" title="Gluten Free"><i class="fas fa-bread-slice"></i></li>
-
-    </ul>
+    
+    <!-- Adjusted layout for Like and dietary icons -->
+    <div class="recipe-type-Like">
+      <ul class="d-flex align-items-center list-unstyled mb-0">
+        <li class="like-container" v-if="$root.store.username">
+          <b-button @click="toggleLike" class="custom-button">
+            <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+          </b-button>
+        </li>
+        <!-- Use ternary operator to conditionally render dietary icons -->
+        <li v-if="recipe.vegetarian" data-toggle="tooltip" title="Vegetarian">
+          <i class="fas fa-seedling text-success"></i>
+        </li>
+        <li v-if="recipe.vegan" data-toggle="tooltip" title="Vegan">
+          <i class="fas fa-leaf text-success"></i>
+        </li>
+        <li v-if="recipe.glutenFree" data-toggle="tooltip" title="Gluten Free">
+          <i class="fas fa-bread-slice"></i>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -74,20 +82,17 @@ export default {
       try {
         const response = await mockAddFavorite(this.recipe.id);
         if (response.status === 200 && response.response.data.success) {
-          this.isLiked = true; 
-        } 
-        else {
+          this.isLiked = !this.isLiked;
+        } else {
           this.isLiked = false; 
         }
       } catch (err) {
         this.isLiked = false; 
         this.$root.toast("Error", err, "danger");
-        
       }
-    },
-
-  }
-};
+    }
+  },
+}
 </script>
 
 <style scoped>
@@ -98,6 +103,11 @@ export default {
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 340px;
+  min-height: 340px;
+  max-width: 340px;
+  min-width: 340px;
+
 }
 
 .recipe-preview {
@@ -109,12 +119,12 @@ export default {
 
 .recipe-image-container {
   overflow: hidden; 
+  height: 200px; 
 }
 
 .recipe-image {
   width: 100%;
   height: 100%; 
-  border: #ddd;
 }
 
 .recipe-footer {
@@ -125,7 +135,8 @@ export default {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
-  margin-left: 10%;
+  display: flex;
+  justify-content: center; /* Center align horizontally */
 }
 
 .recipe-overview {
@@ -142,9 +153,17 @@ export default {
 }
 
 .recipe-type-Like {
+  margin-top: auto; /* Pushes the Like section to the bottom */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipe-type-Like ul {
   display: flex;
   align-items: center;
-  margin-left: 65px;
+  list-style-type: none;
+  padding: 0;
 }
 
 .recipe-type-Like li {
@@ -158,8 +177,6 @@ export default {
   min-width: 18px; 
   min-height: 15px; 
   display: flex;
-
-  
 }
 
 .custom-button .bi-heart,
@@ -175,6 +192,7 @@ export default {
   box-shadow: none; 
   outline: none; 
 }
+
 .card-body {
   margin: 0;
   padding: 0;

@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       showDropdown: false,
+      searchText:''
     };
   },
   components:{
@@ -51,7 +52,6 @@ export default {
   },
   setup() {
     const modalActive = ref(false);
-
     const toggleModal = () => {
       modalActive.value = !modalActive.value;
     };

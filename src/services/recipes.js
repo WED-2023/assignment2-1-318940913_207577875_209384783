@@ -13,6 +13,17 @@ export function mockGetRecipesPreview(amount = 1) {
 
   return { data: { recipes: recipes } };
 }
+export function mockGetAllRecipesPreview() {
+  let recipes = [];
+  let i = 0;
+  
+  while (i < multiple_recipe_preview.length) {
+    recipes.push(multiple_recipe_preview[i]);
+    i++;
+  }
+
+  return { data: { recipes: recipes } };
+}
 
 export function mockGetRecipePreviewById(id) {
   return { data: { recipe: multiple_recipe_preview.find(recipe => recipe.id === id) } } ;
