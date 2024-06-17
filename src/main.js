@@ -89,6 +89,10 @@ const shared_data = {
     this.username = undefined;
   },
   saveRecipeProgress(recipeId, progress) {
+    if (!this.username) {
+      console.warn("No user logged in. Progress will not be saved.");
+      return;
+    }
     const userProgress = JSON.parse(localStorage.getItem("userProgress")) || {};
     userProgress[this.username] = userProgress[this.username] || {};
     userProgress[this.username][recipeId] = progress;
