@@ -56,6 +56,8 @@
       <router-link :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="btn btn-primary">Let's Start Cooking This Recipe</router-link>
       <br>
       <button @click="addToMeal" class="btn btn-primary mt-2" :disabled="!$root.store.username">Add To My Meal</button>
+      <br>
+      <router-link :to="{ name: 'MealMaking' }" class="btn btn-primary mt-2">My Meals</router-link>
     </div>
     <br>
   </div>

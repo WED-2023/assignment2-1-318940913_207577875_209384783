@@ -20,6 +20,30 @@ const router = new VueRouter({
 
 import Vuelidate from "vuelidate";
 
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  state: {
+    currentRecipeId: null
+  },
+  mutations: {
+    setCurrentRecipeId(state, recipeId) {
+      state.currentRecipeId = recipeId;
+    }
+  },
+  actions: {
+    setCurrentRecipeId({ commit }, recipeId) {
+      commit('setCurrentRecipeId', recipeId);
+    }
+  },
+  getters: {
+    getCurrentRecipeId(state) {
+      return state.currentRecipeId;
+    }
+  }
+});
 
 
 import {
@@ -112,6 +136,15 @@ const shared_data = {
     if (!userMeals[username].includes(recipeId)) {
       userMeals[username].push(recipeId);
     }
+    localStorage.setItem("userMeals", JSON.stringify(userMeals));
+  },
+  saveRecipesToMeal(username, recipeIds) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipes will not be added to the meal.");
+      return;
+    }
+    const userMeals = JSON.parse(localStorage.getItem("userMeals")) || {};
+    userMeals[username] = recipeIds;
     localStorage.setItem("userMeals", JSON.stringify(userMeals));
   },
   getUserMeals(username) {

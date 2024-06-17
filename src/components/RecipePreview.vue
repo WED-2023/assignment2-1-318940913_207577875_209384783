@@ -1,7 +1,19 @@
 <template>
   <div class="recipe-preview-container">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }" class="recipe-preview">
+    <router-link v-if="meal" :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="recipe-preview">
+      <div class="recipe-image-container">
+        <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
+      </div>
+      <div class="recipe-footer">
+        <div class="recipe-title">{{ recipe.title }}</div>
+        <ul class="recipe-overview">
+          <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
+          <li><i class="bi bi-heart-fill"></i>{{ recipe.aggregateLikes }} likes</li>
+        </ul>
+      </div>
+    </router-link>
+    <router-link v-else :to="{ name: 'recipe', params: { recipeId: recipe.id } }" class="recipe-preview">
       <div class="recipe-image-container">
         <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
       </div>
@@ -48,8 +60,16 @@ export default {
       type: Object,
       required: true
     },
+    meal: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   methods: {
+    removeRecipe() {
+      this.$emit('remove', this.recipe);
+    },
     async toggleLike() {
       try {
         const response = await mockAddFavorite(this.recipe.id);
@@ -66,10 +86,7 @@ export default {
       }
     },
 
-  },
-  mounted() {
-  this.isLiked = this.$root.store.getRecipeLike(this.recipe.id);
-}
+  }
 };
 </script>
 
@@ -161,6 +178,11 @@ export default {
 .card-body {
   margin: 0;
   padding: 0;
+}
+
+.delete-icon {
+  display: inline-block;
+  margin-left: 10px; /* Adjust spacing between likes and delete icon */
 }
 
 </style>

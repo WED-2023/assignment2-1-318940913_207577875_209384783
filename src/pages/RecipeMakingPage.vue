@@ -52,6 +52,7 @@
               <br>
               <b-form-spinbutton id="sb-inline" v-model="recipe.servings" inline @change="handleServingsChange"></b-form-spinbutton>
             </div>
+            <router-link :to="{ name: 'MealMaking' }" class="btn btn-primary mt-2">My Meals</router-link>
           </div>
         </div>
       </div>
@@ -79,6 +80,7 @@ export default {
   methods: {
     markAsDone() {
       this.checkedInstructions = this.checkedInstructions.map(() => true);
+      this.saveProgress();
     },
     calculateAdjustedAmount(ingredient) {
       return ingredient.amount * (this.recipe.servings / this.originalServings);
@@ -112,7 +114,8 @@ export default {
         this.originalServings = this.recipe.servings;
 
         // Load saved progress or initialize if none
-        this.checkedInstructions = this.$root.store.getRecipeProgress(this.$route.params.recipeId) || instructions.map(() => false);
+        this.checkedInstructions = this.$root.store.getRecipeProgress(this.$route.params.recipeId) || this.recipe.instructions.map(() => false);
+        if(this.checkedInstructions.length == 0) this.checkedInstructions = this.recipe.instructions.map(() => false);
 
       } catch (error) {
         console.log(error);
@@ -126,6 +129,7 @@ export default {
     },
     resetAllRecipeProgress() {
       this.checkedInstructions = this.checkedInstructions.map(() => false);
+      this.saveProgress();
     },
     saveProgress() {
       if (!this.$root.store.username) {
@@ -135,6 +139,7 @@ export default {
       this.$root.store.saveRecipeProgress(this.$route.params.recipeId, this.checkedInstructions);
     }
   },
+
   async created() {
     await this.fetchRecipeDetails();
   }

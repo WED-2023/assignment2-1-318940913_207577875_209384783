@@ -1,12 +1,13 @@
 <template>
     <div>
-        <RecipePreviewList title="My Meal" :recipes="mealRecipes" :meal='false'></RecipePreviewList>    
+        <RecipePreviewList title="My Meal" :recipes="mealRecipes" :meal='true'></RecipePreviewList>    
     </div>
 </template>
 
 <script>
     import RecipePreviewList from "@/components/RecipePreviewList.vue";
     import { mockGetRecipePreviewById } from "../services/recipes.js"; 
+    import { mockGetRecipeFullDetails } from "../services/recipes.js"; 
     export default {
         data() {
             return {
@@ -26,7 +27,7 @@
                 const userMeals = this.$root.store.getUserMeals(username);
                 for (const recipeID of userMeals)
                 {
-                    const response = mockGetRecipePreviewById(recipeID);
+                    const response = mockGetRecipeFullDetails(recipeID);
                     this.mealRecipes.push(response.data.recipe);
                 }
             }

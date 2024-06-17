@@ -17,7 +17,9 @@
     "vue-axios": "^2.1.5",
     "vue-cookies": "^1.8.3",
     "vue-router": "^3.2.0",
-    "vuelidate": "^0.7.5"
+    "vuedraggable": "^2.24.3",
+    "vuelidate": "^0.7.5",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",

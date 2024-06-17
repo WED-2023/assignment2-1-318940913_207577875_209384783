@@ -83,7 +83,7 @@ import intolerances from '../assets/intolerances.json';
 
 export default {
   components:{
-    RecipePreviewList,
+    // RecipePreviewList,
     RecipePreview,
   },
   data() {
