@@ -101,6 +101,7 @@ export default {
       cuisines: cuisines,
       diets: diets,
       intolerances: intolerances
+      // dan dan dan
       
     };
   },
