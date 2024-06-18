@@ -21,7 +21,7 @@
           Username length should be between 3-8 characters long
         </b-form-invalid-feedback>
         <b-form-invalid-feedback v-if="!$v.form.username.alpha">
-          Username alpha
+          Username must only contain alphabetic characters
         </b-form-invalid-feedback>
       </b-form-group>
 
@@ -59,13 +59,18 @@
         </b-form-invalid-feedback>
         <b-form-text v-else-if="$v.form.password.$error" text-variant="info">
           Your password should be <strong>strong</strong>. <br />
-          For that, your password should be also:
         </b-form-text>
         <b-form-invalid-feedback
-          v-if="$v.form.password.required && !$v.form.password.length"
-        >
-          Have length between 5-10 characters long
+          v-if="$v.form.password.required && !$v.form.password.length">
+        Password must have length between 5-10 characters long
+      </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.containsNumber">
+          Password must contain at least one number
         </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.containsSpecialChar">
+          Password must contain at least one special character
+        </b-form-invalid-feedback>
+
       </b-form-group>
 
       <b-form-group
@@ -112,10 +117,7 @@
     >
       Register failed: {{ form.submitError }}
     </b-alert>
-    <!-- <b-card class="mt-3 md-3" header="Form Data Result">
-      <pre class="m-0"><strong>form:</strong> {{ form }}</pre>
-      <pre class="m-0"><strong>$v.form:</strong> {{ $v.form }}</pre>
-    </b-card> -->
+
   </div>
 </template>
 
@@ -130,6 +132,9 @@ import {
   email
 } from "vuelidate/lib/validators";
 import { mockRegister } from "../services/auth.js";
+
+
+
 export default {
   name: "Register",
   data() {
@@ -161,7 +166,10 @@ export default {
       },
       password: {
         required,
-        length: (p) => minLength(5)(p) && maxLength(10)(p)
+        minLength: minLength(5),
+        maxLength: maxLength(10),
+        containsNumber: value => /\d/.test(value),
+        containsSpecialChar: value => /[!@#$%^&*(),.?":{}|<>]/.test(value)
       },
       confirmedPassword: {
         required,
@@ -236,5 +244,41 @@ export default {
 <style lang="scss" scoped>
 .container {
   max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+}
+.mt-2{
+  margin-top: 20px;
+  font-size: 18px;
+}
+.btn-danger{
+  background-color: gray;
+  border-color: gray;
+  border-radius: 8px;
+}
+.btn-danger:hover{
+  background-color: rgb(96, 96, 96);
+  border-color: rgb(96, 96, 96);
+}
+.btn-primary{
+  background-color: green;
+  border-color: green;
+  border-radius: 8px;
+}
+.btn-primary:hover{
+  background-color:rgb(2, 85, 2);
+  border-color:rgb(2, 85, 2);
+}
+h1.title{
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 2.8rem;
+  display: inline-block;
+  border-bottom: 2px solid #42b983;
+  margin-left: 120px;
 }
 </style>

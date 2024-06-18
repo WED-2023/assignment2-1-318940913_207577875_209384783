@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" type="dark" id="nav">
+    <b-navbar toggleable="lg" type="dark" id="nav" fixed="top">
       <img src="@/assets/Rachel.png" alt="Logo" class="navbar-logo" /> Rachel's recipes 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="defaultNav">
@@ -12,7 +12,6 @@
         </b-nav-item>
         <b-navbar-nav>
           <b-form-input v-model="searchText" placeholder="Search..." />
-          <!-- <b-button @click="search" variant="primary" class="nav-item">Search</b-button> -->
           <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item>
         </b-navbar-nav>
         </b-navbar-nav>
@@ -23,7 +22,7 @@
         <b-navbar-nav class="ml-auto User-section" v-else>
           <b-nav-item :to="{ name: 'MealMaking' }">
             <!-- <img :src="require('@/assets/foodIcon.png')" alt="Logo" class="meals-logo" /> -->
-            My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
+            <i class="bi bi-cart"></i> My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
           </b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
@@ -75,7 +74,6 @@ export default {
 </script>
 
 <style lang="scss">
-// @import "@/scss/form-style.scss";
 @import url("https://fonts.googleapis.com/css2?family=Karla:wght@300;400&display=swap");
 * {
   margin: 0;
@@ -84,20 +82,21 @@ export default {
   font-family: "Karla", sans-serif;
 }
 
-
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   min-height: 100vh;
+  padding-top: 60px; 
+  margin-top: 10px;
     .dropdown-item, .nav-item {
-      color: white;
-      background-color: #2f2626;; /* Change the color here */
+      // color: white;
+      background-color: #2f2626;; 
       border-color: #2f2626;
     }
     .dropdown-item:hover, .nav-item:hover {
-      color: #42b983; /* Change the hover color here */
+      color: #42b983; 
     }
 }
 
@@ -111,9 +110,9 @@ export default {
 }
 
 .navbar-logo {
-  width: 50px; /* Set the fixed width */
-  height: 50px; /* Set the fixed height */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
+  width: 60px; 
+  height: 100; 
+  object-fit: cover; 
   margin-right: 25px;
   gap: 10px;
   margin-left: 15px;
@@ -143,9 +142,9 @@ export default {
 }
 
 .meals-logo {
-  width: 40px; /* Set the fixed width */
-  height: 25px; /* Set the fixed height */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
+  width: 40px; 
+  height: 25px; 
+  object-fit: cover; 
   margin-right: 5px;
   gap: 10px;
   margin-left: 15px;

@@ -1,48 +1,45 @@
 <template>
-  <div>
-    <b-row>
+  <div class="table">
+    <b-row class="row-container">
       <!-- Left Column - Random Recipes -->
-      <b-col cols="12" md="6" lg="6">
+      <b-col lg="5">
         <div class="random-column">
           <div class="recipe-preview-container">
-            <h3 class="mb-4">Explore these Recipes</h3>
-
+            <h3 class="mb-4">Discover New Culinary Adventures</h3>
             <!-- First Row: Two recipes -->
-            <b-row v-if="randomRecipes.length >= 2">
-              <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" cols="12" md="6" lg="6" >
+            <b-row v-if="randomRecipes.length >= 2" >
+              <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6"  >
                 <RecipePreview :recipe="recipe" />
               </b-col>
             </b-row>
             <!-- Second Row: One recipe -->
             <b-row v-if="randomRecipes.length >= 3">
-              <b-col :key="randomRecipes[2].id" cols="12" md="12" lg="12">
+              <b-col :key="randomRecipes[2].id" lg="12" class="recipe-row-two">
                 <RecipePreview :recipe="randomRecipes[2]" />
               </b-col>
             </b-row>
           </div>
           <div class="random-button-container">
-            <b-button id="random-button" @click="handleRandomize" variant="primary"><i class="bi bi-shuffle"></i> Explore More Recipes</b-button>
+            <b-button id="random-button" @click="handleRandomize" variant="primary" class="random-button"><i class="bi bi-shuffle"></i> Explore More Recipes</b-button>
           </div>
         </div>
       </b-col>
-
       <!-- Right Column - Last Viewed Recipes / Login -->
-      <b-col cols="12" md="6" lg="6">
-        <div class="d-flex justify-content-center">
+      <b-col lg="5">
+        <div class="login-last-viewed">
           <div v-if="$root.store.username" class="container-user">
-            <h3 class="mb-4">Last Viewed Recipes</h3>
+            <h3 class="mb-4">Recipes You've Recently Seen</h3>
             <b-row v-if="lastUserRecipes.length >= 2" >
-              <b-col v-for="recipe in firstRowRecipesUser" :key="recipe.id" cols="12" md="6" lg="6" >
+              <b-col v-for="recipe in firstRowRecipesUser" :key="recipe.id"  lg="6" >
                 <RecipePreview :recipe="recipe"   />
               </b-col>
             </b-row>
             <!-- Second Row: One recipe -->
             <b-row v-if="lastUserRecipes.length >= 3">
-              <b-col :key="lastUserRecipes[2].id" cols="12" md="12" lg="12">
+              <b-col :key="lastUserRecipes[2].id" lg="12" class="recipe-row-two">
                 <RecipePreview :recipe="lastUserRecipes[2]" />
               </b-col>
             </b-row>
-            <!-- <RecipePreviewList :recipes="lastUserRecipes" title="Last Viewed Recipes" class="RandomRecipes center"/> -->
           </div>
           <div v-else class="login-container">
             <LoginPage />
@@ -55,9 +52,9 @@
 
 <script>
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
-import RecipePreview from "@/components/RecipePreview.vue"; // Replace with actual path
+import RecipePreview from "@/components/RecipePreview.vue"; 
 import LoginPage from "@/pages/LoginPage.vue";
-import { mockGetAllRecipesPreview, mockGetRecipesPreview } from "../services/recipes.js"; // Adjust import paths as necessary
+import { mockGetAllRecipesPreview, mockGetRecipesPreview } from "../services/recipes.js"; 
 
 export default {
   data() {
@@ -86,24 +83,21 @@ export default {
   },
   methods: {
     fetchRandomRecipes() {
-      const response = mockGetAllRecipesPreview(); // Mock data for all recipes
+      const response = mockGetAllRecipesPreview();
       const allRecipes = response.data.recipes;
   
-      // Shuffle the array of recipes to get a random order
       const shuffledRecipes = this.shuffleArray(allRecipes);
   
-      // Slice the shuffled array to get the first 3 recipes
       this.randomRecipes = shuffledRecipes.slice(0, 3);
     },
     fetchLastViewedRecipes(amountToFetch) {
-      const response = mockGetRecipesPreview(amountToFetch); // Mock data for last viewed recipes
+      const response = mockGetRecipesPreview(amountToFetch); 
       this.lastUserRecipes = response.data.recipes;
     },
     handleRandomize() {
-      this.fetchRandomRecipes(); // Fetch new random recipes
+      this.fetchRandomRecipes(); 
     },
     shuffleArray(array) {
-      // Function to shuffle array items randomly
       let currentIndex = array.length;
       let temporaryValue, randomIndex;
     
@@ -121,28 +115,34 @@ export default {
   },
   computed: {
     firstRowRecipes() {
-      return this.randomRecipes.slice(0, 2); // First two recipes for first row
+      return this.randomRecipes.slice(0, 2); 
     },
     firstRowRecipesUser() {
-      return this.lastUserRecipes.slice(0, 2); // First two recipes for first row
+      return this.lastUserRecipes.slice(0, 2); 
     }
   }
 };
 </script>
 
 <style scoped>
-/* .random-column {
-  margin-top: 50px;
-} */
+.random-column {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.login-last-viewed {
+  padding: 20px;
+  border-radius: 8px;
+  margin-left: 30px;
+}
+
+.recipe-row-two {
+  margin-top: 20px;
+  margin-left: 180px;
+}
 
 .random-button-container {
   margin-top: 20px;
-  text-align: center;
-}
-
-.container-user, .login-container {
-  width: 100%;
-  max-width: 100%;
 }
 
 .login-container {
@@ -150,7 +150,25 @@ export default {
   text-align: center;
 }
 
-.recipe-preview-container {
-  margin-top: 20px;
+.bi-shuffle {
+  font-size: 1.4rem;
+}
+
+.mb-4 {
+  font-weight: bold;
+  font-size: 1.8rem;
+  display: inline-block;
+  border-bottom: 2px solid #42b983;
+  margin-left: 140px;
+}
+
+.random-button {
+  font-size: 1.6rem;
+  margin-left: 180px;
+}
+
+.row-container[data-v-54d5bc8c] {
+    width: 90%;
+    margin: 0% 25% 0% 8%;
 }
 </style>

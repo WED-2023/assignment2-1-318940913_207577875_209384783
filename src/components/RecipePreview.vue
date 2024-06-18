@@ -26,7 +26,6 @@
       </div>
     </router-link>
     
-    <!-- Adjusted layout for Like and dietary icons -->
     <div class="recipe-type-Like">
       <ul class="d-flex align-items-center list-unstyled mb-0">
         <li class="like-container" v-if="$root.store.username">
@@ -34,7 +33,6 @@
             <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </b-button>
         </li>
-        <!-- Use ternary operator to conditionally render dietary icons -->
         <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
           <i class="fas fa-seedling text-success"></i>
         </li>
@@ -148,7 +146,7 @@ export default {
   font-weight: bold;
   margin-bottom: 10px;
   display: flex;
-  justify-content: center; /* Center align horizontally */
+  justify-content: center; 
 }
 
 .recipe-overview {
@@ -165,7 +163,7 @@ export default {
 }
 
 .recipe-type-Like {
-  margin-top: auto; /* Pushes the Like section to the bottom */
+  margin-top: auto; 
   display: flex;
   justify-content: space-between;
   align-items: center;
