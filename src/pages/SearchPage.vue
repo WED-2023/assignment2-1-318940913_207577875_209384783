@@ -3,34 +3,38 @@
     <h1 class="mb-4 text-center">Search Recipes</h1>
     
     <div class="row mb-4">
-      <div class="col-md-8">
+      <!-- <div class="col-md-8">
         <input v-model="searchQuery" type="text" class="form-control" placeholder="Search for recipes..." />
+      </div> -->
+      <div>
+        <b-input-group :size="lg" class="mb-3" prepend="find recipe" style="width: 1000px;">
+          <b-form-input></b-form-input>
+          <b-input-group-append><b-button size="sm" text="Button" variant="success" @click="performSearch">Search</b-button> </b-input-group-append>
+        </b-input-group>
       </div>
-      <div class="col-md-4">
+      <div class="sort-options">
         <select v-model="resultsCount" class="form-select">
           <option :value="5" >5</option>
           <option :value="10">10</option>
           <option :value="15">15</option>
         </select>
-      </div>
-    </div>
-    <div class="sort-options">
-      <label>
-        Sort by:
+        <label>
+         Sort by:
         <select placeholder="sortBy" v-model="sortBy">
           <option value="default">default</option>
           <option value="time">Preparation Time</option>
           <option value="popularity">Popularity</option>
         </select>
       </label>
-    </div>
 
+      </div>
+      
+    </div>
     <div class="d-flex justify-content-between align-items-center mb-4">
       <b-button v-b-toggle.filters-sidebar variant="primary">Toggle Filters</b-button>
-      <button @click="performSearch" class="btn btn-primary">Search</button>
     </div>
 
-    <b-sidebar id="filters-sidebar" title="Filters" shadow>
+    <b-sidebar id="filters-sidebar" title="Filters" v-model="showSidebar"    >
       <div class="mb-3">
         <h5>Cuisines</h5>
         <div v-for="cuisine in cuisines" :key="cuisine">
@@ -50,9 +54,15 @@
         </div>
       </div>
     </b-sidebar>
-    <b-col cols="12" >
-        <RecipePreviewList title="Recipes" :recipes="recipes"/>
-      </b-col>
+    <b-col cols="12">
+    <!-- Check if recipes array is empty -->
+    <div v-if="recipes.length === 0" class="text-center mt-3">
+      <p>No results found.</p>
+    </div>
+
+    <!-- Render RecipePreviewList if recipes array is not empty -->
+    <RecipePreviewList v-else title="Recipes" :recipes="recipes"/>
+  </b-col>
   </div>
 </template>
 
@@ -95,7 +105,8 @@ export default {
       },
       cuisines: cuisines,
       diets: diets,
-      intolerances: intolerances
+      intolerances: intolerances,
+      showSidebar: true
     };
   },
   methods: {
@@ -171,13 +182,15 @@ export default {
 </script>
 
 <style scoped>
+
 h1 {
   color: #333;
   font-weight: bold;
 }
-
-
-
+.h5{
+  color: #000000;
+  font-weight: bold;
+}
 .btn-primary {
   background-color: #007bff;
   border-color: #007bff;
@@ -187,4 +200,5 @@ h1 {
   background-color: #0056b3;
   border-color: #0056b3;
 }
+
 </style>
