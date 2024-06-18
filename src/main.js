@@ -20,31 +20,6 @@ const router = new VueRouter({
 
 import Vuelidate from "vuelidate";
 
-import Vuex from 'vuex';
-
-Vue.use(Vuex);
-
-export default new Vuex.Store({
-  state: {
-    currentRecipeId: null
-  },
-  mutations: {
-    setCurrentRecipeId(state, recipeId) {
-      state.currentRecipeId = recipeId;
-    }
-  },
-  actions: {
-    setCurrentRecipeId({ commit }, recipeId) {
-      commit('setCurrentRecipeId', recipeId);
-    }
-  },
-  getters: {
-    getCurrentRecipeId(state) {
-      return state.currentRecipeId;
-    }
-  }
-});
-
 
 import {
   FormGroupPlugin,
@@ -150,7 +125,52 @@ const shared_data = {
   getUserMeals(username) {
     const userMeals = JSON.parse(localStorage.getItem("userMeals")) || {};
     return userMeals[username] || [];
-  }
+  },
+  addRecipeToFavorites(username, recipeId) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipe will not be added to the meal.");
+      return;
+    }
+    const userFavorites = JSON.parse(localStorage.getItem("userFavorites")) || {};
+    userFavorites[username] = userFavorites[username] || [];
+    if (!userFavorites[username].includes(recipeId)) {
+      userFavorites[username].push(recipeId);
+    }
+    localStorage.setItem("userFavorites", JSON.stringify(userFavorites));
+  },
+  deleteRecipeFromFavorites(username, recipeId) {
+    const userFavorites = JSON.parse(localStorage.getItem("userFavorites")) || {};
+    if (!userFavorites[username]) {
+      console.warn("No favorites found for the user.");
+      return;
+    }
+  
+    // Filter out the recipeId from the user's favorites
+    userFavorites[username] = userFavorites[username].filter(id => id !== recipeId);
+  
+    localStorage.setItem("userFavorites", JSON.stringify(userFavorites));
+  },
+  saveRecipesToFavorites(username, recipeIds) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipes will not be added to the meal.");
+      return;
+    }
+    const userFavorites = JSON.parse(localStorage.getItem("userFavorites")) || {};
+    userFavorites[username] = recipeIds;
+    localStorage.setItem("userFavorites", JSON.stringify(userFavorites));
+  },
+  getUserFavorites(username) {
+    const userFavorites = JSON.parse(localStorage.getItem("userFavorites")) || {};
+    return userFavorites[username] || [];
+  },
+  isRecipeInFavorites(username, recipeId) {
+    const userFavorites = JSON.parse(localStorage.getItem("userFavorites")) || {};
+    if (!userFavorites[username]) {
+      return false; // No favorites found for the user
+    }
+
+    return userFavorites[username].includes(recipeId);
+  },
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;

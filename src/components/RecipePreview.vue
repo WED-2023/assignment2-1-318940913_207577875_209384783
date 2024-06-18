@@ -35,13 +35,13 @@
           </b-button>
         </li>
         <!-- Use ternary operator to conditionally render dietary icons -->
-        <li v-if="recipe.vegetarian" data-toggle="tooltip" title="Vegetarian">
+        <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
           <i class="fas fa-seedling text-success"></i>
         </li>
-        <li v-if="recipe.vegan" data-toggle="tooltip" title="Vegan">
+        <li v-if="recipe.vegan" v-b-tooltip.hover title="Vegan">
           <i class="fas fa-leaf text-success"></i>
         </li>
-        <li v-if="recipe.glutenFree" data-toggle="tooltip" title="Gluten Free">
+        <li v-if="recipe.glutenFree" v-b-tooltip.hover title="Gluten Free">
           <i class="fas fa-bread-slice"></i>
         </li>
       </ul>
@@ -74,6 +74,10 @@ export default {
       default: false
     },
   },
+  mounted() 
+  {
+    this.isLiked = this.$root.store.isRecipeInFavorites(this.$root.store.username, this.recipe.id)
+  },
   methods: {
     removeRecipe() {
       this.$emit('remove', this.recipe);
@@ -83,6 +87,14 @@ export default {
         const response = await mockAddFavorite(this.recipe.id);
         if (response.status === 200 && response.response.data.success) {
           this.isLiked = !this.isLiked;
+          if(this.isLiked)
+          {
+            this.$root.store.addRecipeToFavorites(this.$root.store.username, this.recipe.id);
+          }
+          else
+          {
+            this.$root.store.deleteRecipeFromFavorites(this.$root.store.username, this.recipe.id);
+          }
         } else {
           this.isLiked = false; 
         }
@@ -196,11 +208,6 @@ export default {
 .card-body {
   margin: 0;
   padding: 0;
-}
-
-.delete-icon {
-  display: inline-block;
-  margin-left: 10px; /* Adjust spacing between likes and delete icon */
 }
 
 </style>

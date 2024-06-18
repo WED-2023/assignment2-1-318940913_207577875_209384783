@@ -21,6 +21,10 @@
           <b-nav-item :to="{ name: 'register' }">Register</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto User-section" v-else>
+          <b-nav-item :to="{ name: 'MealMaking' }">
+            <!-- <img :src="require('@/assets/foodIcon.png')" alt="Logo" class="meals-logo" /> -->
+            My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
+          </b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
               Hello {{ $root.store.username }}
@@ -138,5 +142,13 @@ export default {
   color: #42b983;
 }
 
-
+.meals-logo {
+  width: 40px; /* Set the fixed width */
+  height: 25px; /* Set the fixed height */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  margin-right: 5px;
+  gap: 10px;
+  margin-left: 15px;
+  border-radius: 8px;
+}
 </style>

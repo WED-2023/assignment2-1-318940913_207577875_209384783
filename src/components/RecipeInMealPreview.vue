@@ -2,7 +2,7 @@
     <div>
         <RecipePreview :recipe="recipe" :meal="true">
         </RecipePreview>
-        <div class="mt-1">
+        <div class="recipe-preview mt-1">
             <b-progress :value="checkedCount" :max="recipe.instructions.length" variant="success" animated show-progress>
             <b-progress-bar :value="checkedCount">
                 <strong>{{ checkedCount }} / {{ recipe.instructions.length }}</strong>
@@ -47,5 +47,12 @@ import RecipePreview from "./RecipePreview.vue";
 </script>
 
 <style lang="scss" scoped>
+
+.recipe-preview {
+
+  max-height: 340px;
+  max-width: 340px;
+
+}
 
 </style>
