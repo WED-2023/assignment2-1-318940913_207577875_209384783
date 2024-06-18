@@ -142,13 +142,20 @@ export default {
 }
 
 .login-form {
-  margin-top: 20px; /* Adjust top margin for spacing */
+  margin-top: 20px; 
 }
 
 .login-button {
   width: 100%;
   margin-top: 30px;
   font-size: 25px;
+  background-color: green;
+  border-color: green;
+  border-radius: 8px;
+}
+.login-button:hover{
+  background-color:rgb(2, 85, 2);
+  border-color:rgb(2, 85, 2);
 }
 
 .register-link {
@@ -184,7 +191,7 @@ h1.title{
   font-size: 2.8rem;
   display: inline-block;
   border-bottom: 2px solid #42b983;
-  margin-left: 120px;
+  // margin-left: 120px;
 }
 
 </style>
