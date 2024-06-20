@@ -6,7 +6,7 @@
         <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
       </div>
       <div class="recipe-footer">
-        <div class="recipe-title">{{ recipe.title }}</div>
+        <div class="recipe-title" :class="{ 'viewed': hasViewedRecipe }">{{ recipe.title }}</div>
         <ul class="recipe-overview">
           <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
           <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
@@ -18,7 +18,7 @@
         <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
       </div>
       <div class="recipe-footer">
-        <div class="recipe-title">{{ recipe.title }}</div>
+        <div class="recipe-title" :class="{ 'viewed': hasViewedRecipe }">{{ recipe.title }}</div>
         <ul class="recipe-overview">
           <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
           <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
@@ -58,7 +58,9 @@ export default {
   data() {
     return {
       image_load: true,
-      isLiked: false 
+      isLiked: false ,
+      hasViewedRecipe: false
+
     };
   },
   props: {
@@ -75,8 +77,26 @@ export default {
   mounted() 
   {
     this.isLiked = this.$root.store.isRecipeInFavorites(this.$root.store.username, this.recipe.id)
+    this.checkIfViewed();
+  },
+  watch: {
+    '$root.store.username': function(newVal, oldVal) {
+    this.checkIfViewed();
+    }
   },
   methods: {
+    checkIfViewed() {
+      if(this.$root.store.username)
+      {
+        const username = this.$root.store.username; 
+        const seenByUser = this.$root.store.getUserseenBy(username);
+        if(seenByUser.includes(this.recipe.id))
+        {
+          this.hasViewedRecipe=true;
+        }
+      }
+
+    },
     removeRecipe() {
       this.$emit('remove', this.recipe);
     },
@@ -86,21 +106,15 @@ export default {
         if (response.status === 200 && response.response.data.success) {
           this.isLiked = !this.isLiked;
           if(this.isLiked)
-          {
-            this.$root.store.addRecipeToFavorites(this.$root.store.username, this.recipe.id);
-          }
-          else
-          {
-            this.$root.store.deleteRecipeFromFavorites(this.$root.store.username, this.recipe.id);
-          }
-        } else {
-          this.isLiked = false; 
-        }
+          { this.$root.store.addRecipeToFavorites(this.$root.store.username, this.recipe.id); }
+          else{this.$root.store.deleteRecipeFromFavorites(this.$root.store.username, this.recipe.id); }
+        } else { this.isLiked = false; }
       } catch (err) {
         this.isLiked = false; 
         this.$root.toast("Error", err, "danger");
       }
-    }
+    },
+
   },
 }
 </script>
@@ -113,11 +127,15 @@ export default {
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-height: 340px;
-  min-height: 340px;
+  max-height: 350px;
+  min-height: 350px;
   max-width: 340px;
   min-width: 340px;
 
+}
+.recipe-preview-container:hover
+{
+  background-color: rgb(241, 240, 240);
 }
 
 .recipe-preview {
@@ -206,6 +224,9 @@ export default {
 .card-body {
   margin: 0;
   padding: 0;
+}
+.recipe-title.viewed {
+  color: purple;
 }
 
 </style>

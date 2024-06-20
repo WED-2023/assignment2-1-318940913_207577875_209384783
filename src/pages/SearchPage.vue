@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <b-sidebar id="filters-sidebar" title="Filters" right visible>
+    <b-sidebar id="filters-sidebar" title="Filters" right >
       <div class="mb-3">
         <h5>Cuisines</h5>
         <div v-for="cuisine in cuisines" :key="cuisine">
@@ -85,6 +85,10 @@ export default {
   },
 
   watch: {
+    '$route.query.q': function(newQuery) {
+      this.searchQuery = newQuery;
+      this.performSearch();
+    },
     sortBy() {this.handleSortOptionChange();},
     resultsCount(newVal, oldVal) {if (newVal !== oldVal) {this.performSearch();} },
     filters: {
@@ -92,16 +96,20 @@ export default {
       deep: true
     },
     searchQuery() {this.performSearch();},
+
+
   },
   created() {
-
-    this.fetchLastViewedRecipes();},
+    this.fetchLastViewedRecipes();
+    this.performSearch();
+  
+  },
 
   data() {
     return {
       recipes: [],
       sortBy: 'default',
-      searchQuery: "",
+      searchQuery: this.$route.query.q ||  "",
       resultsCount: 5,
       filters: {
         selectedCuisines: [],
@@ -115,6 +123,7 @@ export default {
       connectedUser: false,
     };
   },
+
   methods: {
     fetchAllRecipes() {
     const response = mockGetAllRecipesPreview();
@@ -164,7 +173,8 @@ export default {
         break;
       }
     },
-  }
+  },
+  
 };
 </script>
 

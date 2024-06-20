@@ -1,48 +1,25 @@
 <template>
   <div class="login-container">
-
     <h1 class="title">Login</h1>
-
     <b-form @submit.prevent="onLogin">
       <!-- Username Input -->
-      <b-form-group
-        id="input-group-Username"
-        label-cols-sm="3"
-        label="Username:"
-        label-for="Username"
-      >
-        <b-input-group>
-          <b-input-group-prepend is-text>
-            <i class="bi bi-person"></i>
-          </b-input-group-prepend>
-          <b-form-input
-            id="Username"
-            v-model.trim="$v.form.username.$model"
-            type="text"
-            placeholder="Enter your username"
-            :state="validateState('username')"
-          ></b-form-input>
-        </b-input-group>
+      <b-form-group id="input-group-Username" label-cols-sm="3" label="Username:" label-for="Username">
+          <b-input-group>
+            <b-input-group-prepend is-text>
+                <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
+            </b-input-group-prepend>
+            <b-form-input id="Username" v-model="$v.form.username.$model" type="text" placeholder="Enter your username" :state="validateState('username')"></b-form-input>
+          </b-input-group>
         <b-form-invalid-feedback v-if="$v.form.username.$error">Username is required.</b-form-invalid-feedback>
       </b-form-group>
 
       <!-- Password Input -->
-      <b-form-group
-        id="input-group-Password"
-        label-cols-sm="3"
-        label="Password:"
-        label-for="Password"
-      >
+      <b-form-group id="input-group-Password" label-cols-sm="3" label="Password:" label-for="Password" >
         <b-input-group>
           <b-input-group-prepend is-text>
-            <i class="bi bi-lock-fill"></i>
+            <span class="input-group-text"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
           </b-input-group-prepend>
-          <b-form-input
-            id="Password"
-            type="password"
-            v-model.trim="$v.form.password.$model"
-            placeholder="Enter your password"
-            :state="validateState('password')"
+          <b-form-input id="Password" type="password" v-model="$v.form.password.$model" placeholder="Enter your password" :state="validateState('password')"
           ></b-form-input>
         </b-input-group>
         <b-form-invalid-feedback v-if="$v.form.password.$error">Password is required.</b-form-invalid-feedback>
@@ -55,9 +32,7 @@
     </b-form>
 
     <!-- Register Link -->
-    <div class="register-link">
-      <router-link to="register">Don't have an account yet? Register here.</router-link>
-    </div>
+    <div class="mt-2"> Don't have an account yet? <router-link to="login"> Register here.</router-link></div>
 
     <!-- Error and Success Alerts -->
     <b-alert v-if="form.submitError" variant="danger" dismissible show>
@@ -141,10 +116,6 @@ export default {
 
 }
 
-.login-form {
-  margin-top: 20px; 
-}
-
 .login-button {
   width: 100%;
   margin-top: 30px;
@@ -164,34 +135,27 @@ export default {
   font-size: 1.2rem;
 }
 
-.bi-box-arrow-in-right {
-  font-size: 1.4rem;
-  margin-right: 15px;
-}
-
-/* Style for bi-person and bi-lock-fill icons inside input */
-.b-input-group-prepend .input-group-text {
-  background-color: transparent;
-  border-color: #ced4da;
-  height: 46px; /* Adjust height of input group */
-}
-
-/* Adjust input height for better visibility */
-.b-form-input {
-  height: 46px;
-}
-
-/* Adjust invalid feedback position */
-.b-form-invalid-feedback {
-  margin-top: 4px;
-}
 h1.title{
   margin-bottom: 50px;
   font-weight: bold;
   font-size: 2.8rem;
   display: inline-block;
   border-bottom: 2px solid #42b983;
-  // margin-left: 120px;
 }
-
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+     font-weight: 400; 
+     line-height: 3.5; 
+    color: #495057;
+    background-color: #e9ecef;
+    border: none; 
+    border-radius: 0.25rem;
+}
+.mt-2[data-v-16d8eba4] {
+    font-size: 20px;}
+.mt-2, .my-2 {
+    margin-top: 1.5rem !important;
+}
 </style>

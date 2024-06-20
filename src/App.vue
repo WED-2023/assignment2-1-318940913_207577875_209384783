@@ -11,7 +11,9 @@
             <CreateNewRecipe @close="toggleModal" :modalActive="modalActive"></CreateNewRecipe>
         </b-nav-item>
         <b-navbar-nav>
-          <b-form-input v-model="searchText" placeholder="Search..." />
+          <!-- <b-form-input v-model="searchText" placeholder="Search..." />
+          <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item> -->
+          <b-form-input v-model="searchText" placeholder="Search..." @keyup.enter="handleSearch" />
           <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item>
         </b-navbar-nav>
         </b-navbar-nav>
@@ -69,6 +71,9 @@ export default {
         this.$forceUpdate();
       });
     },
+    handleSearch() {
+      this.$router.push({ name: 'search', query: { q: this.searchText } });
+    }
   },
 };
 </script>

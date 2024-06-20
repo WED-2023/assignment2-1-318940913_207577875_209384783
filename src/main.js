@@ -5,21 +5,22 @@ import axios from "axios";
 import { BootstrapVue, IconsPlugin, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import Vuelidate from "vuelidate";
+import routes from "./routes";
+import VueRouter from "vue-router";
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(BootstrapVueIcons)
-
-
-import routes from "./routes";
-import VueRouter from "vue-router";
 Vue.use(VueRouter);
+Vue.use(Vuelidate);
+Vue.use(VueAxios, axios);
+
+
+
 const router = new VueRouter({ 
   routes,
 });
-
-import Vuelidate from "vuelidate";
-
 
 import {
   FormGroupPlugin,
@@ -45,7 +46,6 @@ import {
   ToastPlugin,
   LayoutPlugin,
 ].forEach((x) => Vue.use(x));
-Vue.use(Vuelidate);
 
 axios.interceptors.request.use(
   function(config) {
@@ -70,7 +70,6 @@ axios.interceptors.response.use(
   }
 );
 
-Vue.use(VueAxios, axios);
 
 Vue.config.productionTip = false;
 
@@ -144,7 +143,6 @@ const shared_data = {
       console.warn("No favorites found for the user.");
       return;
     }
-  
     // Filter out the recipeId from the user's favorites
     userFavorites[username] = userFavorites[username].filter(id => id !== recipeId);
   
@@ -168,9 +166,35 @@ const shared_data = {
     if (!userFavorites[username]) {
       return false; // No favorites found for the user
     }
-
     return userFavorites[username].includes(recipeId);
   },
+  addUserWatchedRecipe(username, recipeId) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipe will not be added to the meal.");
+      return;
+    }
+    const seenByUser = JSON.parse(localStorage.getItem("seenByUser")) || {};
+    seenByUser[username] = seenByUser[username] || [];
+    if (!seenByUser[username].includes(recipeId)) {
+      seenByUser[username].push(recipeId);
+    }
+    localStorage.setItem("seenByUser", JSON.stringify(seenByUser));
+  },
+  getUserseenBy(username) {
+    const seenByUser = JSON.parse(localStorage.getItem("seenByUser")) || {};
+    return seenByUser[username] || [];
+  },
+  isUserWatchedRecipe(username, recipeId){
+    const seenByUser = JSON.parse(localStorage.getItem("seenByUser")) || {};
+    console.log("Retrieved seenByUser from localStorage:", seenByUser);
+
+    if (!seenByUser[username]) {
+      return false; 
+    }
+    return seenByUser[username].includes(recipeId);
+  }
+
+
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;

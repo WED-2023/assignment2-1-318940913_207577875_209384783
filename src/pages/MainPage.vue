@@ -29,7 +29,7 @@
         <div class="login-last-viewed">
           <div v-if="$root.store.username" class="container-user">
             <h3 class="mb-4">Recipes You've Recently Seen</h3>
-            <b-row v-if="lastUserRecipes.length >= 2" >
+            <b-row v-if="lastUserRecipes.length >= 1" >
               <b-col v-for="recipe in firstRowRecipesUser" :key="recipe.id"  lg="6" >
                 <RecipePreview :recipe="recipe"   />
               </b-col>
@@ -38,6 +38,7 @@
             <b-row v-if="lastUserRecipes.length >= 3">
               <b-col :key="lastUserRecipes[2].id" lg="12" class="recipe-row-two">
                 <RecipePreview :recipe="lastUserRecipes[2]" />
+                
               </b-col>
             </b-row>
           </div>
@@ -54,7 +55,7 @@
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
 import RecipePreview from "@/components/RecipePreview.vue"; 
 import LoginPage from "@/pages/LoginPage.vue";
-import { mockGetAllRecipesPreview, mockGetRecipesPreview } from "../services/recipes.js"; 
+import { mockGetAllRecipesPreview, mockGetRecipesPreview,mockGetRecipePreviewById } from "../services/recipes.js"; 
 
 export default {
   data() {
@@ -71,13 +72,14 @@ export default {
   mounted() {
     this.fetchRandomRecipes();
     if (this.$root.store.username) {
-      this.fetchLastViewedRecipes(3);
+      this.fetchRandomRecipes();
+      this.fetchLastViewedRecipes();
     }
   },
   watch: {
     '$root.store.username': function(newVal) {
       if (newVal) {
-        this.fetchLastViewedRecipes(3);
+        this.fetchLastViewedRecipes();
       }
     }
   },
@@ -85,14 +87,23 @@ export default {
     fetchRandomRecipes() {
       const response = mockGetAllRecipesPreview();
       const allRecipes = response.data.recipes;
-  
-      const shuffledRecipes = this.shuffleArray(allRecipes);
-  
-      this.randomRecipes = shuffledRecipes.slice(0, 3);
+        const shuffledRecipes = this.shuffleArray(allRecipes);
+        this.randomRecipes = shuffledRecipes.slice(0, 4);
+
     },
-    fetchLastViewedRecipes(amountToFetch) {
-      const response = mockGetRecipesPreview(amountToFetch); 
-      this.lastUserRecipes = response.data.recipes;
+    fetchLastViewedRecipes() {
+      this.lastUserRecipes=[];
+      const username = this.$root.store.username; 
+      const seenByUser = this.$root.store.getUserseenBy(username);
+      console.log("seenByUser : ",seenByUser);
+      if(seenByUser.length >0)
+      {
+        for (let i = seenByUser.length - 1; i >= 0; i--) {
+        const recipeID = seenByUser[i];
+        const response = mockGetRecipePreviewById(recipeID);
+        this.lastUserRecipes.push(response.data.recipe);
+        }
+      }
     },
     handleRandomize() {
       this.fetchRandomRecipes(); 
@@ -124,7 +135,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style  scoped>
 .random-column {
   padding: 20px;
   border-radius: 8px;
