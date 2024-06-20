@@ -2,7 +2,7 @@
   <div class="table">
     <b-row class="row-container">
       <!-- Left Column - Random Recipes -->
-      <b-col lg="5">
+      <b-col  cols="12" md="6" lg="6">
         <div class="random-column">
           <div class="recipe-preview-container">
             <h3 class="mb-4">Discover New Culinary Adventures</h3>
@@ -25,7 +25,7 @@
         </div>
       </b-col>
       <!-- Right Column - Last Viewed Recipes / Login -->
-      <b-col lg="5">
+      <b-col cols="12" md="6" lg="6">
         <div class="login-last-viewed">
           <div v-if="$root.store.username" class="container-user">
             <h3 class="mb-4">Recipes You've Recently Seen</h3>
@@ -136,21 +136,21 @@ export default {
 </script>
 
 <style  scoped>
-.random-column {
+/* .random-column {
   padding: 20px;
   border-radius: 8px;
-}
+} */
 
-.login-last-viewed {
+/* .login-last-viewed {
   padding: 20px;
   border-radius: 8px;
   margin-left: 30px;
-}
+} */
 
-.recipe-row-two {
+/* .recipe-row-two {
   margin-top: 20px;
   margin-left: 180px;
-}
+} */
 
 .random-button-container {
   margin-top: 20px;
@@ -170,16 +170,19 @@ export default {
   font-size: 1.8rem;
   display: inline-block;
   border-bottom: 2px solid #42b983;
-  margin-left: 140px;
+  text-align: center; /* Center-align the text */
+  width: 100%; /* Ensure the width expands to fit its container */
+  margin: 0 auto; 
 }
+
 
 .random-button {
   font-size: 1.6rem;
   margin-left: 180px;
 }
 
-.row-container[data-v-54d5bc8c] {
+/* .row-container[data-v-54d5bc8c] {
     width: 90%;
     margin: 0% 25% 0% 8%;
-}
+} */
 </style>

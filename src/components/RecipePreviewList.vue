@@ -1,6 +1,6 @@
 <template>
   <b-container class="title-container">
-    <h3 class="title mb-2">{{ title }}</h3>
+    <h3 v-if="title" class="title mb-2">{{ title }}</h3>
     <b-row>
       <draggable v-if="meal" v-model="recipes" tag="div" class="row" group="recipesGroup" @end="onDragEnd">
         <b-col v-for="(recipe, index) in recipes" :key="recipe.id" class="recipe-col">
@@ -43,7 +43,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      required: false
     },
     recipes: {
       type: Array,

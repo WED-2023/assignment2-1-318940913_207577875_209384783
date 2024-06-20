@@ -1,5 +1,5 @@
 <template>
-  <div class="recipe-preview-container">
+  <div class="recipe-preview-container" @mouseover="isHovered = true" @mouseleave="isHovered = false">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <router-link v-if="meal" :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="recipe-preview">
       <div class="recipe-image-container">
@@ -32,7 +32,7 @@
           <!-- <b-button @click="toggleLike" class="custom-button">
             <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </b-button> -->
-          <RecipeLike :recipe="recipe"></RecipeLike>
+          <RecipeLike :recipe="recipe" :is-hovered="isHovered"></RecipeLike>
         </li>
         <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
           <i class="fas fa-seedling text-success"></i>
@@ -62,8 +62,8 @@ export default {
     return {
       image_load: true,
       isLiked: false ,
-      hasViewedRecipe: false
-
+      hasViewedRecipe: false,
+      isHovered: false
     };
   },
   props: {
@@ -139,9 +139,9 @@ export default {
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: 350px;
-  /* min-height: 350px; */
-  max-width: 340px;
-  /* min-width: 340px; */
+  min-height: 350px;
+  max-width: 150px;
+  min-width: 340px;
 
 }
 .recipe-preview-container:hover
@@ -237,7 +237,7 @@ export default {
   padding: 0;
 }
 .recipe-title.viewed {
-  color: purple;
+  color: rgb(134, 129, 134);
 }
 
 </style>
