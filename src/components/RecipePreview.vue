@@ -139,9 +139,9 @@ export default {
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: 350px;
-  min-height: 350px;
+  /* min-height: 350px; */
   max-width: 340px;
-  min-width: 340px;
+  /* min-width: 340px; */
 
 }
 .recipe-preview-container:hover
