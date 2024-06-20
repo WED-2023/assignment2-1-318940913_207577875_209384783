@@ -71,6 +71,9 @@ export default {
       recipe: null
     };
   },
+  mounted(){
+    this.addUserWatched();
+  },
   methods: {
     addToMeal() {
       const user = this.$root.store.username;
@@ -81,6 +84,13 @@ export default {
       const user = this.$root.store.username;
       this.$root.store.addRecipeToMeal(user, this.recipe.id);
       this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipe.id } });
+    },
+    addUserWatched(){
+      const user = this.$root.store.username;
+      if(this.$root.store.username)
+      {
+        this.$root.store.addUserWatchedRecipe(user,this.recipe.id)
+      }
     }
   },
   async created() {

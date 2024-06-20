@@ -21,6 +21,7 @@ const routes = [
     path: "/search",
     name: "search",
     component: () => import("./pages/SearchPage"),
+    props: route => ({query: route.query.q}),
   },
   {
     path: "/recipe",

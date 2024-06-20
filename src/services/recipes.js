@@ -41,6 +41,7 @@ export function mockGetFamilyRecipes() {
 
 export function mockGetRecipePreviewById(id) {
   return { data: { recipe: multiple_recipe_preview.find(recipe => recipe.id === id) } } ;
+
 }
 
 export function mockGetRecipeFullDetails(recipeId, testMode=false) {
