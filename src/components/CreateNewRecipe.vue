@@ -202,7 +202,7 @@ export default {
         const response = mockAddUserRecipe(recipeContent);
         if (response.status === 200 && response.response.data.success) {
           this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
-
+          this.$root.store.addRecipeToMyRecipes(this.$root.store.username, this.$root.store.getUserLastRecipeID());
           this.modalActive = false;
           this.resetFields();
         } else {

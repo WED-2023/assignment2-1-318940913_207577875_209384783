@@ -30,9 +30,10 @@
     <div class="recipe-type-Like">
       <ul class="d-flex align-items-center list-unstyled mb-0">
         <li class="like-container" v-if="$root.store.username">
-          <b-button @click="toggleLike" class="custom-button">
+          <!-- <b-button @click="toggleLike" class="custom-button">
             <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-          </b-button>
+          </b-button> -->
+          <RecipeLike :recipe="recipe"></RecipeLike>
         </li>
         <!-- Use ternary operator to conditionally render dietary icons -->
         <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
@@ -52,10 +53,12 @@
 <script>
 import { mockAddFavorite } from "../services/user.js";
 import { BButton } from 'bootstrap-vue';
+import RecipeLike from "@/components/RecipeLike.vue";
 
 export default {
   components: {
-    BButton
+    BButton,
+    RecipeLike
   },
   data() {
     return {
@@ -84,7 +87,7 @@ export default {
     },
     async toggleLike() {
       try {
-        const response = await mockAddFavorite(this.recipe.id);
+        const response = mockAddFavorite(this.recipe.id);
         if (response.status === 200 && response.response.data.success) {
           this.isLiked = !this.isLiked;
           if(this.isLiked)
@@ -97,6 +100,7 @@ export default {
           }
         } else {
           this.isLiked = false; 
+          this.$root.store.deleteRecipeFromFavorites(this.$root.store.username, this.recipe.id);
         }
       } catch (err) {
         this.isLiked = false; 

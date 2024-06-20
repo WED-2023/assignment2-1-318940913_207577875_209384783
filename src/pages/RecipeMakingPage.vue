@@ -52,7 +52,6 @@
               <br>
               <b-form-spinbutton id="sb-inline" v-model="recipe.servings" inline @change="handleServingsChange"></b-form-spinbutton>
             </div>
-            <router-link :to="{ name: 'MealMaking' }" class="btn btn-primary mt-2">My Meals</router-link>
           </div>
         </div>
       </div>

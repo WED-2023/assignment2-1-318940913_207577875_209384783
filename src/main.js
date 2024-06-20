@@ -87,6 +87,7 @@ const shared_data = {
     localStorage.removeItem("username");
     this.username = undefined;
   },
+  // ------------------------------------------------------------------------------------
   saveRecipeProgress(recipeId, progress) {
     if (!this.username) {
       console.warn("No user logged in. Progress will not be saved.");
@@ -126,6 +127,7 @@ const shared_data = {
     const userMeals = JSON.parse(localStorage.getItem("userMeals")) || {};
     return userMeals[username] || [];
   },
+  // ------------------------------------------------------------------------------------
   addRecipeToFavorites(username, recipeId) {
     if (!this.username) {
       console.warn("No user logged in. Recipe will not be added to the meal.");
@@ -171,6 +173,49 @@ const shared_data = {
 
     return userFavorites[username].includes(recipeId);
   },
+  // ------------------------------------------------------------------------------------
+  addRecipeToMyRecipes(username, recipeId) {
+    if (!this.username) {
+      console.warn("No user logged in. Recipe will not be added to the meal.");
+      return;
+    }
+    const userRecipes = JSON.parse(localStorage.getItem("userRecipes")) || {};
+    userRecipes[username] = userRecipes[username] || [];
+    if (!userRecipes[username].includes(recipeId)) {
+      userRecipes[username].push(recipeId);
+    }
+    localStorage.setItem("userRecipes", JSON.stringify(userRecipes));
+  },
+  deleteRecipeFromMyRecipes(username, recipeId) {
+    const userRecipes = JSON.parse(localStorage.getItem("userFavuserRecipesorites")) || {};
+    if (!userRecipes[username]) {
+      console.warn("No favorites found for the user.");
+      return;
+    }
+    userRecipes[username] = userRecipes[username].filter(id => id !== recipeId);
+    localStorage.setItem("userRecipes", JSON.stringify(userRecipes));
+  },
+  getUserMyRecipes(username) {
+    const userRecipes = JSON.parse(localStorage.getItem("userRecipes")) || {};
+    return userRecipes[username] || [];
+  },
+  isRecipeInMyRecipes(username, recipeId) {
+    const userRecipes = JSON.parse(localStorage.getItem("userRecipes")) || {};
+    if (!userRecipes[username]) {
+      return false; 
+    }
+    return userRecipes[username].includes(recipeId);
+  },
+  // TODO: Change it to get the last ID in the DB
+  getUserLastRecipeID(username) {
+    const userRecipes = JSON.parse(localStorage.getItem("userRecipes")) || {};
+    if(userRecipes[username])
+    {
+      return userRecipes[username][userRecipes[username].length - 1].id + 1
+    }
+    return 1;
+  },
+  // ------------------------------------------------------------------------------------
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;

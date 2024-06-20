@@ -53,11 +53,9 @@
       </div>
     </div>
     <div class="text-center mt-4">
-      <button @click="makeRecipe" class="btn btn-primary mt-2" :disabled="!$root.store.username">Let's Start Cooking This Recipe</button>
+      <b-button variant="success" @click="makeRecipe" class="btn btn-primary mt-2" style="border-radius: 5px;" >Let's Start Cooking This Recipe</b-button>
       <br>
-      <button @click="addToMeal" class="btn btn-primary mt-2" :disabled="!$root.store.username">Add To My Meal</button>
-      <br>
-      <router-link :to="{ name: 'MealMaking' }" class="btn btn-primary mt-2">My Meals</router-link>
+      <b-button variant="success" @click="addToMeal" class="btn btn-primary mt-2" :disabled="!$root.store.username" style="border-radius: 5px;" >Add To My Meal</b-button>
     </div>
     <br>
   </div>
