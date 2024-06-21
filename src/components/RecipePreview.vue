@@ -146,7 +146,7 @@ export default {
 }
 .recipe-preview-container:hover
 {
-  background-color: rgb(241, 240, 240);
+  background-color: rgba(241, 240, 240);
 }
 
 .recipe-preview {
