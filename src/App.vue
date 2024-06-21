@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" id="nav" fixed="top">
-      <img src="@/assets/Rachel.png" alt="Logo" class="navbar-logo" /> Rachel's recipes 
+      <img src="@/assets/Rachel.png" alt="Logo" class="navbar-logo" @click="moveToMain" />
+      <span class="brand-text">Rachel's Recipes</span>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="defaultNav">
           <b-nav-item :to="{ name: 'main' }">Main</b-nav-item> 
@@ -73,6 +74,11 @@ export default {
     },
     handleSearch() {
       this.$router.push({ name: 'search', query: { q: this.searchText } });
+    },
+    moveToMain() {
+      if (this.$route.name !== 'main') {
+      this.$router.push({ name: 'main' });
+    }
     }
   },
 };
@@ -122,6 +128,14 @@ export default {
   gap: 10px;
   margin-left: 15px;
   border-radius: 8px;
+}
+
+.navbar-logo:hover {
+  cursor: pointer;
+}
+
+.brand-text {
+  font-weight: bold;
 }
 
 .defaultNav {

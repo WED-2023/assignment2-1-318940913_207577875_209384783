@@ -95,7 +95,7 @@ export default {
   },
   async created() {
     try {
-      const response = mockGetRecipeFullDetails(this.$route.params.recipeId);
+      const response = mockGetRecipeFullDetails(this.$route.params.recipeId, true);
 
       console.log("response.status", response.status);
       if (response.status !== 200) this.$router.replace("/NotFound");
