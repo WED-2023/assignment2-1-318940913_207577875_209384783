@@ -25,7 +25,7 @@
         <b-navbar-nav class="ml-auto User-section" v-else>
           <b-nav-item :to="{ name: 'MealMaking' }">
             <!-- <img :src="require('@/assets/foodIcon.png')" alt="Logo" class="meals-logo" /> -->
-            <i class="bi bi-cart"></i> My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
+             My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
           </b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
