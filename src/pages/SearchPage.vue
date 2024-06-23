@@ -101,6 +101,7 @@ export default {
   },
   created() {
     this.fetchLastViewedRecipes();
+
     this.performSearch();
   
   },
@@ -142,7 +143,8 @@ export default {
     }
   },
   async performSearch() {
-     this.fetchAllRecipes();      
+    this.fetchAllRecipes();   
+  
     let filteredRecipes = this.recipes;
     if (this.searchQuery) {filteredRecipes = filteredRecipes.filter(recipe => recipe.title.toLowerCase().includes(this.searchQuery.toLowerCase()));}
     if (this.filters.selectedCuisines.length > 0) {filteredRecipes = filteredRecipes.filter(recipe => this.filters.selectedCuisines.includes(recipe.cuisine));}

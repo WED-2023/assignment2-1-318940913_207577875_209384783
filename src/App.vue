@@ -15,7 +15,7 @@
           <!-- <b-form-input v-model="searchText" placeholder="Search..." />
           <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item> -->
           <b-form-input v-model="searchText" placeholder="Search..." @keyup.enter="handleSearch" />
-          <b-nav-item :to="{ name: 'search' }" size="sm">Search</b-nav-item>
+          <b-nav-item :to="{ name: 'search' }" size="sm" @click="handleSearch">Search</b-nav-item>
         </b-navbar-nav>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto User-section" v-if="!$root.store.username">
