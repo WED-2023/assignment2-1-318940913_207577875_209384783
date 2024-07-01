@@ -14,52 +14,79 @@
         <b-form-invalid-feedback v-if="!$v.form.username.alpha"> Username must only contain alphabetic characters </b-form-invalid-feedback>
       </b-form-group>
 
+      <b-form-group id="input-group-firstname" label-cols-sm="3" label="First Name:" label-for="firstName" >
+        <b-input-group>
+          <b-input-group-prepend is-text>
+            <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
+          </b-input-group-prepend>
+          <b-form-input id="firstName" v-model="$v.form.firstName.$model" type="text" :state="validateState('firstName')" ></b-form-input>
+        </b-input-group>
+        <b-form-invalid-feedback v-if="!$v.form.firstName.required"> First Name is required </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-else-if="!$v.form.firstName.alpha"> First Name must only contain alphabetic characters </b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group id="input-group-lastname" label-cols-sm="3" label="Last Name:" label-for="lastName" >
+        <b-input-group>
+          <b-input-group-prepend is-text>
+            <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
+          </b-input-group-prepend>
+          <b-form-input id="lastName" v-model="$v.form.lastName.$model" type="text" :state="validateState('lastName')" ></b-form-input>
+        </b-input-group>
+        <b-form-invalid-feedback v-if="!$v.form.lastName.required"> Last Name is required </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-else-if="!$v.form.lastName.alpha"> Last Name must only contain alphabetic characters </b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group id="input-group-email" label-cols-sm="3" label="Email:" label-for="email" >
+        <b-input-group>
+          <b-input-group-prepend is-text>
+            <span class="input-group-text"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+          </b-input-group-prepend>
+          <b-form-input id="email" v-model="$v.form.email.$model" type="email" :state="validateState('email')" ></b-form-input>
+        </b-input-group>
+        <b-form-invalid-feedback v-if="!$v.form.email.required"> Email is required </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-else-if="!$v.form.email.email"> Email must be valid </b-form-invalid-feedback>
+      </b-form-group>
+
       <b-form-group id="input-group-country"  label-cols-sm="3" label="Country:"  label-for="country"  >
         <b-input-group>
           <b-input-group-prepend is-text>
             <span class="input-group-text"><i class="fa fa-flag" aria-hidden="true"></i></span>
           </b-input-group-prepend>
-        <b-form-select  id="country" v-model="$v.form.country.$model"  :options="countries"  :state="validateState('country')"
-        ></b-form-select>
-      </b-input-group>
+          <b-form-select id="country" v-model="$v.form.country.$model" :options="countries" :state="validateState('country')"></b-form-select>
+        </b-input-group>
         <b-form-invalid-feedback> Country is required </b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group id="input-group-Password" label-cols-sm="3" label="Password:" label-for="password" >
+      <b-form-group id="input-group-password" label-cols-sm="3" label="Password:" label-for="password" >
         <b-input-group>
           <b-input-group-prepend is-text>
-            <span class="input-group-text"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+            <span class="input-group-text"><i class="fa fa-lock" aria-hidden="true"></i></span>
           </b-input-group-prepend>
-        <b-form-input id="password" type="password" v-model="$v.form.password.$model" :state="validateState('password')"
-        ></b-form-input>
-      </b-input-group>
-
+          <b-form-input id="password" type="password" v-model="$v.form.password.$model" :state="validateState('password')" ></b-form-input>
+        </b-input-group>
         <b-form-invalid-feedback v-if="!$v.form.password.required"> Password is required </b-form-invalid-feedback>
-        <b-form-text v-else-if="$v.form.password.$error" text-variant="info">  Your password should be <strong>strong</strong>. <br /> </b-form-text> <b-form-invalid-feedback
-          v-if="$v.form.password.required && !$v.form.password.length"> Password must have length between 5-10 characters long
-      </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.containsNumber"> Password must contain at least one number </b-form-invalid-feedback>
+        <b-form-text v-else-if="$v.form.password.$error" text-variant="info">  Your password should be <strong>strong</strong>. <br /> </b-form-text>
+        <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.length"> Password must have length between 5-10 characters long </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.containsNumber"> Password must contain at least one number </b-form-invalid-feedback>
         <b-form-invalid-feedback v-if="$v.form.password.required && !$v.form.password.containsSpecialChar"> Password must contain at least one special character </b-form-invalid-feedback>
-
       </b-form-group>
 
       <b-form-group id="input-group-confirmedPassword" label-cols-sm="3" label="Confirm Password:" label-for="confirmedPassword" >
         <b-input-group>
           <b-input-group-prepend is-text>
-            <span class="input-group-text"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+            <span class="input-group-text"><i class="fa fa-lock" aria-hidden="true"></i></span>
           </b-input-group-prepend>
-        <b-form-input  id="confirmedPassword" type="password" v-model="$v.form.confirmedPassword.$model" :state="validateState('confirmedPassword')" ></b-form-input>
-      </b-input-group>
+          <b-form-input id="confirmedPassword" type="password" v-model="$v.form.confirmedPassword.$model" :state="validateState('confirmedPassword')" ></b-form-input>
+        </b-input-group>
         <b-form-invalid-feedback v-if="!$v.form.confirmedPassword.required"> Password confirmation is required </b-form-invalid-feedback>
-        <b-form-invalid-feedback  v-else-if="!$v.form.confirmedPassword.sameAsPassword" > The confirmed password is not equal to the original password </b-form-invalid-feedback>
+        <b-form-invalid-feedback v-else-if="!$v.form.confirmedPassword.sameAsPassword"> The confirmed password is not equal to the original password </b-form-invalid-feedback>
       </b-form-group>
 
       <b-button type="reset" variant="danger">Reset</b-button>
-      <b-button type="submit" variant="primary" >Register</b-button >
+      <b-button type="submit" variant="primary" >Register</b-button>
       <div class="mt-2"> You have an account already? <router-link to="login"> Log in here</router-link></div>
     </b-form>
-    <b-alert class="mt-2"  v-if="form.submitError" variant="warning" dismissible show > Register failed: {{ form.submitError }} </b-alert>
-
+    <b-alert class="mt-2" v-if="form.submitError" variant="warning" dismissible show> Register failed: {{ form.submitError }} </b-alert>
   </div>
 </template>
 
@@ -74,8 +101,6 @@ import {
   email
 } from "vuelidate/lib/validators";
 import { mockRegister } from "../services/auth.js";
-
-
 
 export default {
   name: "Register",
@@ -103,6 +128,18 @@ export default {
         length: (u) => minLength(3)(u) && maxLength(8)(u),
         alpha
       },
+      firstName: {
+        required,
+        alpha
+      },
+      lastName: {
+        required,
+        alpha
+      },
+      email: {
+        required,
+        email
+      },
       country: {
         required
       },
@@ -120,9 +157,7 @@ export default {
     }
   },
   mounted() {
-    // console.log("mounted");
     this.countries.push(...countries);
-    // console.log($v);
   },
   methods: {
     validateState(param) {
@@ -133,7 +168,11 @@ export default {
       try {
         const userDetails = {
           username: this.form.username,
-          password: this.form.password
+          password: this.form.password,
+          email: this.form.email,
+          firstName: this.form.firstName,
+          lastName: this.form.lastName,
+          country: this.form.country
         };
         const response = mockRegister(userDetails);
         this.$router.push("/login");
@@ -142,10 +181,9 @@ export default {
         this.form.submitError = err.response.data.message;
       }
     },
-
     onRegister() {
       this.$v.form.$touch();
-      if (this.$v.form.$anyError) { return;}
+      if (this.$v.form.$anyError) { return; }
       this.Register();
     },
     onReset() {
@@ -158,7 +196,7 @@ export default {
         confirmedPassword: "",
         email: ""
       };
-      this.$nextTick(() => {this.$v.$reset();});
+      this.$nextTick(() => { this.$v.$reset(); });
     }
   }
 };
@@ -171,16 +209,14 @@ export default {
   border: 1px solid #ccc;
   background-color: #f9f9f9;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-
 }
 .mt-2[data-v-86ab1514] {
-    font-size: 20px;
+  font-size: 20px;
 }
 .mt-2, .my-2 {
-    margin-top: 1.5rem !important;
+  margin-top: 1.5rem !important;
 }
-
-.btn-danger{
+.btn-danger {
   background-color: gray;
   border-color: gray;
   border-radius: 8px;
@@ -189,11 +225,11 @@ export default {
   font-size: 1.2rem;
   margin-top: 30px;
 }
-.btn-danger:hover{
+.btn-danger:hover {
   background-color: rgb(96, 96, 96);
   border-color: rgb(96, 96, 96);
 }
-.btn-primary{
+.btn-primary {
   background-color: green;
   border-color: green;
   border-radius: 8px;
@@ -201,11 +237,11 @@ export default {
   font-size: 1.2rem;
   margin-top: 30px;
 }
-.btn-primary:hover{
-  background-color:rgb(2, 85, 2);
-  border-color:rgb(2, 85, 2);
+.btn-primary:hover {
+  background-color: rgb(2, 85, 2);
+  border-color: rgb(2, 85, 2);
 }
-h1.title{
+h1.title {
   margin-bottom: 20px;
   font-weight: bold;
   font-size: 2.8rem;
@@ -214,16 +250,14 @@ h1.title{
   margin-left: 150px;
 }
 .input-group-text {
-    display: flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-    font-weight: 400; 
-    line-height: 3.5; 
-    color: #495057;
-    background-color: #e9ecef;
-    border: none; 
-    border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-weight: 400;
+  line-height: 3.5;
+  color: #495057;
+  background-color: #e9ecef;
+  border: none;
+  border-radius: 0.25rem;
 }
-
-
 </style>
