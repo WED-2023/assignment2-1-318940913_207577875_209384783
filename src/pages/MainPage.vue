@@ -104,6 +104,12 @@ export default {
         this.lastUserRecipes.push(response.data.recipe);
         }
       }
+      else{
+        const response = mockGetAllRecipesPreview();
+        const allRecipes = response.data.recipes;
+        const shuffledRecipes = this.shuffleArray(allRecipes);
+        this.lastUserRecipes = shuffledRecipes.slice(0, 4);
+      }
     },
     handleRandomize() {
       this.fetchRandomRecipes(); 
@@ -136,22 +142,6 @@ export default {
 </script>
 
 <style  scoped>
-/* .random-column {
-  padding: 20px;
-  border-radius: 8px;
-} */
-
-/* .login-last-viewed {
-  padding: 20px;
-  border-radius: 8px;
-  margin-left: 30px;
-} */
-
-/* .recipe-row-two {
-  margin-top: 20px;
-  margin-left: 180px;
-} */
-
 .random-button-container {
   margin-top: 20px;
 }
@@ -170,8 +160,8 @@ export default {
   font-size: 1.8rem;
   display: inline-block;
   border-bottom: 2px solid #42b983;
-  text-align: center; /* Center-align the text */
-  width: 100%; /* Ensure the width expands to fit its container */
+  text-align: center; 
+  width: 100%; 
   margin: 0 auto; 
 }
 
@@ -181,8 +171,4 @@ export default {
   margin-left: 180px;
 }
 
-/* .row-container[data-v-54d5bc8c] {
-    width: 90%;
-    margin: 0% 25% 0% 8%;
-} */
 </style>
