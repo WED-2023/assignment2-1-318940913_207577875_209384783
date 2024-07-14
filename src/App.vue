@@ -45,6 +45,8 @@
 
 <script>
 import CreateNewRecipe from '@/components/CreateNewRecipe.vue';
+import {logOutServer} from "@/services/auth";
+
 import { ref } from "vue";
 export default {
   data() {
@@ -65,12 +67,23 @@ export default {
     return { modalActive, toggleModal };
   },
   methods: {
-    Logout() {
-      this.$root.store.logout();
-      this.$root.toast("Logout", "User logged out successfully", "success");
-      this.$router.push("/").catch(() => {
-        this.$forceUpdate();
-      });
+    async Logout() {
+      try{
+        const response = await logOutServer();
+        if (response.success) {
+          this.$root.store.logout();
+          this.$root.toast("Logout", "User logged out successfully", "success");
+          this.$router.push("/").catch(() => {
+            this.$forceUpdate();
+          });
+        }
+        else{
+          this.$root.toast("Logout Error", response.message, "danger");
+        }
+      }
+      catch (error) {
+        this.$root.toast("Logout Error", "Failed to log out. Please try again.", "danger");
+      }
     },
     handleSearch() {
       this.$router.push({ name: 'search', query: { q: this.searchText } });

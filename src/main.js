@@ -16,7 +16,7 @@ Vue.use(VueRouter);
 Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
 
-
+axios.defaults.withCredentials = true;
 
 const router = new VueRouter({ 
   routes,
@@ -50,6 +50,8 @@ import {
 axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
+    config.headers["Cache-Control"] = "no-cache";
+
     return config;
   },
   function(error) {

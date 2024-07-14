@@ -101,6 +101,8 @@ import {
   email
 } from "vuelidate/lib/validators";
 import { mockRegister } from "../services/auth.js";
+import {registerServer} from "@/services/auth";
+
 
 export default {
   name: "Register",
@@ -168,13 +170,14 @@ export default {
       try {
         const userDetails = {
           username: this.form.username,
-          password: this.form.password,
-          email: this.form.email,
           firstName: this.form.firstName,
           lastName: this.form.lastName,
-          country: this.form.country
+          country: this.form.country,
+          password: this.form.password,
+          email: this.form.email
         };
-        const response = mockRegister(userDetails);
+        console.log(userDetails);
+        const response = await registerServer(userDetails);
         this.$router.push("/login");
       } catch (err) {
         console.log(err.response);

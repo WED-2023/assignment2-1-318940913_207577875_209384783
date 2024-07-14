@@ -4,7 +4,8 @@ import recipe_preview from "../assets/mocks/recipe_preview.json";
 import multiple_recipes_full_view from "../assets/mocks/multiple_recipes_full_view.json";
 import multiple_recipe_preview from "../assets/mocks/multiple_recipe_preview.json";
 import family_recipes_full_view from "../assets/mocks/family_recipes_full_view.json";
-
+import axios from 'axios';
+const API_URL = 'http://127.0.0.1:80';
 
 export function mockGetRecipesPreview(amount = 1) {
   let recipes = [];
@@ -58,4 +59,31 @@ export function mockGetRecipeFullDetails(recipeId, testMode=false) {
 
 
   }
+// --------------------------- Server Connection !!!! ---------------------------------------------------------
+  export async function fetchRandomRecipesFromServer() {
+    try {
+      const response = await axios.get(`${API_URL}/recipes/random`, {
+        params: { number: 3 },
+        withCredentials: true
+      });
+      let recipes = response.data;
+      return { status:200, data:{recipes}};
+    } catch (error) {
+      console.error('Error fetching random recipes:', error);
+      return { data: { recipes: [] } };
+    }
+  }
   
+
+  export async function fetchLastViewedRecipesFromServer  () {
+
+    try {
+      const response = await axios.get(`${API_URL}/users/LastViewedRecipes`);
+      console.log(" response.data == ",response.data );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching last viewed recipes:', error);
+      throw error;
+    }
+  }
+  // ------------------------------------------------------------------------------------

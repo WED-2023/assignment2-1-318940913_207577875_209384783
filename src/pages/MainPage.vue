@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import {fetchRandomRecipesFromServer,fetchLastViewedRecipesFromServer } from "@/services/recipes";
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
 import RecipePreview from "@/components/RecipePreview.vue"; 
 import LoginPage from "@/pages/LoginPage.vue";
@@ -84,51 +85,85 @@ export default {
     }
   },
   methods: {
-    fetchRandomRecipes() {
-      const response = mockGetAllRecipesPreview();
-      const allRecipes = response.data.recipes;
-        const shuffledRecipes = this.shuffleArray(allRecipes);
-        this.randomRecipes = shuffledRecipes.slice(0, 4);
+    // fetchRandomRecipes() {
+    //   const response = mockGetAllRecipesPreview();
+    //   const allRecipes = response.data.recipes;
+    //     const shuffledRecipes = this.shuffleArray(allRecipes);
+    //     this.randomRecipes = shuffledRecipes.slice(0, 4);
 
+    // },
+    // ----------------------function connect to server ----------------------------------
+    async fetchRandomRecipes() {
+      try {
+        const response = await fetchRandomRecipesFromServer();
+        this.randomRecipes = response.data.recipes;
+      } catch (error) {
+        console.error('Error fetching random recipes:', error);
+      }
     },
-    fetchLastViewedRecipes() {
-      this.lastUserRecipes=[];
-      const username = this.$root.store.username; 
-      const seenByUser = this.$root.store.getUserseenBy(username);
-      console.log("seenByUser : ",seenByUser);
-      if(seenByUser.length >0)
-      {
-        for (let i = seenByUser.length - 1; i >= 0; i--) {
-        const recipeID = seenByUser[i];
-        const response = mockGetRecipePreviewById(recipeID);
-        this.lastUserRecipes.push(response.data.recipe);
+    // ------------------------------------------------------------------------------------
+
+    // fetchLastViewedRecipes() {
+    //   this.lastUserRecipes=[];
+    //   const username = this.$root.store.username; 
+    //   const seenByUser = this.$root.store.getUserseenBy(username);
+    //   console.log("seenByUser : ",seenByUser);
+    //   if(seenByUser.length >0)
+    //   {
+    //     for (let i = seenByUser.length - 1; i >= 0; i--) {
+    //     const recipeID = seenByUser[i];
+    //     const response = mockGetRecipePreviewById(recipeID);
+    //     this.lastUserRecipes.push(response.data.recipe);
+    //     }
+    //   }
+    //   else{
+    //     const response = mockGetAllRecipesPreview();
+    //     const allRecipes = response.data.recipes;
+    //     const shuffledRecipes = this.shuffleArray(allRecipes);
+    //     this.lastUserRecipes = shuffledRecipes.slice(0, 4);
+    //   }
+    // },
+    // ---------------------- function connect to server ----------------------------------
+
+    async fetchLastViewedRecipes(){
+      const username = this.$root.store.username;
+
+      if (this.$root.store.username) {
+        try{
+          const response = await fetchLastViewedRecipesFromServer();
+          if (response.data.recipes.length > 1) {this.lastUserRecipes = response.data.recipes;}
+          else
+          {
+            console
+            const response = await fetchRandomRecipesFromServer();
+            this.lastUserRecipes = response.data.recipes;
+          }
         }
+        catch (error) {
+        console.error('Error fetching last viewed recipes:', error);
       }
-      else{
-        const response = mockGetAllRecipesPreview();
-        const allRecipes = response.data.recipes;
-        const shuffledRecipes = this.shuffleArray(allRecipes);
-        this.lastUserRecipes = shuffledRecipes.slice(0, 4);
       }
     },
+    // ------------------------------------------------------------------------------------
+
     handleRandomize() {
       this.fetchRandomRecipes(); 
     },
-    shuffleArray(array) {
-      let currentIndex = array.length;
-      let temporaryValue, randomIndex;
+    // shuffleArray(array) {
+    //   let currentIndex = array.length;
+    //   let temporaryValue, randomIndex;
     
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
+    //   while (currentIndex !== 0) {
+    //     randomIndex = Math.floor(Math.random() * currentIndex);
+    //     currentIndex -= 1;
     
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-      }
+    //     temporaryValue = array[currentIndex];
+    //     array[currentIndex] = array[randomIndex];
+    //     array[randomIndex] = temporaryValue;
+    //   }
     
-      return array;
-    }
+    //   return array;
+    // }
   },
   computed: {
     firstRowRecipes() {
