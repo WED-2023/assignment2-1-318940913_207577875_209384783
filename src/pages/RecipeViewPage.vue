@@ -37,7 +37,7 @@
                 :key="index + '_' + r.id"
                 class="list-group-item"
               >
-              {{ r.original }}
+              {{ r.originalName }} {{ r.amount }} {{ r.unit }}
               </li>
             </ul>
           </div>
@@ -76,8 +76,10 @@ export default {
   async created() {
     try {
       const response = await getRecipeFullPage(this.recipeId);
+      console.log("response = ", response);
       const {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id} = response.data;
       this.recipe = {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id};
+      console.log("recipe = ", this.recipe);
     } catch (error) {
       console.log("Error fetching recipe:", error.message);
       this.$router.replace("/NotFound");

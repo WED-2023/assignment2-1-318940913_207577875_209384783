@@ -199,6 +199,7 @@ export default {
           ingredients: this.ingredients,
           instructions: this.instructions
         };
+        console.log("Client - recipeContent.instructions = ", recipeContent.instructions);
         const response = await createNewRecipe(recipeContent);
         if (response.status === 201 && response.data.success) {
           this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});

@@ -67,7 +67,7 @@
 <script>
 import {
   fetchRandomRecipesFromServer,
-  fetchLastViewedRecipesFromServer,
+  fetchLastViewedRecipesFromServer
 } from "@/services/recipes";
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
 import RecipePreview from "@/components/RecipePreview.vue";
