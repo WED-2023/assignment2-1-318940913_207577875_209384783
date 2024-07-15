@@ -11,6 +11,9 @@ import VueRouter from "vue-router";
 import VueCookies from "vue-cookies";
 
 
+import VueCookies from "vue-cookies";
+Vue.use(VueCookies);
+
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(BootstrapVueIcons)
