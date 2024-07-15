@@ -184,7 +184,7 @@ export default {
       this.image = null;
       this.isFormSubmitted = false; 
     },
-    submitForm() {
+    async submitForm() {
       this.isFormSubmitted = true; 
       if (this.isFormValid()) {
         const recipeContent = {
@@ -199,8 +199,8 @@ export default {
           ingredients: this.ingredients,
           instructions: this.instructions
         };
-        const response = createNewRecipe(recipeContent);
-        if (response.status === 201 && response.response.data.success) {
+        const response = await createNewRecipe(recipeContent);
+        if (response.status === 201 && response.data.success) {
           this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
           this.modalActive = false;
           this.resetFields();

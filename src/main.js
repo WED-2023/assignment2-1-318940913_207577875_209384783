@@ -8,7 +8,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Vuelidate from "vuelidate";
 import routes from "./routes";
 import VueRouter from "vue-router";
-import VueCookies from "vue-cookies";
 
 
 import VueCookies from "vue-cookies";
@@ -20,7 +19,6 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueRouter);
 Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
-Vue.use(VueCookies);
 axios.defaults.withCredentials = true;
 
 const router = new VueRouter({ 
