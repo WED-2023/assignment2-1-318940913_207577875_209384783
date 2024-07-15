@@ -25,11 +25,11 @@
         <div class="form-group">
           <label for="sortBy" class="me-2">Sort by:</label>
           <select id="sortBy" v-model="sortBy" class="form-select-sort">
-            <option value="default">Default</option>
-            <option value="timeAsc">Preparation Time (Low to High)</option>
-            <option value="timeDesc">Preparation Time (High to Low)</option>
-            <option value="popularityAsc">Popularity (Low to High)</option>
-            <option value="popularityDesc">Popularity (High to Low)</option>
+            <option value="time">Time</option>
+            <option value="popularity">Popularity</option>
+            <option value="healthiness">Healthiness</option>
+            <option value="calories">Calories</option>
+            <!-- <option value="popularityDesc">Popularity (High to Low)</option> -->
           </select>
         </div>
       </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { mockGetAllRecipesPreview,mockGetRecipesPreview } from "../services/recipes.js";
+import { mockGetAllRecipesPreview,mockGetRecipesPreview,getSearchResultsFromServer } from "../services/recipes.js";
 import cuisines from '../assets/cuisines.json';
 import diets from '../assets/diets.json';
 import intolerances from '../assets/intolerances.json';
@@ -86,30 +86,27 @@ export default {
 
   watch: {
     '$route.query.q': function(newQuery) {
-      this.searchQuery = newQuery;
-      this.performSearch();
+      // this.searchQuery = newQuery;
+      // this.performSearch();
     },
-    sortBy() {this.handleSortOptionChange();},
+    // sortBy() {this.handleSortOptionChange();},
     resultsCount(newVal, oldVal) {if (newVal !== oldVal) {this.performSearch();} },
-    filters: {
-      handler() {this.performSearch();},
-      deep: true
-    },
-    searchQuery() {this.performSearch();},
-
-
+    sortBy(newVal, oldVal) {if (newVal !== oldVal) {this.performSearch();} }
+    // filters: {
+    //   handler() {this.performSearch();},
+    //   deep: true
+    // },
+    // searchQuery() {this.performSearch();},
   },
   created() {
-    this.fetchLastViewedRecipes();
 
-    this.performSearch();
   
   },
 
   data() {
     return {
       recipes: [],
-      sortBy: 'default',
+      sortBy: 'time',
       searchQuery: this.$route.query.q ||  "",
       resultsCount: 5,
       filters: {
@@ -126,55 +123,13 @@ export default {
   },
 
   methods: {
-    fetchAllRecipes() {
-    const response = mockGetAllRecipesPreview();
-    if (response && response.data && Array.isArray(response.data.recipes)) {
-      this.recipes = response.data.recipes;
-    } else {
-      this.recipes = [];
-    }
-  },
-  fetchLastViewedRecipes() {
-    const response = mockGetRecipesPreview(this.resultsCount);
-    if (response && response.data && Array.isArray(response.data.recipes)) {
-      this.lastViewedRecipes = response.data.recipes;
-    } else {
-      this.lastViewedRecipes = [];
-    }
-  },
   async performSearch() {
-    this.fetchAllRecipes();   
-  
-    let filteredRecipes = this.recipes;
-    if (this.searchQuery) {filteredRecipes = filteredRecipes.filter(recipe => recipe.title.toLowerCase().includes(this.searchQuery.toLowerCase()));}
-    if (this.filters.selectedCuisines.length > 0) {filteredRecipes = filteredRecipes.filter(recipe => this.filters.selectedCuisines.includes(recipe.cuisine));}
-    if (this.filters.selectedDiets.length > 0) {filteredRecipes = filteredRecipes.filter(recipe => this.filters.selectedDiets.includes(recipe.diet));}
-    if (this.filters.selectedIntolerances.length > 0) {filteredRecipes = filteredRecipes.filter(recipe => this.filters.selectedIntolerances.includes(recipe.intolerance));}
-    this.recipes = filteredRecipes.slice(0, this.resultsCount);
-    this.handleSortOptionChange();
-
-  },
-    handleSortOptionChange() {
-      switch (this.sortBy) {
-      case 'default':
-        this.recipes.sort((a, b) => a.title.localeCompare(b.title)); 
-      break;
-      case 'timeAsc':
-        this.recipes.sort((a, b) => a.readyInMinutes - b.readyInMinutes);
-        break;
-      case 'timeDesc':
-        this.recipes.sort((a, b) => b.readyInMinutes - a.readyInMinutes);
-        break;
-      case 'popularityAsc':
-        this.recipes.sort((a, b) => a.aggregateLikes - b.aggregateLikes);
-        break;
-      case 'popularityDesc':
-        this.recipes.sort((a, b) => b.aggregateLikes - a.aggregateLikes);
-        break;
-      default:
-        break;
-      }
-    },
+    const cuisines = this.filters.selectedCuisines.join(',');
+    const diets = this.filters.selectedDiets.join(',');
+    const intolerances = this.filters.selectedIntolerances.join(',');
+    const response = await getSearchResultsFromServer(this.searchQuery,cuisines,diets,intolerances,this.resultsCount,this.sortBy);
+    this.recipes = response;
+  }
   },
   
 };

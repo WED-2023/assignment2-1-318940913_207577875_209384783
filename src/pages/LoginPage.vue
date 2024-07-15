@@ -78,7 +78,6 @@ export default {
           username: this.form.username,
           password: this.form.password
         };
-        console.log("credentials = ",credentials);
         const response = await logInServer(credentials);
         if (response.success) {
           this.form.submitSuccess = true;

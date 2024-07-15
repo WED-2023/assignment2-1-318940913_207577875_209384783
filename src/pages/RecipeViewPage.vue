@@ -62,83 +62,48 @@
 </template>
 
 <script>
-import { mockGetRecipeFullDetails } from "../services/recipes.js";
+import { updateLastViewedRecipesServer } from "@/services/user.js";
+import { getRecipeFullPage} from "@/services/recipes.js";
 
 export default {
   name: "recipe",
   data() {
     return {
-      recipe: null
+      recipe: null,
+      recipeId: this.$route.params.recipeId
     };
-  },
-  mounted(){
-    this.addUserWatched();
-  },
-  methods: {
-    addToMeal() {
-      const user = this.$root.store.username;
-      this.$root.store.addRecipeToMeal(user, this.recipe.id);
-      this.$router.push({ name: 'MealMaking', params: { recipeId: this.recipe.id } });
-    },
-    makeRecipe() {
-      const user = this.$root.store.username;
-      this.$root.store.addRecipeToMeal(user, this.recipe.id);
-      this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipe.id } });
-    },
-    addUserWatched(){
-      const user = this.$root.store.username;
-      if(this.$root.store.username)
-      {
-        this.$root.store.addUserWatchedRecipe(user,this.recipe.id)
-      }
-    }
   },
   async created() {
     try {
-      const response = mockGetRecipeFullDetails(this.$route.params.recipeId, true);
-
-      console.log("response.status", response.status);
-      if (response.status !== 200) this.$router.replace("/NotFound");
-
-      const {
-        instructions,
-        extendedIngredients,
-        aggregateLikes,
-        readyInMinutes,
-        image,
-        title,
-        vegetarian,
-        vegan,
-        glutenFree,
-        servings,
-        id
-      } = response.data.recipe;
-
-      // const _instructions = analyzedInstructions
-      //   .map((fstep) => {
-      //     fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-      //     return fstep.steps;
-      //   })
-      //   .reduce((a, b) => [...a, ...b], []);
-
-      this.recipe = {
-        instructions,
-        extendedIngredients,
-        aggregateLikes,
-        readyInMinutes,
-        image,
-        title,
-        vegetarian,
-        vegan,
-        glutenFree,
-        servings,
-        id
-      };
+      const response = await getRecipeFullPage(this.recipeId);
+      const {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id} = response.data;
+      this.recipe = {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id};
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching recipe:", error.message);
       this.$router.replace("/NotFound");
     }
+  },
+  mounted(){
+    this.addUserWatched();
+    // this.getRecipePage();
+  },
+  methods: {
+
+    addToMeal() {
+      // const user = this.$root.store.username;
+      // this.$root.store.addRecipeToMeal(user, this.recipeId);
+      // this.$router.push({ name: 'MealMaking', params: { recipeId: this.recipe.id } });
+    },
+    makeRecipe() {
+      // const user = this.$root.store.username;
+      // this.$root.store.addRecipeToMeal(user, this.recipe.id);
+      // this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipe.id } });
+    },
+    async addUserWatched(){
+      if(this.$root.store.username) {const response = await updateLastViewedRecipesServer(this.recipeId);}
+    }
   }
+  
 };
 </script>
 

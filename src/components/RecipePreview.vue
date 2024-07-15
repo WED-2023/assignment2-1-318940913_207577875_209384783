@@ -50,6 +50,10 @@
 
 <script>
 import { mockAddFavorite } from "../services/user.js";
+import { checkLastViewedRecipesFromServer } from "../services/recipes.js";
+
+
+
 import { BButton } from 'bootstrap-vue';
 import RecipeLike from "@/components/RecipeLike.vue";
 
@@ -88,17 +92,12 @@ export default {
     }
   },
   methods: {
-    checkIfViewed() {
+    async checkIfViewed() {
       if(this.$root.store.username)
       {
-        const username = this.$root.store.username; 
-        const seenByUser = this.$root.store.getUserseenBy(username);
-        if(seenByUser.includes(this.recipe.id))
-        {
-          this.hasViewedRecipe=true;
-        }
+        const response = await checkLastViewedRecipesFromServer(this.recipe.id);
+        this.hasViewedRecipe = response;
       }
-
     },
     removeRecipe() {
       this.$emit('remove', this.recipe);

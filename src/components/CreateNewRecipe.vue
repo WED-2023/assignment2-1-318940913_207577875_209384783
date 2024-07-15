@@ -82,7 +82,7 @@
 <script>
 import { BFormFile, BFormCheckbox, BModal ,BToast} from 'bootstrap-vue';
 // import { BFormSpinbutton } from 'bootstrap-vue';
-import { mockAddUserRecipe } from "../services/user.js";
+import { createNewRecipe } from "../services/user.js";
 
 export default {
   components: {
@@ -190,19 +190,18 @@ export default {
         const recipeContent = {
           title: this.title,
           image: this.image,
-          readyInMinutes: this.readyInMinutes,
+          ready_in_minutes: this.readyInMinutes,
           summary: this.summary,
           servings: this.servings,
           vegan: this.vegan,
           vegetarian: this.vegetarian,
-          isGlutenFree: this.isGlutenFree,
+          is_gluten_free: this.isGlutenFree,
           ingredients: this.ingredients,
           instructions: this.instructions
         };
-        const response = mockAddUserRecipe(recipeContent);
-        if (response.status === 200 && response.response.data.success) {
+        const response = createNewRecipe(recipeContent);
+        if (response.status === 201 && response.response.data.success) {
           this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
-          this.$root.store.addRecipeToMyRecipes(this.$root.store.username, this.$root.store.getUserLastRecipeID());
           this.modalActive = false;
           this.resetFields();
         } else {

@@ -76,14 +76,53 @@ export function mockGetRecipeFullDetails(recipeId, testMode=false) {
   
 
   export async function fetchLastViewedRecipesFromServer  () {
-
     try {
       const response = await axios.get(`${API_URL}/users/LastViewedRecipes`);
-      console.log(" response.data == ",response.data );
-      return response.data;
+      let recipes = response.data;
+      return { status:200, data:{recipes}};
     } catch (error) {
       console.error('Error fetching last viewed recipes:', error);
       throw error;
     }
   }
+  export async function checkLastViewedRecipesFromServer(recipeID) {
+    try {
+      const response = await axios.get(`${API_URL}/users/IsLastViewedRecipe`, {
+        params: {recipeId: recipeID }});
+      return response.data.isLastViewed;
+    } catch (error) {
+      console.error('Error checking last viewed recipes:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  }
+  export async function getRecipeFullPage (recipeId) {
+    try {
+      const response = await axios.get(`${API_URL}/recipes/recipe/${recipeId}`);
+      return response;
+    } catch (error) {
+      throw new Error(`Error fetching recipe: ${error.response ? error.response.data : error.message}`);
+    }
+  };
+
+  export async function getSearchResultsFromServer(recipeName,cuisines,diets,intolerances,number,sortBy) {
+    try {
+      const response = await axios.get(`${API_URL}/recipes/search`, {
+        params: {
+          recipeName: recipeName,
+          cuisine: cuisines,
+          diet: diets,
+          intolerance: intolerances,
+          number:number,
+          sort:sortBy
+        }});
+      console.log(" search response = ",response);
+      return response.data;
+    } catch (error) {
+      console.error('Error while trying to search:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  }
+
+
+
   // ------------------------------------------------------------------------------------

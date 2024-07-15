@@ -69,18 +69,13 @@ export default {
   methods: {
     async Logout() {
       try{
-        const response = await logOutServer();
-        if (response.success) {
+          const response = await logOutServer();
           this.$root.store.logout();
           this.$root.toast("Logout", "User logged out successfully", "success");
           this.$router.push("/").catch(() => {
             this.$forceUpdate();
           });
         }
-        else{
-          this.$root.toast("Logout Error", response.message, "danger");
-        }
-      }
       catch (error) {
         this.$root.toast("Logout Error", "Failed to log out. Please try again.", "danger");
       }
