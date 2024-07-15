@@ -7,6 +7,7 @@
   <script>
   import { mockAddFavorite } from "../services/user.js";
   import { BButton } from "bootstrap-vue";
+  import { isRecipeInFavorites, markAsFavorite, unMarkAsFavorite } from "../services/user.js";
   
   export default {
     components: {
@@ -27,36 +28,28 @@
         isLiked: false,
       };
     },
-    mounted() {
-      this.isLiked = this.$root.store.isRecipeInFavorites(
-        this.$root.store.username,
-        this.recipe.id
-      );
-    },
+    async mounted() {
+    try {
+      // console.log(`Checking if recipe ${this.recipe.id} is in favorites...`);
+      this.isLiked = await isRecipeInFavorites(this.recipe.id);
+      // console.log(`Recipe ${this.recipe.id} is in favorites: ${this.isLiked}`);
+    } catch (error) {
+      console.error(`Failed to check if recipe ${this.recipe.id} is in favorites:`, error);
+    }
+  },
     methods: {
       async toggleLike() {
         try {
-          const response = mockAddFavorite(this.recipe.id);
-          if (response.status === 200 && response.response.data.success) {
-            this.isLiked = !this.isLiked;
-            if (this.isLiked) {
-              this.$root.store.addRecipeToFavorites(
-                this.$root.store.username,
-                this.recipe.id
-              );
-            } else {
-              this.$root.store.deleteRecipeFromFavorites(
-                this.$root.store.username,
-                this.recipe.id
-              );
-            }
-          } else {
-            this.isLiked = false;
-            this.$root.store.deleteRecipeFromFavorites(
-              this.$root.store.username,
-              this.recipe.id
-            );
-          }
+          const credentials = {
+            recipeId: this.recipe.id
+          };
+          if(!this.isLiked)
+            await markAsFavorite(credentials);
+          else
+            await unMarkAsFavorite(this.recipe.id);
+          this.isLiked = !this.isLiked;
+          this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit event to parent
+          console.log("Event Triggered At RecipeLike");
         } catch (err) {
           this.isLiked = false;
           this.$root.toast("Error", err, "danger");

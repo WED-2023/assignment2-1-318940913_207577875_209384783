@@ -1,47 +1,43 @@
 <template>
   <div>
-      <RecipePreviewList title="My Recipes" :recipes="myRecipes"></RecipePreviewList>  
+    <RecipePreviewList
+      title="My Recipes"
+      :recipes="myRecipes"
+      @addedNewRecipe="handleAddedNewRecipe"
+    ></RecipePreviewList>
   </div>
-  </template>
-  
-  <script>
-  import RecipePreviewList from "@/components/RecipePreviewList.vue";
-  import { mockGetRecipeFullDetails } from "../services/recipes.js"; 
-  
-  export default {
+</template>
+
+<script>
+import RecipePreviewList from "@/components/RecipePreviewList.vue";
+import { getRecipeInMyRecipes } from "../services/user.js";
+import { mockGetRecipeFullDetails } from "../services/recipes.js";
+
+export default {
   data() {
-      return {
-      myRecipes: [], 
-      };
+    return {
+      myRecipes: [],
+    };
   },
   components: {
-      RecipePreviewList,
+    RecipePreviewList,
   },
   mounted() {
-      this.fetchFavoriteRecipes();
+    this.fetchFavoriteRecipes();
   },
   methods: {
-      handleDocumentClick(event) {
-      // Ensure the event is from a valid source if necessary
-      this.fetchFavoriteRecipes();
-      },
-      async fetchFavoriteRecipes() {
-          this.myRecipes = [];
-          const username = this.$root.store.username; 
-          const userRecipes = this.$root.store.getUserMyRecipes(username);
-  
-          for (const recipeID of userRecipes) {
-              const response = mockGetRecipeFullDetails(recipeID, true);
-              if (response && response.data && response.data.recipe) {
-              this.myRecipes.push(response.data.recipe);
-              }
-          }
+    async fetchFavoriteRecipes() {
+      try {
+        this.myRecipes = await getRecipeInMyRecipes();
+      } catch (error) {
+        console.error("Error fetching my recipes:", error);
       }
-  }
-  }
-  </script>
-  
-  <style lang="scss" scoped>
-  
-  </style>
-    
+    },
+    async handleAddedNewRecipe() {
+      await fetchFavoriteRecipes();
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped></style>

@@ -9,6 +9,9 @@ import Vuelidate from "vuelidate";
 import routes from "./routes";
 import VueRouter from "vue-router";
 
+import VueCookies from "vue-cookies";
+Vue.use(VueCookies);
+
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(BootstrapVueIcons)

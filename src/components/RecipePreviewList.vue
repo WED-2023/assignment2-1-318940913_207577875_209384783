@@ -8,7 +8,7 @@
             <div @click="removeRecipe(index)" class="icon-container">
               <i class="bi bi-trash mb-1 icon-shadow"></i>
             </div>
-            <RecipeInMealPreview class="recipePreview" :recipe="recipe" />
+            <RecipeInMealPreview class="recipePreview" :recipe="recipe" @likedChanged="handleLikedChanged" />
           </div>
         </b-col>
         
@@ -18,7 +18,7 @@
       </draggable>
       <template v-else>
         <b-col v-for="recipe in recipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
-          <RecipePreview class="recipePreview" :recipe="recipe"/>
+          <RecipePreview class="recipePreview" :recipe="recipe" @likedChanged="handleLikedChanged"/>
         </b-col>
       </template>
     </b-row>
@@ -56,6 +56,11 @@ export default {
     },
   },
   methods: {
+    handleLikedChanged(recipeId, isLiked) {
+      // Emit event to parent component (FavoriteRecipesPage.vue) And Others
+      this.$emit("likedChanged", recipeId, isLiked);
+      console.log("Event Triggered At RecipePreviewList");
+    },
     onDragEnd(event) {
       // Get the new order of recipe IDs
       const newOrderRecipeIds = this.recipes.map(recipe => recipe.id);

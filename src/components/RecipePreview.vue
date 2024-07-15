@@ -32,7 +32,7 @@
           <!-- <b-button @click="toggleLike" class="custom-button">
             <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </b-button> -->
-          <RecipeLike :recipe="recipe" :is-hovered="isHovered"></RecipeLike>
+          <RecipeLike :recipe="recipe" :is-hovered="isHovered" @likedChanged="handleLikedChanged"></RecipeLike>
         </li>
         <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
           <i class="fas fa-seedling text-success"></i>
@@ -79,7 +79,6 @@ export default {
   },
   mounted() 
   {
-    this.isLiked = this.$root.store.isRecipeInFavorites(this.$root.store.username, this.recipe.id)
     this.checkIfViewed();
   },
   watch: {
@@ -88,6 +87,11 @@ export default {
     }
   },
   methods: {
+    handleLikedChanged(recipeId, isLiked) {
+      // Emit event to parent component (RecipePreviewList.vue)
+      this.$emit("likedChanged", recipeId, isLiked);
+      console.log("Event Triggered At RecipePreview");
+    },
     checkIfViewed() {
       if(this.$root.store.username)
       {

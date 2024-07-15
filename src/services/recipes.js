@@ -79,8 +79,8 @@ export function mockGetRecipeFullDetails(recipeId, testMode=false) {
 
     try {
       const response = await axios.get(`${API_URL}/users/LastViewedRecipes`);
-      console.log(" response.data == ",response.data );
-      return response.data;
+      let recipes = response.data;
+      return { status:200, data:{recipes}};
     } catch (error) {
       console.error('Error fetching last viewed recipes:', error);
       throw error;

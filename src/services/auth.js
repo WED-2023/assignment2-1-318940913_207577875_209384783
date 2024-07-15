@@ -44,9 +44,7 @@ const API_URL = 'http://127.0.0.1:80';
   
   export async function logOutServer() {
     try {
-      const response = await axios.post(`${API_URL}/Logout`,{
-        withCredentials: true
-      });
+      const response = await axios.post(`${API_URL}/Logout`);
       return response.data;
     } catch (error) {
       console.error('Error logging out:', error);
