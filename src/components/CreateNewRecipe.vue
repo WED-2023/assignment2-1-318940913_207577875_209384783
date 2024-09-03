@@ -31,12 +31,35 @@
           <div class="form-check">
             <b-form-checkbox v-model="isGlutenFree" id="inlineCheckbox3" name="inline-checkbox" switch style="margin-bottom: 15px;">Gluten Free </b-form-checkbox>
           </div>
+
+<!-- 
           <div class="image-form">
         <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }" accept="image/*" @change="handleFileUpload" ></b-form-file>
-        <div class="image-preview" v-if="image">
-              <img :src="imageUrl" alt="Selected Image" class="img-fluid" />
+        <div class="image-preview" v-if="image"> -->
+               <!-- Use the temporary URL to display the image -->
+              <!-- <img :src="imageUrl" alt="Selected Image" class="img-fluid" />
           </div>    
-      </div >
+      </div > -->
+      <!-- <div class="image-form">
+        <b-form-group label="Image URL" label-for="recipe-image" class="form-group">
+          <b-form-input id="recipe-image" v-model="image" required
+            placeholder="Enter image URL"></b-form-input>
+        </b-form-group>
+
+      </div> -->
+      <div class="image-form">
+        <b-form-group label="Image URL" label-for="recipe-image" class="form-group">
+          <!-- Apply the conditional input-error class directly to the input field -->
+          <b-form-input
+            id="recipe-image"
+            v-model="image"
+            required
+            placeholder="Enter image URL"
+            :class="{ 'input-error': isFormSubmitted && !image }" 
+          ></b-form-input>
+        </b-form-group>
+        </div>
+
           
           
         </div>
@@ -81,7 +104,6 @@
 
 <script>
 import { BFormFile, BFormCheckbox, BModal ,BToast} from 'bootstrap-vue';
-// import { BFormSpinbutton } from 'bootstrap-vue';
 import { createNewRecipe } from "../services/user.js";
 
 export default {
@@ -89,7 +111,6 @@ export default {
     BFormFile,
     BFormCheckbox,
     BModal,
-    // BFormSpinbutton,
     BToast
   },
   props: {
@@ -98,7 +119,7 @@ export default {
   data() {
     return {
       title: '',
-      image: null,
+      image: '',
       readyInMinutes: '',
       summary: '',
       servings: '',
@@ -132,10 +153,7 @@ export default {
       const lastInstruction = this.instructions[this.instructions.length - 1];
       return !!(lastInstruction && lastInstruction.name.trim());
     },
-    imageUrl() {
-      // Compute the URL for displaying the image preview
-      return this.image ? URL.createObjectURL(this.image) : '';
-    }
+
   },
   methods: {
     close() {
@@ -144,7 +162,6 @@ export default {
     addIngredient() {
       if (this.canAddIngredient) {
         this.ingredients.push({ name: '', quantity: '', unit: '' });
-        // this.$root.$bvToast.toast("A new ingredient has been included in your recipe",{title:"Ingredient added!" ,variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       } else {
         this.$root.$bvToast.toast("Please fill in all fields for the current ingredient before adding a new one.",{title:"Cannot add ingredient!" ,variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       }
@@ -152,14 +169,11 @@ export default {
     removeIngredient(index) {
       if (this.ingredients.length > 1) {
         this.ingredients.splice(index, 1);
-        // this.$root.$bvToast.toast("Ingredient removed!",{title: 'The selected ingredient has been deleted from your recipe',variant: 'warning',toaster: 'b-toaster-top-right',solid: true,
-        // autoHideDelay: 2000, appendToast: true,});
       }
     },
     addInstruction() {
       if (this.canAddInstruction) {
         this.instructions.push({ name: '' });
-        // this.$root.$bvToast.toast("A new instruction has been added to your recipe",{title:"Instruction added!" ,variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       } else {
         this.$root.$bvToast.toast("Please fill in the instruction field before adding a new one.",{title:"Cannot add instruction!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       }
@@ -167,7 +181,6 @@ export default {
     removeInstruction(index) {
       if (this.instructions.length > 1) {
         this.instructions.splice(index, 1);
-        // this.$root.$bvToast.toast("The selected instruction has been deleted from your recipe",{title:"Instruction removed!",variant: 'warning',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
 
       }
     },
@@ -199,7 +212,6 @@ export default {
           ingredients: this.ingredients,
           instructions: this.instructions
         };
-        console.log("Client - recipeContent.instructions = ", recipeContent.instructions);
         const response = await createNewRecipe(recipeContent);
         if (response.status === 201 && response.data.success) {
           this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
@@ -211,7 +223,6 @@ export default {
         }
       } else {
         this.$root.$bvToast.toast('Please fill in all the required fields.',{title:"Fields are missing!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
-
       }
     },
     isFormValid() {
@@ -225,9 +236,6 @@ export default {
         this.instructions.every(instruction => instruction.name)
       );
     },
-    handleFileUpload(event) {
-      this.image = event.target.files[0];
-    }
   },
 };
 </script>
@@ -421,7 +429,7 @@ h1 {
 .image-form{
   width: 100%;
 }
-.image-form .input-error{
+.recipe-image .input-error{
   height: 32.5px;
   border: 1px solid red;
   border-radius: 5px;

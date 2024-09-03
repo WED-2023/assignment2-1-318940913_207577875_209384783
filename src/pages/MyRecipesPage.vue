@@ -11,7 +11,6 @@
 <script>
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
 import { getRecipeInMyRecipes } from "../services/user.js";
-import { mockGetRecipeFullDetails } from "../services/recipes.js";
 
 export default {
   data() {
@@ -34,7 +33,7 @@ export default {
       }
     },
     async handleAddedNewRecipe() {
-      await fetchFavoriteRecipes();
+      await this.fetchFavoriteRecipes();
     },
   },
 };
