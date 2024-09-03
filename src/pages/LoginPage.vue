@@ -32,7 +32,7 @@
     </b-form>
 
     <!-- Register Link -->
-    <div class="mt-2"> Don't have an account yet? <router-link to="login"> Register here.</router-link></div>
+    <div class="mt-2"> Don't have an account yet? <router-link to="register"> Register here.</router-link></div>
 
     <!-- Error and Success Alerts -->
     <b-alert v-if="form.submitError" variant="danger" dismissible show>

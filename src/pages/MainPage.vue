@@ -7,17 +7,17 @@
           <div class="recipe-preview-container">
             <h3 class="mb-4">Discover New Culinary Adventures</h3>
             <!-- First Row: Two recipes -->
-            <b-row v-if="randomRecipes.length >= 2">
+            <b-row v-if="randomRecipes.length >= 3">
               <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6">
                 <RecipePreview :recipe="recipe" />
               </b-col>
             </b-row>
-            <!-- Second Row: One recipe -->
-            <b-row v-if="randomRecipes.length >= 3">
-              <b-col :key="randomRecipes[2].id" lg="12" class="recipe-row-two">
-                <RecipePreview :recipe="randomRecipes[2]" />
-              </b-col>
-            </b-row>
+            <!-- Second Row: two recipes -->
+          <b-row v-if="randomRecipes.length >= 4">
+            <b-col v-for="recipe in randomRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
+              <RecipePreview :recipe="recipe" />
+            </b-col>
+          </b-row>
           </div>
           <div class="random-button-container">
             <b-button
@@ -32,36 +32,43 @@
       </b-col>
       <!-- Right Column - Last Viewed Recipes / Login -->
       <b-col cols="12" md="6" lg="6">
-        <div class="login-last-viewed">
-          <div v-if="$root.store.username" class="container-user">
-            <h3 class="mb-4">Recipes You've Recently Seen</h3>
-            <b-row v-if="lastUserRecipes.length >= 1">
-              <b-col
-                v-for="recipe in firstRowRecipesUser"
-                :key="recipe.id"
-                lg="6"
-              >
-                <RecipePreview :recipe="recipe" />
-              </b-col>
-            </b-row>
-            <!-- Second Row: One recipe -->
-            <b-row v-if="lastUserRecipes.length >= 3">
-              <b-col
-                :key="lastUserRecipes[2].id"
-                lg="12"
-                class="recipe-row-two"
-              >
-                <RecipePreview :recipe="lastUserRecipes[2]" />
-              </b-col>
-            </b-row>
-          </div>
-          <div v-else class="login-container">
-            <LoginPage />
-          </div>
+      <div class="login-last-viewed">
+        <div v-if="$root.store.username" class="container-user">
+          <!-- ss -->
+          <h3 class="mb-4">Recipes You've Recently Seen</h3>
+          <!-- Display if there are user recipes -->
+          <b-row v-if="lastUserRecipes.length >= 1">
+            <b-col v-for="recipe in firstRowRecipesUser" :key="recipe.id" lg="6">
+              <RecipePreview :recipe="recipe" />
+            </b-col>
+          </b-row>
+          <!-- Second Row: two recipes -->
+          <b-row v-if="lastUserRecipes.length >= 3">
+            <b-col v-for="recipe in lastUserRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
+              <RecipePreview :recipe="recipe" />
+            </b-col>
+          </b-row>
+          <!-- Display if no user recipes are available -->
+          <b-row v-if="lastUserRecipes.length === 0">
+          <!-- First Row: Two recipes -->
+          <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6">
+            <RecipePreview :recipe="recipe" />
+          </b-col>
+        </b-row>
+        <!-- Second Row: Recipes in places 3 and 4 -->
+        <b-row v-if="lastUserRecipes.length === 0 && randomRecipes.length >= 4">
+          <b-col v-for="recipe in randomRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
+            <RecipePreview :recipe="recipe" />
+          </b-col>
+        </b-row>
         </div>
-      </b-col>
-    </b-row>
-  </div>
+        <div v-else class="login-container">
+          <LoginPage />
+        </div>
+      </div>
+    </b-col>
+        </b-row>
+      </div>
 </template>
 
 <script>

@@ -63,7 +63,7 @@ export function mockGetRecipeFullDetails(recipeId, testMode=false) {
   export async function fetchRandomRecipesFromServer() {
     try {
       const response = await axios.get(`${API_URL}/recipes/random`, {
-        params: { number: 3 },
+        params: { number: 4 },
         withCredentials: true
       });
       let recipes = response.data;
