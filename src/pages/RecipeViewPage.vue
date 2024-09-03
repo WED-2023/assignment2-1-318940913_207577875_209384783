@@ -63,6 +63,7 @@
 
 <script>
 import { updateLastViewedRecipesServer } from "@/services/user.js";
+import { addToMyMeal } from "../services/user.js";
 import { getRecipeFullPage} from "@/services/recipes.js";
 
 export default {
@@ -86,24 +87,41 @@ export default {
     }
   },
   mounted(){
-    this.addUserWatched();
+    // this.addUserWatched();
     // this.getRecipePage();
   },
   methods: {
 
-    addToMeal() {
+    // add and not forward to recipe making page
+    async addToMeal() {
+      try {
+        console.log("addtomeal, recipeid = ", this.recipeId);
+        await addToMyMeal({ recipeId: this.recipeId });
+        console.log("Add to my meal recipe id: ", this.recipeId);
+      } catch (error) {
+        console.error("Error handling add recipe to my meal:", error);
+      }
       // const user = this.$root.store.username;
       // this.$root.store.addRecipeToMeal(user, this.recipeId);
       // this.$router.push({ name: 'MealMaking', params: { recipeId: this.recipe.id } });
     },
-    makeRecipe() {
+    // add and forward to recipe making page
+    async makeRecipe() {
+      try {
+        console.log("makeRecipe, recipeid = ", this.recipeId);
+        await addToMyMeal({ recipeId: this.recipeId });
+        console.log("Add to my meal recipe id: ", this.recipeId);
+      } catch (error) {
+        console.error("Error handling add recipe to my meal:", error);
+      }
+      this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipeId } });
       // const user = this.$root.store.username;
       // this.$root.store.addRecipeToMeal(user, this.recipe.id);
       // this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipe.id } });
     },
-    async addUserWatched(){
-      if(this.$root.store.username) {const response = await updateLastViewedRecipesServer(this.recipeId);}
-    }
+    // async addUserWatched(){
+    //   if(this.$root.store.username) {const response = await updateLastViewedRecipesServer(this.recipeId);}
+    // }
   }
   
 };

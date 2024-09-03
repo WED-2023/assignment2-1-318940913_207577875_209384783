@@ -61,12 +61,16 @@
 
 <script>
 import { mockGetRecipeFullDetails } from "../services/recipes.js";
+import { getRecipeFullPage} from "@/services/recipes.js";
+import { getRecipeProgress, setRecipeProgress} from "@/services/user.js";
+
 
 export default {
   name: "RecipeMaking",
   data() {
     return {
       recipe: null,
+      recipeId: this.$route.params.recipeId,
       checkedInstructions: [],
       originalServings: 0
     };
@@ -86,35 +90,20 @@ export default {
     },
     async fetchRecipeDetails() {
       try {
-        const response = await mockGetRecipeFullDetails(this.$route.params.recipeId);
-        console.log("response.status", response.status);
-        if (response.status !== 200) this.$router.replace("/NotFound");
-
-        const {
-          instructions,
-          extendedIngredients,
-          readyInMinutes,
-          image,
-          title,
-          servings,
-          summary
-        } = response.data.recipe;
-
-        this.recipe = {
-          instructions,
-          extendedIngredients,
-          readyInMinutes,
-          image,
-          title,
-          servings,
-          summary
-        };
-
+        console.log("fetchRecipeDetails: this.recipeId = ", this.recipeId)
+        const response = await getRecipeFullPage(this.recipeId);
+        console.log("response = ", response);
+        const {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id} = response.data;
+        this.recipe = {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id};
+        console.log("recipe = ", this.recipe);
         this.originalServings = this.recipe.servings;
 
+        console.log("RecipeMakingPage - getRecipeProgress = ", await getRecipeProgress(this.recipe.id));
+
         // Load saved progress or initialize if none
-        this.checkedInstructions = this.$root.store.getRecipeProgress(this.$route.params.recipeId) || this.recipe.instructions.map(() => false);
+        this.checkedInstructions = await getRecipeProgress(this.recipe.id) || this.recipe.instructions.map(() => false);
         if(this.checkedInstructions.length == 0) this.checkedInstructions = this.recipe.instructions.map(() => false);
+        console.log("this.checkedInstructions = ", this.checkedInstructions);
 
       } catch (error) {
         console.log(error);
@@ -130,12 +119,10 @@ export default {
       this.checkedInstructions = this.checkedInstructions.map(() => false);
       this.saveProgress();
     },
-    saveProgress() {
-      if (!this.$root.store.username) {
-      console.warn("No user logged in. Progress will not be saved.");
+    async saveProgress() {
+      console.log("saveProgress: this.recipeId = ", this.recipeId, " this.checkedInstruction = ", this.checkedInstructions)
+      await setRecipeProgress({ recipeId: this.recipeId, recipe_progress: this.checkedInstructions });
       return;
-    }
-      this.$root.store.saveRecipeProgress(this.$route.params.recipeId, this.checkedInstructions);
     }
   },
 

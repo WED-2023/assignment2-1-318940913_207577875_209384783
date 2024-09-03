@@ -37,7 +37,7 @@ export async function getRecipeInFavorites(with_preview = true) {
     const response = await axios.get(`${API_URL}/users/FavoritesRecipes`);
     if (response.status != 200) return [];
     if (with_preview) {
-      const credentials = {
+      const credentials =  {
         recipes_id: response.data,
       };
       const preview_response = await axios.post(
@@ -107,6 +107,52 @@ export async function updateLastViewedRecipesServer(recipe_Id) {
     throw error;
   }
 }
+
+export async function addToMyMeal(credentials) {
+  try {
+    const response = await axios.post(
+      `${API_URL}/users/MyMeal`,
+      credentials,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error add recipe to my meal: ", error);
+    throw error;
+  }
+}
+
+export async function getRecipeProgress (recipeId) {
+  try {
+    const response = await axios.get(`${API_URL}/users/RecipeMakingProgress/${recipeId}`);
+    console.log("getRecipeProgress - response = ", response);
+    console.log("getRecipeProgress - response.data = ", response.data);
+    console.log("getRecipeProgress - response.data.recipe_progress = ", response.data.recipe_progress);
+    return response.data.recipe_progress;
+  } catch (error) {
+    throw new Error(`Error fetching recipe: ${error.response ? error.response.data : error.message}`);
+  }
+};
+
+export async function setRecipeProgress(credentials) {
+  try {
+    const response = await axios.put(
+      `${API_URL}/users/RecipeMaking`,
+      credentials,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error set recipe progress: ", error);
+    throw error;
+  }
+}
+
+
 export function mockAddFavorite(recipeId, like) {
   return {
     status: 200,
