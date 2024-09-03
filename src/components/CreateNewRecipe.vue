@@ -33,7 +33,8 @@
           </div>
           <div class="image-form">
         <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }" accept="image/*" @change="handleFileUpload" ></b-form-file>
-        <div class="image-preview" v-if="image">
+        <div class="image-preview" v-if="imageUrl">
+               <!-- Use the temporary URL to display the image -->
               <img :src="imageUrl" alt="Selected Image" class="img-fluid" />
           </div>    
       </div >
@@ -99,6 +100,7 @@ export default {
     return {
       title: '',
       image: null,
+      imageUrl: '',
       readyInMinutes: '',
       summary: '',
       servings: '',
@@ -132,10 +134,10 @@ export default {
       const lastInstruction = this.instructions[this.instructions.length - 1];
       return !!(lastInstruction && lastInstruction.name.trim());
     },
-    imageUrl() {
-      // Compute the URL for displaying the image preview
-      return this.image ? URL.createObjectURL(this.image) : '';
-    }
+    // imageUrl() {
+    //   // Compute the URL for displaying the image preview
+    //   return this.image ? URL.createObjectURL(this.image) : '';
+    // }
   },
   methods: {
     close() {
@@ -182,6 +184,7 @@ export default {
       this.ingredients = [{ name: '', quantity: '', unit: '' }];
       this.instructions = [{ name: '' }];
       this.image = null;
+      this.imageUrl = '';
       this.isFormSubmitted = false; 
     },
     async submitForm() {
@@ -190,6 +193,7 @@ export default {
         const recipeContent = {
           title: this.title,
           image: this.image,
+          imageUrl: this.imageUrl,
           ready_in_minutes: this.readyInMinutes,
           summary: this.summary,
           servings: this.servings,
@@ -218,6 +222,7 @@ export default {
       return (
         this.title &&
         this.image &&
+        this.imageUrl &&
         this.readyInMinutes &&
         this.summary &&
         this.servings &&
@@ -225,9 +230,16 @@ export default {
         this.instructions.every(instruction => instruction.name)
       );
     },
+    // handleFileUpload(event) {
+    //   this.image = event.target.files[0];
+    // }
     handleFileUpload(event) {
-      this.image = event.target.files[0];
+    const file = event.target.files[0];
+    if (file) {
+      this.image = file;
+      this.imageUrl = URL.createObjectURL(file); // Create a temporary URL for the image preview
     }
+  }
   },
 };
 </script>
