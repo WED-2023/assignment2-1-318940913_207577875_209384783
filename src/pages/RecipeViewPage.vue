@@ -87,7 +87,7 @@ export default {
     }
   },
   mounted(){
-    // this.addUserWatched();
+    this.addUserWatched();
     // this.getRecipePage();
   },
   methods: {
@@ -119,9 +119,9 @@ export default {
       // this.$root.store.addRecipeToMeal(user, this.recipe.id);
       // this.$router.push({ name: 'RecipeMaking', params: { recipeId: this.recipe.id } });
     },
-    // async addUserWatched(){
-    //   if(this.$root.store.username) {const response = await updateLastViewedRecipesServer(this.recipeId);}
-    // }
+    async addUserWatched(){
+      if(this.$root.store.username) {const response = await updateLastViewedRecipesServer(this.recipeId);}
+    }
   }
   
 };

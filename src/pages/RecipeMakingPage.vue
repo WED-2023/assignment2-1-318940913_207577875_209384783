@@ -23,34 +23,72 @@
                 :key="index + '_' + r.id"
                 class="list-group-item"
               >
-                {{ calculateAdjustedAmount(r) }} {{ r.unit }} {{ r.originalName }}
+                {{ calculateAdjustedAmount(r) }} {{ r.unit }}
+                {{ r.originalName }}
               </li>
             </ul>
           </div>
           <div class="col-md-6">
             <h5>Instructions</h5>
             <ol class="list-group list-group-flush instructions-list">
-              <li v-for="(s, index) in recipe.instructions" :key="index" class="list-instruction-item">
-                <input type="checkbox" v-model="checkedInstructions[index]" @change="saveProgress" class="instruction-checkbox"/>
-                <span :class="{ 'checked-text': checkedInstructions[index] }">{{ s }}</span>
+              <li
+                v-for="(s, index) in recipe.instructions"
+                :key="index"
+                class="list-instruction-item"
+              >
+                <input
+                  type="checkbox"
+                  v-model="checkedInstructions[index]"
+                  class="instruction-checkbox"
+                />
+                <span :class="{ 'checked-text': checkedInstructions[index] }">{{
+                  s
+                }}</span>
               </li>
             </ol>
             <div class="mt-1">
-              <b-button class="mr-1" size="sm" variant="" @click="resetAllRecipeProgress" style="border-radius: 5px;">Clear</b-button>
-              <b-button size="sm" variant="success" @click="markAsDone" style="border-radius: 5px;" >Mark As Done</b-button>
+              <b-button
+                class="mr-1"
+                size="sm"
+                variant=""
+                @click="resetAllRecipeProgress"
+                style="border-radius: 5px;"
+                >Clear</b-button
+              >
+              <b-button
+                size="sm"
+                variant="success"
+                @click="markAsDone"
+                style="border-radius: 5px;"
+                >Mark As Done</b-button
+              >
             </div>
             <div class="mt-3">
               <h5>Recipe Progress</h5>
-              <b-progress :value="checkedCount" :max="recipe.instructions.length" variant="success" animated show-progress>
+              <b-progress
+                :value="checkedCount"
+                :max="recipe.instructions.length"
+                variant="success"
+                animated
+                show-progress
+              >
                 <b-progress-bar :value="checkedCount">
-                  <strong>{{ checkedCount }} / {{ recipe.instructions.length }}</strong>
+                  <strong
+                    >{{ checkedCount }} /
+                    {{ recipe.instructions.length }}</strong
+                  >
                 </b-progress-bar>
               </b-progress>
             </div>
             <div class="mt-3">
               Choose Serving Amount:
-              <br>
-              <b-form-spinbutton id="sb-inline" v-model="recipe.servings" inline @change="handleServingsChange"></b-form-spinbutton>
+              <br />
+              <b-form-spinbutton
+                id="sb-inline"
+                v-model="recipe.servings"
+                inline
+                @change="handleServingsChange"
+              ></b-form-spinbutton>
             </div>
           </div>
         </div>
@@ -61,9 +99,17 @@
 
 <script>
 import { mockGetRecipeFullDetails } from "../services/recipes.js";
-import { getRecipeFullPage} from "@/services/recipes.js";
-import { getRecipeProgress, setRecipeProgress} from "@/services/user.js";
+import { getRecipeFullPage } from "@/services/recipes.js";
+import { getRecipeProgress, setRecipeProgress } from "@/services/user.js";
 
+// Utility function to debounce a function call
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
 
 export default {
   name: "RecipeMaking",
@@ -72,13 +118,13 @@ export default {
       recipe: null,
       recipeId: this.$route.params.recipeId,
       checkedInstructions: [],
-      originalServings: 0
+      originalServings: 0,
     };
   },
   computed: {
     checkedCount() {
       return this.checkedInstructions.filter(Boolean).length;
-    }
+    },
   },
   methods: {
     markAsDone() {
@@ -90,45 +136,82 @@ export default {
     },
     async fetchRecipeDetails() {
       try {
-        console.log("fetchRecipeDetails: this.recipeId = ", this.recipeId)
         const response = await getRecipeFullPage(this.recipeId);
-        console.log("response = ", response);
-        const {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id} = response.data;
-        this.recipe = {instructions,extendedIngredients,aggregateLikes,readyInMinutes,image,title,vegetarian,vegan,glutenFree,servings,id};
-        console.log("recipe = ", this.recipe);
+        const {
+          instructions,
+          extendedIngredients,
+          aggregateLikes,
+          readyInMinutes,
+          image,
+          title,
+          vegetarian,
+          vegan,
+          glutenFree,
+          servings,
+          id,
+        } = response.data;
+        this.recipe = {
+          instructions,
+          extendedIngredients,
+          aggregateLikes,
+          readyInMinutes,
+          image,
+          title,
+          vegetarian,
+          vegan,
+          glutenFree,
+          servings,
+          id,
+        };
         this.originalServings = this.recipe.servings;
 
-        console.log("RecipeMakingPage - getRecipeProgress = ", await getRecipeProgress(this.recipe.id));
-
         // Load saved progress or initialize if none
-        this.checkedInstructions = await getRecipeProgress(this.recipe.id) || this.recipe.instructions.map(() => false);
-        if(this.checkedInstructions.length == 0) this.checkedInstructions = this.recipe.instructions.map(() => false);
-        console.log("this.checkedInstructions = ", this.checkedInstructions);
-
+        this.checkedInstructions =
+          (await getRecipeProgress(this.recipe.id)) ||
+          this.recipe.instructions.map(() => false);
+        if (this.checkedInstructions.length === 0)
+          this.checkedInstructions = this.recipe.instructions.map(() => false);
       } catch (error) {
         console.log(error);
         this.$router.replace("/NotFound");
       }
     },
     handleServingsChange() {
-      this.recipe.extendedIngredients.forEach(ingredient => {
-        this.$set(ingredient, 'adjustedAmount', this.calculateAdjustedAmount(ingredient));
+      this.recipe.extendedIngredients.forEach((ingredient) => {
+        this.$set(
+          ingredient,
+          "adjustedAmount",
+          this.calculateAdjustedAmount(ingredient)
+        );
       });
     },
     resetAllRecipeProgress() {
       this.checkedInstructions = this.checkedInstructions.map(() => false);
       this.saveProgress();
     },
-    async saveProgress() {
-      console.log("saveProgress: this.recipeId = ", this.recipeId, " this.checkedInstruction = ", this.checkedInstructions)
-      await setRecipeProgress({ recipeId: this.recipeId, recipe_progress: this.checkedInstructions });
-      return;
-    }
+    // Debounced saveProgress method
+    saveProgress: debounce(async function() {
+      await setRecipeProgress({
+        recipeId: this.recipeId,
+        recipe_progress: this.checkedInstructions,
+      });
+    }, 300),
   },
-
+  watch: {
+    // Watch changes in checkedInstructions and debounce the save function
+    checkedInstructions: {
+      handler: debounce(async function() {
+        await setRecipeProgress({
+          recipeId: this.recipeId,
+          recipe_progress: this.checkedInstructions,
+        });
+      }, 300),
+      deep: true, // Ensure deep watching for array elements
+    },
+  },
   async created() {
     await this.fetchRecipeDetails();
-  }
+  },
 };
 </script>
 
@@ -208,5 +291,4 @@ export default {
   border-bottom: 2px solid #42b983;
   padding-bottom: 10px;
 }
-
 </style>

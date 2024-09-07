@@ -2,8 +2,16 @@
   <b-container class="title-container">
     <h3 v-if="title" class="title mb-2">{{ title }}</h3>
     <b-row>
-      <draggable v-if="meal" v-model="recipes" tag="div" class="row" group="recipesGroup" @end="onDragEnd">
-        <b-col v-for="(recipe, index) in recipes" :key="recipe.id" class="recipe-col">
+      <!-- Bind to localRecipes instead of recipes -->
+      <draggable 
+        v-if="meal" 
+        v-model="localRecipes" 
+        tag="div" 
+        class="row" 
+        group="recipesGroup" 
+        @end="onDragEnd"
+      >
+        <b-col v-for="(recipe, index) in localRecipes" :key="recipe.id" class="recipe-col">
           <div class="recipe-wrapper">
             <div @click="removeRecipe(index)" class="icon-container">
               <i class="bi bi-trash mb-1 icon-shadow"></i>
@@ -12,18 +20,18 @@
           </div>
         </b-col>
         
-        <b-col v-if="recipes.length === 0">
+        <b-col v-if="localRecipes.length === 0">
           <p>No recipes added to the meal.</p>
         </b-col>
       </draggable>
       <template v-else>
-        <b-col v-for="recipe in recipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
+        <b-col v-for="recipe in localRecipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
           <RecipePreview class="recipePreview" :recipe="recipe" @likedChanged="handleLikedChanged"/>
         </b-col>
       </template>
     </b-row>
     <div v-if="meal" class="clearMeal">
-      <b-button v-if="recipes.length > 0" variant="danger" @click="clearMeal">Clear Meal</b-button>
+      <b-button v-if="localRecipes.length > 0" variant="danger" @click="clearMeal">Clear Meal</b-button>
     </div>
   </b-container>
 </template>
@@ -32,6 +40,7 @@
 import draggable from 'vuedraggable';
 import RecipePreview from "./RecipePreview.vue";
 import RecipeInMealPreview from "./RecipeInMealPreview.vue";
+import { updateRecipesOrder, removeFromMyMeal} from "@/services/user.js";
 
 export default {
   name: "RecipePreviewList",
@@ -55,33 +64,48 @@ export default {
       default: false
     },
   },
+  data() {
+    return {
+      localRecipes: [...this.recipes], // Initialize with a copy of the recipes prop
+    };
+  },
+  watch: {
+    // Watch for changes in the recipes prop and update localRecipes accordingly
+    recipes(newRecipes) {
+      this.localRecipes = [...newRecipes];
+    },
+  },
   methods: {
     handleLikedChanged(recipeId, isLiked) {
-      // Emit event to parent component (FavoriteRecipesPage.vue) And Others
       this.$emit("likedChanged", recipeId, isLiked);
       console.log("Event Triggered At RecipePreviewList");
     },
-    onDragEnd(event) {
-      // Get the new order of recipe IDs
-      const newOrderRecipeIds = this.recipes.map(recipe => recipe.id);
-      
-      // Call saveRecipesToMeal to save the new order
-      this.$root.store.saveRecipesToMeal(this.$root.store.username, newOrderRecipeIds);
+    async onDragEnd(event) {
+      const newOrderRecipeIds = this.localRecipes.map(recipe => recipe.id);
+      await updateRecipesOrder({recipes_order_id: newOrderRecipeIds});
+      this.$emit('update:recipes', [...this.localRecipes]); // Emit updated recipes to parent
     },
 
-    removeRecipe(index) {
-      this.recipes.splice(index, 1); // Remove recipe at index
-      const recipeIds = this.recipes.map(recipe => recipe.id);
-      this.$root.store.saveRecipesToMeal(this.$root.store.username, recipeIds); // Save updated meal
+    async removeRecipe(index) {
+      const recipe_to_remove = this.localRecipes[index];
+      await removeFromMyMeal(recipe_to_remove.id);
+      this.localRecipes.splice(index, 1); // Remove recipe from local copy
+      this.$emit('update:recipes', [...this.localRecipes]); // Emit updated recipes to parent
     },
 
-    clearMeal() {
-      this.recipes = []; // Clear all recipes from meal
-      this.$root.store.saveRecipesToMeal(this.$root.store.username, []); // Save empty meal
+    async clearMeal() {
+      console.log("1");
+      for(const recipe of this.localRecipes)
+        await removeFromMyMeal(recipe.id);
+        console.log("1");
+      this.localRecipes = []; // Clear all recipes from local copy
+      this.$emit('update:recipes', []); // Emit updated recipes to parent
     },
   }
 };
 </script>
+
+
 
 <style lang="scss" scoped>
 /* Optional: Adjust spacing and layout as needed */

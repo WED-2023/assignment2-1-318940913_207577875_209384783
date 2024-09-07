@@ -124,6 +124,30 @@ export async function addToMyMeal(credentials) {
   }
 }
 
+export async function removeFromMyMeal(recipe_id) {
+  try {
+    const response = await axios.delete(`${API_URL}/users/MyMeal`, {
+      data: { recipeId: recipe_id },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error remove recipe from my meal: ", error);
+    throw error;
+  }
+}
+
+export async function getRecipesInMyMeal() {
+  try {
+    const response = await axios.get(`${API_URL}/users/MyMeal`);
+    if (response.status != 200) return [];
+    return response.data;
+  } catch (error) {
+    console.error("Error in get favorites: ", error);
+    throw error;
+  }
+}
+
 export async function getRecipeProgress (recipeId) {
   try {
     const response = await axios.get(`${API_URL}/users/RecipeMakingProgress/${recipeId}`);
@@ -148,6 +172,22 @@ export async function setRecipeProgress(credentials) {
     return response.data;
   } catch (error) {
     console.error("Error set recipe progress: ", error);
+    throw error;
+  }
+}
+
+export async function updateRecipesOrder(credentials) {
+  try {
+    const response = await axios.put(
+      `${API_URL}/users/MyMeal`,
+      credentials,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error reorder recipes in meal: ", error);
     throw error;
   }
 }

@@ -25,7 +25,7 @@
         <b-navbar-nav class="ml-auto User-section" v-else>
           <b-nav-item :to="{ name: 'MealMaking' }">
             <!-- <img :src="require('@/assets/foodIcon.png')" alt="Logo" class="meals-logo" /> -->
-             My Meal ({{ this.$root.store.getUserMeals(this.$root.store.username).length }})
+             My Meal ({{ mealLength }})
           </b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
@@ -39,24 +39,35 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <router-view />
+    <router-view @update:recipes="updateMealLength" />
   </div>
 </template>
 
 <script>
 import CreateNewRecipe from '@/components/CreateNewRecipe.vue';
 import {logOutServer} from "@/services/auth";
+import { getRecipesInMyMeal } from "@/services/user.js";
 
 import { ref } from "vue";
 export default {
   data() {
     return {
       showDropdown: false,
-      searchText:''
+      searchText:'',
+      mealRecipes: []
     };
   },
   components:{
     CreateNewRecipe,
+  },
+  computed: {
+    // Define the computed property using the Options API
+    mealLength() {
+      return this.mealRecipes.length;
+    },
+  },
+  mounted() {
+    this.fetchMealRecipes(); // Fetch the meal recipes when the component is mounted
   },
   setup() {
     const modalActive = ref(false);
@@ -67,6 +78,17 @@ export default {
     return { modalActive, toggleModal };
   },
   methods: {
+    async fetchMealRecipes() {
+      try {
+        const recipes = await getRecipesInMyMeal(); // Fetch the recipes asynchronously
+        this.mealRecipes = recipes; // Set the fetched recipes in the data property
+      } catch (error) {
+        console.error("Failed to fetch recipes in meal:", error);
+      }
+    },
+    updateMealLength(updatedRecipes) {
+      this.mealRecipes = updatedRecipes;
+    },
     async Logout() {
       try{
           const response = await logOutServer();
