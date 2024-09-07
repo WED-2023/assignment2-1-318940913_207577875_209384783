@@ -1,91 +1,94 @@
 <template>
-    <b-button @click="toggleLike" class="custom-button" :class="{ 'hovered': isHovered }">
-      <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-    </b-button>
-  </template>
-  
-  <script>
-  import { mockAddFavorite } from "../services/user.js";
-  import { BButton } from "bootstrap-vue";
-  import { isRecipeInFavorites, markAsFavorite, unMarkAsFavorite } from "../services/user.js";
-  
-  export default {
-    components: {
-      BButton,
-    },
-    props: {
-      recipe: {
-        type: Object,
-        required: true,
-      },
-      isHovered: {
-        type: Boolean,
-        default: false,
-      },
-    },
-    data() {
-      return {
-        isLiked: false,
-      };
-    },
-    async mounted() {
+  <!-- Button that toggles the like status of a recipe, showing different icons based on the state -->
+  <b-button @click="toggleLike" class="custom-button" :class="{ 'hovered': isHovered }">
+    <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+  </b-button>
+</template>
+
+<script>
+import { isRecipeInFavorites, markAsFavorite, unMarkAsFavorite } from "../services/user.js";
+import { BButton } from "bootstrap-vue";
+
+export default {
+components: {
+  BButton,
+},
+props: {
+  recipe: {
+    type: Object,
+    required: true, // Recipe object must be passed to the component
+  },
+  isHovered: {
+    type: Boolean,
+    default: false, // Tracks if the button is hovered to change its style
+  },
+},
+data() {
+  return {
+    isLiked: false, // Boolean indicating if the recipe is currently liked by the user
+  };
+},
+async mounted() {
+  // When component is mounted, check if the recipe is in user's favorites
+  try {
+    this.isLiked = await isRecipeInFavorites(this.recipe.id);
+  } catch (error) {
+    console.error(`Failed to check if recipe ${this.recipe.id} is in favorites:`, error);
+  }
+},
+methods: {
+  async toggleLike() {
+    // Toggles the like state of the recipe and updates it on the server
     try {
-      // console.log(`Checking if recipe ${this.recipe.id} is in favorites...`);
-      this.isLiked = await isRecipeInFavorites(this.recipe.id);
-      // console.log(`Recipe ${this.recipe.id} is in favorites: ${this.isLiked}`);
-    } catch (error) {
-      console.error(`Failed to check if recipe ${this.recipe.id} is in favorites:`, error);
+      if(!this.isLiked) {
+        // If the recipe is not liked, mark it as favorite
+        await markAsFavorite({ recipeId: this.recipe.id });
+      } else {
+        // If the recipe is liked, remove it from favorites
+        await unMarkAsFavorite(this.recipe.id);
+      }
+      this.isLiked = !this.isLiked; // Toggle the local like state
+      this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit an event to notify parent components of the change
+    } catch (err) {
+      console.error("Error toggling the like state of the recipe:", err);
+      this.isLiked = false; // Reset like state on error
     }
   },
-    methods: {
-      async toggleLike() {
-        try {
-          const credentials = {
-            recipeId: this.recipe.id
-          };
-          if(!this.isLiked)
-            await markAsFavorite(credentials);
-          else
-            await unMarkAsFavorite(this.recipe.id);
-          this.isLiked = !this.isLiked;
-          this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit event to parent
-          console.log("Event Triggered At RecipeLike");
-        } catch (err) {
-          this.isLiked = false;
-          this.$root.toast("Error", err, "danger");
-        }
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .custom-button {
-    background-color: white;
-    border-color: white;
-    padding: 0;
-    min-width: 18px;
-    min-height: 15px;
-    display: flex;
-  }
-  
-  .custom-button .bi-heart,
-  .custom-button .bi-heart-fill {
-    color: #ff0000;
-  }
-  
-  .btn.custom-button.btn-secondary:hover,
-  .btn.custom-button.btn-secondary:focus,
-  .btn.custom-button.btn-secondary:active {
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    outline: none;
-  }
-  
-  .hovered .bi-heart,
-  .hovered .bi-heart-fill {
-    background-color: rgb(241, 240, 240);
-  }
-  </style>
-  
+},
+};
+</script>
+
+<style scoped>
+/* Styles for the custom button that triggers the like functionality */
+.custom-button {
+  background-color: white; /* Set the background color to white */
+  border-color: white; /* Match the border color with the background */
+  padding: 0; /* Remove padding to minimize the button size */
+  min-width: 18px; /* Minimum width to ensure the icon is visible */
+  min-height: 15px; /* Minimum height to match the icon's size */
+  display: flex; /* Use flexbox for centering content */
+}
+
+/* Style definitions for heart icons within the button */
+.custom-button .bi-heart,
+.custom-button .bi-heart-fill {
+  color: #ff0000; /* Red color for the heart icons to signify 'like' action */
+}
+
+/* Override Bootstrap's default hover, focus, and active states for a cleaner look */
+.btn.custom-button.btn-secondary:hover,
+.btn.custom-button.btn-secondary:focus,
+.btn.custom-button.btn-secondary:active {
+  border: none; /* Remove border on hover/focus/active states */
+  background: transparent; /* Set background to transparent to avoid color shift */
+  box-shadow: none; /* Remove box shadow for a flat design */
+  outline: none; /* Remove outline on focus for a cleaner look */
+}
+
+/* Specific style when the button is hovered to show a different background */
+.hovered .bi-heart,
+.hovered .bi-heart-fill {
+  background-color: rgb(241, 240, 240); /* Light grey background on hover to highlight the icon */
+}
+</style>
+

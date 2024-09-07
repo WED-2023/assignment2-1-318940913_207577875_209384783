@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- RecipePreviewList component displays a list of favorite recipes -->
     <RecipePreviewList
       title="My Favorites"
       :recipes="favRecipes"
@@ -9,50 +10,52 @@
 </template>
 
 <script>
+// Import the RecipePreviewList component and necessary services
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
-import { getRecipeInFavorites, markAsFavorite, unMarkAsFavorite } from "../services/user.js";
+import {
+  getRecipeInFavorites,
+  markAsFavorite,
+  unMarkAsFavorite,
+} from "../services/user.js";
 
 export default {
   components: {
-    RecipePreviewList,
+    RecipePreviewList, // Register RecipePreviewList component
   },
   data() {
     return {
-      favRecipes: [],
+      favRecipes: [], // Array to store favorite recipes
     };
   },
-  async mounted() {
-    this.fetchFavoriteRecipes();
+  mounted() {
+    this.fetchFavoriteRecipes(); // Fetch favorite recipes when component mounts
   },
   methods: {
     async fetchFavoriteRecipes() {
       try {
-        this.favRecipes = await getRecipeInFavorites();
+        this.favRecipes = await getRecipeInFavorites(); // Load favorite recipes from service
       } catch (error) {
-        console.error("Error fetching favorite recipes:", error);
+        console.error("Error fetching favorite recipes:", error); // Log any errors
       }
     },
     async handleLikedChanged(recipeId, isLiked) {
       try {
         console.log("Event Triggered At Favorites");
         if (!isLiked) {
-          // Remove the recipe from favorites immediately
-          await unMarkAsFavorite(recipeId);
-          this.favRecipes = this.favRecipes.filter((recipe) => recipe.id !== recipeId);
+          await unMarkAsFavorite(recipeId); // Remove recipe from favorites
+          this.favRecipes = this.favRecipes.filter(
+            (recipe) => recipe.id !== recipeId
+          );
         } else {
-          // Add the recipe to favorites
-          await markAsFavorite(recipeId);
-          // Optionally fetch updated favorites list
-          this.favRecipes = await getRecipeInFavorites();
+          await markAsFavorite(recipeId); // Add recipe to favorites
+          this.favRecipes = await getRecipeInFavorites(); // Refresh the favorites list
         }
       } catch (error) {
-        console.error("Error handling liked changed:", error);
+        console.error("Error handling liked changed:", error); // Log any errors
       }
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-/* Optional: Adjust styling as needed */
-</style>
+<style lang="scss" scoped></style>

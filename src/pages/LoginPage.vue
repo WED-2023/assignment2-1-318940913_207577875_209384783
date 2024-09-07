@@ -1,40 +1,80 @@
 <template>
   <div class="login-container">
+    <!-- Main container for the login form -->
     <h1 class="title">Login</h1>
+    <!-- Title for the login form -->
     <b-form @submit.prevent="onLogin">
-      <!-- Username Input -->
-      <b-form-group id="input-group-Username" label-cols-sm="3" label="Username:" label-for="Username">
-          <b-input-group>
-            <b-input-group-prepend is-text>
-                <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
-            </b-input-group-prepend>
-            <b-form-input id="Username" v-model="$v.form.username.$model" type="text" placeholder="Enter your username" :state="validateState('username')"></b-form-input>
-          </b-input-group>
-        <b-form-invalid-feedback v-if="$v.form.username.$error">Username is required.</b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Password Input -->
-      <b-form-group id="input-group-Password" label-cols-sm="3" label="Password:" label-for="Password" >
+      <!-- Username Input Field -->
+      <b-form-group
+        id="input-group-Username"
+        label-cols-sm="3"
+        label="Username:"
+        label-for="Username"
+      >
         <b-input-group>
           <b-input-group-prepend is-text>
-            <span class="input-group-text"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+            <!-- Username icon -->
+            <span class="input-group-text"
+              ><i class="fa fa-user" aria-hidden="true"></i
+            ></span>
           </b-input-group-prepend>
-          <b-form-input id="Password" type="password" v-model="$v.form.password.$model" placeholder="Enter your password" :state="validateState('password')"
-          ></b-form-input>
+          <b-form-input
+            id="Username"
+            v-model="$v.form.username.$model"
+            type="text"
+            placeholder="Enter your username"
+            :state="validateState('username')"
+          >
+          </b-form-input>
         </b-input-group>
-        <b-form-invalid-feedback v-if="$v.form.password.$error">Password is required.</b-form-invalid-feedback>
+        <!-- Error message for username input -->
+        <b-form-invalid-feedback v-if="$v.form.username.$error"
+          >Username is required.</b-form-invalid-feedback
+        >
       </b-form-group>
 
-      <!-- Submit Button -->
+      <!-- Password Input Field -->
+      <b-form-group
+        id="input-group-Password"
+        label-cols-sm="3"
+        label="Password:"
+        label-for="Password"
+      >
+        <b-input-group>
+          <b-input-group-prepend is-text>
+            <!-- Password icon -->
+            <span class="input-group-text"
+              ><i class="fa-solid fa-lock" aria-hidden="true"></i
+            ></span>
+          </b-input-group-prepend>
+          <b-form-input
+            id="Password"
+            type="password"
+            v-model="$v.form.password.$model"
+            placeholder="Enter your password"
+            :state="validateState('password')"
+          >
+          </b-form-input>
+        </b-input-group>
+        <!-- Error message for password input -->
+        <b-form-invalid-feedback v-if="$v.form.password.$error"
+          >Password is required.</b-form-invalid-feedback
+        >
+      </b-form-group>
+
+      <!-- Submit Button for the form -->
       <b-button type="submit" variant="primary" class="login-button">
         <i class="bi bi-box-arrow-in-right"></i> Login
       </b-button>
     </b-form>
 
-    <!-- Register Link -->
-    <div class="mt-2"> Don't have an account yet? <router-link to="register"> Register here.</router-link></div>
+    <!-- Link to registration page -->
+    <div class="mt-2">
+      Don't have an account yet?
+      <router-link to="register"> Register here.</router-link>
+    </div>
 
-    <!-- Error and Success Alerts -->
+    <!-- Error and Success Alerts for login attempts -->
     <b-alert v-if="form.submitError" variant="danger" dismissible show>
       Login failed: {{ form.submitError }}
     </b-alert>
@@ -70,38 +110,39 @@ export default {
   methods: {
     validateState(param) {
       const { $dirty, $error } = this.$v.form[param];
-      return $dirty ? !$error : null;
+      return $dirty ? !$error : null; // Return validation state
     },
     async login() {
       try {
         const credentials = {
           username: this.form.username,
-          password: this.form.password
+          password: this.form.password,
         };
-        const response = await logInServer(credentials);
+        const response = await logInServer(credentials); // Call to server for authentication
         if (response.success) {
-          this.form.submitSuccess = true;
-          this.$root.store.login(this.form.username);
-          this.$router.push("/");
+          this.form.submitSuccess = true; // Set success state
+          this.$root.store.login(this.form.username); // Perform login action
+          this.$router.push("/"); // Redirect to home page
         } else {
-          this.form.submitError = response.message;
+          this.form.submitError = response.message; // Display error message
         }
       } catch (err) {
-        this.form.submitError = err.response.data.message;
+        this.form.submitError = err.response.data.message; // Handle error response
       }
     },
     onLogin() {
       this.form.submitError = undefined;
       this.form.submitSuccess = undefined;
-      this.$v.form.$touch();
-      if (this.$v.form.$anyError) return;
-      this.login();
+      this.$v.form.$touch(); // Trigger validation
+      if (this.$v.form.$anyError) return; // Abort if any errors
+      this.login(); // Proceed with login
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+/* Styling for the login container, buttons, and text */
 .login-container {
   max-width: 500px;
   min-height: 450px;
@@ -117,7 +158,6 @@ export default {
   font-size: 2rem;
   text-align: center;
   margin-bottom: 50px;
-
 }
 
 .login-button {
@@ -128,9 +168,9 @@ export default {
   border-color: green;
   border-radius: 8px;
 }
-.login-button:hover{
-  background-color:rgb(2, 85, 2);
-  border-color:rgb(2, 85, 2);
+.login-button:hover {
+  background-color: rgb(2, 85, 2);
+  border-color: rgb(2, 85, 2);
 }
 
 .register-link {
@@ -139,27 +179,20 @@ export default {
   font-size: 1.2rem;
 }
 
-h1.title{
-  margin-bottom: 50px;
-  font-weight: bold;
-  font-size: 2.8rem;
-  display: inline-block;
-  border-bottom: 2px solid #42b983;
-}
 .input-group-text {
-    display: flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-     font-weight: 400; 
-     line-height: 3.5; 
-    color: #495057;
-    background-color: #e9ecef;
-    border: none; 
-    border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  color: #495057;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
 }
+
 .mt-2[data-v-16d8eba4] {
-    font-size: 20px;}
-.mt-2, .my-2 {
-    margin-top: 1.5rem !important;
+  font-size: 20px;
+}
+.mt-2,
+.my-2 {
+  margin-top: 1.5rem !important;
 }
 </style>

@@ -1,109 +1,219 @@
 <template>
-  <b-modal v-model="modalActive" @hide="close" size="lg" hide-footer title="Come on, let's add a new recipe">
+  <b-modal
+    v-model="modalActive"
+    @hide="close"
+    size="lg"
+    hide-footer
+    title="Come on, let's add a new recipe"
+  >
+    <!-- Main container for modal content -->
     <div class="modal-inner">
       <div class="modal-body">
-        <!-- Left Column: Recipe Details -->
+        <!-- Left Column: Input fields for recipe details -->
         <div class="left-column">
           <h1>Recipe Details</h1>
-          <input type="text" placeholder="Recipe Name" required v-model="title" :class="{ 'input-error': isFormSubmitted && !title }" class="input-style">
+          <input
+            type="text"
+            placeholder="Recipe Name"
+            required
+            v-model="title"
+            :class="{ 'input-error': isFormSubmitted && !title }"
+            class="input-style"
+          />
+
+          <!-- Container for selecting cooking time and number of servings -->
           <div class="time-servings-container">
             <div class="field-readyInMinutes">
-              <select v-model.number="readyInMinutes" required class="styled-select" :class="{ 'input-error': isFormSubmitted && !readyInMinutes }">
-                <option  disabled value="" class="placeholder">Cooking Time </option>
-                <option v-for="time in cookingTimes" :key="time" :value="time">{{ time }} minutes</option>
+              <select
+                v-model.number="readyInMinutes"
+                required
+                class="styled-select"
+                :class="{ 'input-error': isFormSubmitted && !readyInMinutes }"
+              >
+                <option disabled value="" class="placeholder"
+                  >Cooking Time</option
+                >
+                <option v-for="time in cookingTimes" :key="time" :value="time"
+                  >{{ time }} minutes</option
+                >
               </select>
             </div>
             <div class="field-servings">
-              <select v-model.number="servings" required class="styled-select" :class="{ 'input-error': isFormSubmitted && !servings }">
+              <select
+                v-model.number="servings"
+                required
+                class="styled-select"
+                :class="{ 'input-error': isFormSubmitted && !servings }"
+              >
                 <option disabled value="">Number of diners</option>
-                <option v-for="serving in servingsOptions" :key="serving" :value="serving">{{ serving }} diners</option>
+                <option
+                  v-for="serving in servingsOptions"
+                  :key="serving"
+                  :value="serving"
+                  >{{ serving }} diners</option
+                >
               </select>
             </div>
           </div>
 
-          <textarea id="summary" class="summary-textarea" placeholder="Description" v-model="summary"  maxlength="100" required :class="{ 'input-error': isFormSubmitted && !summary }"></textarea>
-          <div class="form-check">
-            <b-form-checkbox v-model="vegan" id="inlineCheckbox1" name="inline-checkbox" switch style="margin-bottom: 10px;"> Vegan </b-form-checkbox>
-          </div>
-          <div class="form-check">
-            <b-form-checkbox v-model="vegetarian" id="inlineCheckbox2" name="inline-checkbox" switch style="margin-bottom: 10px;"> Vegetarian </b-form-checkbox>
-          </div>
-          <div class="form-check">
-            <b-form-checkbox v-model="isGlutenFree" id="inlineCheckbox3" name="inline-checkbox" switch style="margin-bottom: 15px;">Gluten Free </b-form-checkbox>
-          </div>
-
-<!-- 
-          <div class="image-form">
-        <b-form-file id="file-default" placeholder="Choose an image or drop it here.." drop-placeholder="Drop image here..." v-model="image" size="sm" required :class="{ 'input-error': isFormSubmitted && !image }" accept="image/*" @change="handleFileUpload" ></b-form-file>
-        <div class="image-preview" v-if="image"> -->
-               <!-- Use the temporary URL to display the image -->
-              <!-- <img :src="imageUrl" alt="Selected Image" class="img-fluid" />
-          </div>    
-      </div > -->
-      <!-- <div class="image-form">
-        <b-form-group label="Image URL" label-for="recipe-image" class="form-group">
-          <b-form-input id="recipe-image" v-model="image" required
-            placeholder="Enter image URL"></b-form-input>
-        </b-form-group>
-
-      </div> -->
-      <div class="image-form">
-        <b-form-group label="Image URL" label-for="recipe-image" class="form-group">
-          <!-- Apply the conditional input-error class directly to the input field -->
-          <b-form-input
-            id="recipe-image"
-            v-model="image"
+          <!-- Textarea for recipe description -->
+          <textarea
+            id="summary"
+            class="summary-textarea"
+            placeholder="Description"
+            v-model="summary"
+            maxlength="100"
             required
-            placeholder="Enter image URL"
-            :class="{ 'input-error': isFormSubmitted && !image }" 
-          ></b-form-input>
-        </b-form-group>
+            :class="{ 'input-error': isFormSubmitted && !summary }"
+          ></textarea>
+
+          <!-- Checkboxes for dietary preferences -->
+          <div class="form-check">
+            <b-form-checkbox
+              v-model="vegan"
+              id="inlineCheckbox1"
+              name="inline-checkbox"
+              switch
+              style="margin-bottom: 10px;"
+            >
+              Vegan
+            </b-form-checkbox>
+          </div>
+          <div class="form-check">
+            <b-form-checkbox
+              v-model="vegetarian"
+              id="inlineCheckbox2"
+              name="inline-checkbox"
+              switch
+              style="margin-bottom: 10px;"
+            >
+              Vegetarian
+            </b-form-checkbox>
+          </div>
+          <div class="form-check">
+            <b-form-checkbox
+              v-model="isGlutenFree"
+              id="inlineCheckbox3"
+              name="inline-checkbox"
+              switch
+              style="margin-bottom: 15px;"
+            >
+              Gluten Free
+            </b-form-checkbox>
+          </div>
+
+          <!-- Image URL input field -->
+          <div class="image-form">
+            <b-form-group
+              label="Image URL"
+              label-for="recipe-image"
+              class="form-group"
+            >
+              <b-form-input
+                id="recipe-image"
+                v-model="image"
+                required
+                placeholder="Enter image URL"
+                :class="{ 'input-error': isFormSubmitted && !image }"
+              ></b-form-input>
+            </b-form-group>
+          </div>
         </div>
 
-          
-          
-        </div>
-        <!-- --------------------------------------------------------------------------------------------------------------------------------------- -->
-        <!-- Right Column: Ingredients and Instructions -->
+        <!-- Right Column: Inputs for ingredients and instructions -->
         <div class="right-column">
           <h1>Ingredients:</h1>
+          <!-- List each ingredient input group dynamically -->
           <div class="ingredients-container">
-            <div v-for="(ingredient, index) in ingredients" :key="index" class="ingredients-group">
-              <input type="text" :placeholder="'Ingredient...'" v-model="ingredient.name" required 
-                :class="{ 'input-error': isFormSubmitted && !ingredient.name }" >
-              <input type="number" :placeholder="'Quantity...'" step="0.5" min="0.5" v-model="ingredient.quantity" required 
-                :class="{ 'input-error': isFormSubmitted && !ingredient.quantity }" >
-              <select v-model="ingredient.unit" class="select-unit" required 
-                :class="{ 'input-error': isFormSubmitted && !ingredient.unit }">
+            <div
+              v-for="(ingredient, index) in ingredients"
+              :key="index"
+              class="ingredients-group"
+            >
+              <input
+                type="text"
+                :placeholder="'Ingredient...'"
+                v-model="ingredient.name"
+                required
+                :class="{ 'input-error': isFormSubmitted && !ingredient.name }"
+              />
+              <input
+                type="number"
+                :placeholder="'Quantity...'"
+                step="0.5"
+                min="0.5"
+                v-model="ingredient.quantity"
+                required
+                :class="{
+                  'input-error': isFormSubmitted && !ingredient.quantity,
+                }"
+              />
+              <select
+                v-model="ingredient.unit"
+                class="select-unit"
+                required
+                :class="{ 'input-error': isFormSubmitted && !ingredient.unit }"
+              >
                 <option value="" disabled selected>Unit</option>
-                <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
+                <option v-for="unit in units" :key="unit" :value="unit">{{
+                  unit
+                }}</option>
               </select>
-              <b-icon variant="danger" icon="dash" @click="removeIngredient(index)" :class="{ 'disabled-icon': ingredients.length == 1 }" style="margin-top: 5px;"></b-icon>
+              <b-icon
+                variant="danger"
+                icon="dash"
+                @click="removeIngredient(index)"
+                :class="{ 'disabled-icon': ingredients.length == 1 }"
+                style="margin-top: 5px;"
+              ></b-icon>
             </div>
           </div>
           <b-icon variant="success" icon="plus" @click="addIngredient"></b-icon>
+
           <h1>Instructions</h1>
+          <!-- List each instruction input group dynamically -->
           <div class="instructions-container">
-            <div v-for="(instruction, index) in instructions" :key="index" class="instructions-group">
-              <input type="text" :placeholder="'Enter instruction...'" v-model="instruction.name" required  :class="{ 'input-error': isFormSubmitted && !instruction.name }">
-              <b-icon variant="danger" icon="dash" @click="removeInstruction(index)"  :class="{ 'disabled-icon': instructions.length === 1 }"></b-icon>
+            <div
+              v-for="(instruction, index) in instructions"
+              :key="index"
+              class="instructions-group"
+            >
+              <input
+                type="text"
+                :placeholder="'Enter instruction...'"
+                v-model="instruction.name"
+                required
+                :class="{ 'input-error': isFormSubmitted && !instruction.name }"
+              />
+              <b-icon
+                variant="danger"
+                icon="dash"
+                @click="removeInstruction(index)"
+                :class="{ 'disabled-icon': instructions.length === 1 }"
+              ></b-icon>
             </div>
           </div>
-          <b-icon variant="success" icon="plus" @click="addInstruction"></b-icon>
+          <b-icon
+            variant="success"
+            icon="plus"
+            @click="addInstruction"
+          ></b-icon>
         </div>
-        <!-- --------------------------------------------------------------------------------------------------------------------------------------- -->
       </div>
     </div>
 
+    <!-- Buttons for resetting fields or submitting the form -->
     <div class="buttons-group">
-      <button @click="resetFields" type="button" class="reset-button">Clear</button>
-      <button @click="submitForm" >Create</button>
+      <button @click="resetFields" type="button" class="reset-button">
+        Clear
+      </button>
+      <button @click="submitForm">Create</button>
     </div>
   </b-modal>
 </template>
 
 <script>
-import { BFormFile, BFormCheckbox, BModal ,BToast} from 'bootstrap-vue';
+import { BFormFile, BFormCheckbox, BModal, BToast } from "bootstrap-vue";
 import { createNewRecipe } from "../services/user.js";
 
 export default {
@@ -111,94 +221,110 @@ export default {
     BFormFile,
     BFormCheckbox,
     BModal,
-    BToast
+    BToast,
   },
   props: {
-    modalActive: Boolean,
+    modalActive: Boolean, // Receives the state of the modal (open or closed) from the parent component
   },
   data() {
     return {
-      title: '',
-      image: '',
-      readyInMinutes: '',
-      summary: '',
-      servings: '',
-      vegan: false,
-      vegetarian: false,
-      isGlutenFree: false,
-      ingredients: [{ name: '', quantity: '', unit: '' }],
-      instructions: [{ name: '' }],
+      title: "", // Holds the title of the recipe
+      image: "", // Holds the URL of the recipe image
+      readyInMinutes: "", // Holds the cooking time in minutes
+      summary: "", // Holds a brief description of the recipe
+      servings: "", // Holds the number of servings
+      vegan: false, // Boolean indicating if the recipe is vegan
+      vegetarian: false, // Boolean indicating if the recipe is vegetarian
+      isGlutenFree: false, // Boolean indicating if the recipe is gluten-free
+      ingredients: [{ name: "", quantity: "", unit: "" }], // Array to store ingredients with their details
+      instructions: [{ name: "" }], // Array to store cooking instructions
       cookingTimes: [
-        5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
-        55, 60, 75, 90, 105, 120, 135, 150,
-        165, 180, 210, 240, 270, 300, 330, 360
-      ],
-      servingsOptions: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        11, 12, 13, 14, 15
-      ],
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        55,
+        60,
+        75,
+        90,
+        105,
+        120,
+        135,
+        150,
+        165,
+        180,
+        210,
+        240,
+        270,
+        300,
+        330,
+        360,
+      ], // Predefined cooking times for selection
+      servingsOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // Predefined serving options for selection
       units: [
-        'Gram', 'Kilogram', 'Milliliter',
-        'Liter', 'Curt', 'Teaspoon', 'Spoon', 'Cup'
-      ],
-      isFormSubmitted: false,
+        "Gram",
+        "Kilogram",
+        "Milliliter",
+        "Liter",
+        "Curt",
+        "Teaspoon",
+        "Spoon",
+        "Cup",
+      ], // Units of measurement for ingredients
+      isFormSubmitted: false, // Flag to indicate if the form has been submitted (for validation purposes)
     };
-  },
-  computed:{
-    canAddIngredient() {
-      const lastIngredient = this.ingredients[this.ingredients.length - 1];
-      return lastIngredient.name && lastIngredient.quantity && lastIngredient.unit;
-    },
-    canAddInstruction() {
-      const lastInstruction = this.instructions[this.instructions.length - 1];
-      return !!(lastInstruction && lastInstruction.name.trim());
-    },
-
   },
   methods: {
     close() {
-      this.$emit('close');
+      this.$emit("close"); // Emits an event to close the modal, handled by the parent component
     },
     addIngredient() {
+      // Adds a new ingredient to the ingredients array if the last ingredient details are filled
       if (this.canAddIngredient) {
-        this.ingredients.push({ name: '', quantity: '', unit: '' });
-      } else {
-        this.$root.$bvToast.toast("Please fill in all fields for the current ingredient before adding a new one.",{title:"Cannot add ingredient!" ,variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+        this.ingredients.push({ name: "", quantity: "", unit: "" });
       }
     },
     removeIngredient(index) {
+      // Removes an ingredient from the ingredients array if more than one ingredient exists
       if (this.ingredients.length > 1) {
         this.ingredients.splice(index, 1);
       }
     },
     addInstruction() {
+      // Adds a new instruction to the instructions array if the last instruction is not empty
       if (this.canAddInstruction) {
-        this.instructions.push({ name: '' });
-      } else {
-        this.$root.$bvToast.toast("Please fill in the instruction field before adding a new one.",{title:"Cannot add instruction!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+        this.instructions.push({ name: "" });
       }
     },
     removeInstruction(index) {
+      // Removes an instruction from the instructions array if more than one instruction exists
       if (this.instructions.length > 1) {
         this.instructions.splice(index, 1);
-
       }
     },
     resetFields() {
-      this.title = '';
-      this.readyInMinutes = '';
-      this.summary = '';
-      this.servings = '';
+      // Resets all form fields to their default values
+      this.title = "";
+      this.readyInMinutes = "";
+      this.summary = "";
+      this.servings = "";
       this.vegan = false;
       this.vegetarian = false;
       this.isGlutenFree = false;
-      this.ingredients = [{ name: '', quantity: '', unit: '' }];
-      this.instructions = [{ name: '' }];
+      this.ingredients = [{ name: "", quantity: "", unit: "" }];
+      this.instructions = [{ name: "" }];
       this.image = null;
-      this.isFormSubmitted = false; 
+      this.isFormSubmitted = false;
     },
     async submitForm() {
-      this.isFormSubmitted = true; 
+      // Submits the form data to create a new recipe after validating the form
+      this.isFormSubmitted = true;
       if (this.isFormValid()) {
         const recipeContent = {
           title: this.title,
@@ -210,237 +336,120 @@ export default {
           vegetarian: this.vegetarian,
           is_gluten_free: this.isGlutenFree,
           ingredients: this.ingredients,
-          instructions: this.instructions
+          instructions: this.instructions,
         };
         const response = await createNewRecipe(recipeContent);
         if (response.status === 201 && response.data.success) {
-          this.$root.$bvToast.toast("Recipe added successfully.",{title:"Success!",variant: 'success',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
+          this.$root.$bvToast.toast("Recipe added successfully.", {
+            title: "Success!",
+            variant: "success",
+            toaster: "b-toaster-top-right",
+            solid: true,
+            autoHideDelay: 2000,
+            appendToast: true,
+          });
           this.modalActive = false;
           this.resetFields();
         } else {
-          this.$root.$bvToast.toast("Failed to add the recipe. Please try again.",{title:"Failed!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
-
+          this.$root.$bvToast.toast(
+            "Failed to add the recipe. Please try again.",
+            {
+              title: "Failed!",
+              variant: "danger",
+              toaster: "b-toaster-top-right",
+              solid: true,
+              autoHideDelay: 2000,
+              appendToast: true,
+            }
+          );
         }
-      } else {
-        this.$root.$bvToast.toast('Please fill in all the required fields.',{title:"Fields are missing!",variant: 'danger',toaster: 'b-toaster-top-right',solid: true,autoHideDelay: 2000, appendToast: true,});
       }
     },
     isFormValid() {
+      // Validates the form data to ensure all fields are correctly filled
       return (
         this.title &&
         this.image &&
         this.readyInMinutes &&
         this.summary &&
         this.servings &&
-        this.ingredients.every(ingredient => ingredient.name && ingredient.quantity && ingredient.unit) &&
-        this.instructions.every(instruction => instruction.name)
+        this.ingredients.every(
+          (ingredient) =>
+            ingredient.name && ingredient.quantity && ingredient.unit
+        ) &&
+        this.instructions.every((instruction) => instruction.name)
       );
+    },
+  },
+  computed: {
+    canAddIngredient() {
+      // Checks if the last ingredient is fully specified to allow adding a new one
+      const lastIngredient = this.ingredients[this.ingredients.length - 1];
+      return (
+        lastIngredient.name && lastIngredient.quantity && lastIngredient.unit
+      );
+    },
+    canAddInstruction() {
+      // Checks if the last instruction is not empty to allow adding a new one
+      const lastInstruction = this.instructions[this.instructions.length - 1];
+      return !!(lastInstruction && lastInstruction.name.trim());
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.input-style {
-  width: 325px;
-  height: 30px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 15px;
-}
-
-h1 {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 5px;
-  border-bottom: 2px solid #42b983;
-
-  padding-bottom: 10px;
-}
-
+/* General styles for the modal form, with specific focus on the layout and functionality of the input fields and the modal itself. */
 .modal-body {
-  width: 100%;
   display: flex;
-  gap: 15px;
+  gap: 15px; /* Space between columns */
   padding: 0.1rem;
-  height: 500px;
+  height: 500px; /* Fixed height to maintain layout consistency */
 }
 
-.left-column {
-  width: 55%;
-}
-
+.left-column,
 .right-column {
-  width: 65%;
-}
-.disabled-button {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-.summary-textarea{
-  width: 325px;
-  height: 90px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 15px;
-}
-
-.time-servings-container {
   display: flex;
-  gap: 4px;
+  flex-direction: column; /* Stack elements vertically */
+  gap: 10px; /* Space between form elements */
 }
 
+.input-style,
+.summary-textarea,
 .styled-select {
-  width: 160px;
-  height: 30px;
-  padding: 4px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 15px;
-  color: gray;
-}
-
-.styled-select option:checked {
-  color: black;
-  background-color: #f0f0f0;
-}
-
-
-.input-field {
-  width: 100%;
-  height: 30px;
+  width: 100%; /* Full width within column */
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 15px;
+  border: 1px solid #ccc; /* Consistent border styling */
+  border-radius: 5px; /* Rounded borders */
+  margin-bottom: 10px; /* Space below each input */
 }
 
-.select-unit {
-  width: 80px;
-  height: 30px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 15px;
-  color: #898989;
-}
-
-.ingredients-container {
-  max-height: 200px;
-  overflow-y: auto;
-  
-
-  .ingredients-group {
-    display: flex;
-    gap: 6px;
-    input[type="text"].input-error,
-    input[type="number"].input-error,
-    select.input-error {
-      border-color: red; 
-    }
-    input[type="text"] {
-      width: 175px; 
-      height: 30px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
-      margin-bottom: 4px;
-
-    }
-    input[type="number"] {
-      width: 100px; 
-      height: 30px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    select {
-      width: 95px; 
-      height: 30px;
-      padding: 1px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-  }
-}
-
-.instructions-container {
-  max-height: 200px;
-  overflow-y: auto;
-
-  .instructions-group {
-    display: flex;
-    align-items: center;
-    input[type="text"].input-error,
-    input[type="number"].input-error,
-    select.input-error {
-      border-color: red; 
-    }
-
-    input[type="text"] {
-      width: 390px; 
-      height: 30px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-  }
+.input-error {
+  border-color: red; /* Highlight inputs with errors */
 }
 
 .buttons-group {
-  margin-top: 10px;
-  margin-left: 75%;
-  
-  button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #42b983;
-    color: white;
-    transition: background-color 0.3s ease;
-    flex: 1;
-    margin-right: 10px;
-    &:hover {
-      background-color: #36a372;
-    }
-  }
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 10px; /* Space between buttons */
+}
 
-  .reset-button {
-    background-color: grey;
-    &:hover {
-      background-color: #4f4c4c;
-    }
-  }
-}
-.image-form{
-  width: 100%;
-}
-.recipe-image .input-error{
-  height: 32.5px;
-  border: 1px solid red;
+.reset-button,
+button {
+  padding: 10px 20px;
   border-radius: 5px;
+  font-size: 16px;
+  background-color: #42b983; /* Green background for primary action */
+  color: white;
+  &:hover {
+    background-color: #36a372; /* Darker green on hover */
+  }
+}
 
-}
-.input-error {
-  border-color: red ;
-}
-.image-preview img {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 160px;
-  width: 100%;
+.reset-button {
+  background-color: grey; /* Grey background for reset button */
+  &:hover {
+    background-color: #4f4c4c; /* Darker grey on hover */
+  }
 }
 </style>

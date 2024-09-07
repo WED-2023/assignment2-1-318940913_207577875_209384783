@@ -1,24 +1,33 @@
 <template>
   <div class="table">
+    <!-- Layout for the entire page containing two columns -->
     <b-row class="row-container">
-      <!-- Left Column - Random Recipes -->
+      <!-- Left Column - Display random recipes -->
       <b-col cols="12" md="6" lg="6">
         <div class="random-column">
           <div class="recipe-preview-container">
+            <!-- Header for the random recipes section -->
             <h3 class="mb-4">Discover New Culinary Adventures</h3>
-            <!-- First Row: Two recipes -->
+            <!-- First Row: Display up to two random recipes -->
             <b-row v-if="randomRecipes.length >= 3">
               <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6">
+                <!-- Component to preview a recipe -->
                 <RecipePreview :recipe="recipe" />
               </b-col>
             </b-row>
-            <!-- Second Row: two recipes -->
-          <b-row v-if="randomRecipes.length >= 4">
-            <b-col v-for="recipe in randomRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
-              <RecipePreview :recipe="recipe" />
-            </b-col>
-          </b-row>
+            <!-- Second Row: Display the next two random recipes -->
+            <b-row v-if="randomRecipes.length >= 4">
+              <b-col
+                v-for="recipe in randomRecipes.slice(2, 4)"
+                :key="recipe.id"
+                lg="6"
+                class="recipe-row-two"
+              >
+                <RecipePreview :recipe="recipe" />
+              </b-col>
+            </b-row>
           </div>
+          <!-- Button to randomize recipes -->
           <div class="random-button-container">
             <b-button
               id="random-button"
@@ -30,60 +39,50 @@
           </div>
         </div>
       </b-col>
-      <!-- Right Column - Last Viewed Recipes / Login -->
+      <!-- Right Column - Display last viewed recipes or login page -->
       <b-col cols="12" md="6" lg="6">
-      <div class="login-last-viewed">
-        <div v-if="$root.store.username" class="container-user">
-          <!-- ss -->
-          <h3 class="mb-4">Recipes You've Recently Seen</h3>
-          <!-- Display if there are user recipes -->
-          <b-row v-if="lastUserRecipes.length >= 1">
-            <b-col v-for="recipe in firstRowRecipesUser" :key="recipe.id" lg="6">
-              <RecipePreview :recipe="recipe" />
-            </b-col>
-          </b-row>
-          <!-- Second Row: two recipes -->
-          <b-row v-if="lastUserRecipes.length >= 3">
-            <b-col v-for="recipe in lastUserRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
-              <RecipePreview :recipe="recipe" />
-            </b-col>
-          </b-row>
-          <!-- Display if no user recipes are available -->
-          <b-row v-if="lastUserRecipes.length == 0">
-          <!-- First Row: Two recipes -->
-          <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6">
-            <RecipePreview :recipe="recipe" />
-          </b-col>
-        </b-row>
-        <!-- Second Row: Recipes in places 3 and 4 -->
-        <b-row v-if="lastUserRecipes.length === 0 && randomRecipes.length >= 4">
-          <b-col v-for="recipe in randomRecipes.slice(2, 4)" :key="recipe.id" lg="6" class="recipe-row-two">
-            <RecipePreview :recipe="recipe" />
-          </b-col>
-        </b-row>
+        <div class="login-last-viewed">
+          <div v-if="$root.store.username" class="container-user">
+            <!-- Header for the last viewed recipes section -->
+            <h3 class="mb-4">Recipes You've Recently Seen</h3>
+            <!-- Display the last viewed recipes for logged-in users -->
+            <b-row v-if="lastUserRecipes.length >= 1">
+              <b-col
+                v-for="recipe in firstRowRecipesUser"
+                :key="recipe.id"
+                lg="6"
+              >
+                <RecipePreview :recipe="recipe" />
+              </b-col>
+            </b-row>
+            <b-row v-if="lastUserRecipes.length >= 3">
+              <b-col
+                v-for="recipe in lastUserRecipes.slice(2, 4)"
+                :key="recipe.id"
+                lg="6"
+                class="recipe-row-two"
+              >
+                <RecipePreview :recipe="recipe" />
+              </b-col>
+            </b-row>
+          </div>
+          <!-- Display the login page if the user is not logged in -->
+          <div v-else class="login-container">
+            <LoginPage />
+          </div>
         </div>
-        <div v-else class="login-container">
-          <LoginPage />
-        </div>
-      </div>
-    </b-col>
-        </b-row>
-      </div>
+      </b-col>
+    </b-row>
+  </div>
 </template>
 
 <script>
 import {
   fetchRandomRecipesFromServer,
-  fetchLastViewedRecipesFromServer
+  fetchLastViewedRecipesFromServer,
 } from "@/services/recipes";
-import RecipePreviewList from "@/components/RecipePreviewList.vue";
 import RecipePreview from "@/components/RecipePreview.vue";
 import LoginPage from "@/pages/LoginPage.vue";
-import {
-  mockGetAllRecipesPreview,
-  mockGetRecipesPreview,
-  mockGetRecipePreviewById,
-} from "../services/recipes.js";
 
 export default {
   data() {
@@ -93,9 +92,8 @@ export default {
     };
   },
   components: {
-    RecipePreviewList,
-    LoginPage,
     RecipePreview,
+    LoginPage,
   },
   mounted() {
     this.fetchRandomRecipes();
@@ -111,7 +109,6 @@ export default {
     },
   },
   methods: {
-    // ----------------------function connect to server ----------------------------------
     async fetchRandomRecipes() {
       try {
         const response = await fetchRandomRecipesFromServer();
@@ -120,26 +117,19 @@ export default {
         console.error("Error fetching random recipes:", error);
       }
     },
-    // ------------------------------------------------------------------------------------
-
-    // ---------------------- function connect to server ----------------------------------
-
-    async fetchLastViewedRecipes(){
+    async fetchLastViewedRecipes() {
       if (this.$root.store.username) {
         try {
           const response = await fetchLastViewedRecipesFromServer();
           this.lastUserRecipes = response.data.recipes;
+        } catch (error) {
+          console.error("Error fetching last viewed recipes:", error);
         }
-        catch (error) {
-        console.error('Error fetching last viewed recipes:', error);
-      }
       }
     },
-    // ------------------------------------------------------------------------------------
     handleRandomize() {
       this.fetchRandomRecipes();
     },
-
   },
   computed: {
     firstRowRecipes() {
