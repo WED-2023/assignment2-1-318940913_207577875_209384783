@@ -5,23 +5,31 @@
     <h3 v-if="title" class="title mb-2">{{ title }}</h3>
     <b-row>
       <!-- Draggable component allows for drag-and-drop functionality -->
-      <draggable 
-        v-if="meal" 
-        v-model="localRecipes" 
-        tag="div" 
-        class="row" 
-        group="recipesGroup" 
+      <draggable
+        v-if="meal"
+        v-model="localRecipes"
+        tag="div"
+        class="row"
+        group="recipesGroup"
         @end="onDragEnd"
       >
         <!-- Iterates over localRecipes to display each recipe -->
-        <b-col v-for="(recipe, index) in localRecipes" :key="recipe.id" class="recipe-col">
+        <b-col
+          v-for="(recipe, index) in localRecipes"
+          :key="recipe.id"
+          class="recipe-col"
+        >
           <div class="recipe-wrapper">
             <!-- Clickable icon for removing a recipe from the meal -->
             <div @click="removeRecipe(index)" class="icon-container">
               <i class="bi bi-trash mb-1 icon-shadow"></i>
             </div>
             <!-- Component for previewing the recipe in a meal context -->
-            <RecipeInMealPreview class="recipePreview" :recipe="recipe" @likedChanged="handleLikedChanged" />
+            <RecipeInMealPreview
+              class="recipePreview"
+              :recipe="recipe"
+              @likedChanged="handleLikedChanged"
+            />
           </div>
         </b-col>
         <!-- Message displayed if no recipes are added to the meal -->
@@ -31,20 +39,36 @@
       </draggable>
       <!-- Displays recipes without draggable functionality when not part of a meal -->
       <template v-else>
-        <b-col v-for="recipe in localRecipes" :key="recipe.id" cols="12" md="6" lg="4" class="recipe-col">
-          <RecipePreview class="recipePreview" :recipe="recipe" @likedChanged="handleLikedChanged"/>
+        <b-col
+          v-for="recipe in localRecipes"
+          :key="recipe.id"
+          cols="12"
+          md="6"
+          lg="4"
+          class="recipe-col"
+        >
+          <RecipePreview
+            class="recipePreview"
+            :recipe="recipe"
+            @likedChanged="handleLikedChanged"
+          />
         </b-col>
       </template>
     </b-row>
     <!-- Button to clear all recipes from the meal -->
     <div v-if="meal" class="clearMeal">
-      <b-button v-if="localRecipes.length > 0" variant="danger" @click="clearMeal">Clear Meal</b-button>
+      <b-button
+        v-if="localRecipes.length > 0"
+        variant="danger"
+        @click="clearMeal"
+        >Clear Meal</b-button
+      >
     </div>
   </b-container>
 </template>
 
 <script>
-import draggable from 'vuedraggable'; // Import draggable for handling drag-and-drop functionality
+import draggable from "vuedraggable"; // Import draggable for handling drag-and-drop functionality
 import RecipePreview from "./RecipePreview.vue"; // Import RecipePreview component
 import RecipeInMealPreview from "./RecipeInMealPreview.vue"; // Import RecipeInMealPreview for meal-specific previews
 import { updateRecipesOrder, removeFromMyMeal } from "@/services/user.js"; // Import service functions for recipe management
@@ -54,21 +78,21 @@ export default {
   components: {
     RecipePreview,
     RecipeInMealPreview,
-    draggable
+    draggable,
   },
   props: {
     title: {
       type: String,
-      required: false // Optional title for the recipe list
+      required: false, // Optional title for the recipe list
     },
     recipes: {
       type: Array,
-      required: true // Array of recipes to display
+      required: true, // Array of recipes to display
     },
     meal: {
       type: Boolean,
       required: false,
-      default: false // Flag to indicate if the recipes are part of a meal plan
+      default: false, // Flag to indicate if the recipes are part of a meal plan
     },
   },
   data() {
@@ -89,26 +113,26 @@ export default {
     },
     async onDragEnd(event) {
       // Handles the end of a drag event by updating the order of recipes
-      const newOrderRecipeIds = this.localRecipes.map(recipe => recipe.id);
-      await updateRecipesOrder({recipes_order_id: newOrderRecipeIds});
-      this.$emit('update:recipes', [...this.localRecipes]);
+      const newOrderRecipeIds = this.localRecipes.map((recipe) => recipe.id);
+      await updateRecipesOrder({ recipes_order_id: newOrderRecipeIds });
+      this.$emit("update:recipes", [...this.localRecipes]);
     },
     async removeRecipe(index) {
       // Removes a recipe from the meal
       const recipe_to_remove = this.localRecipes[index];
       await removeFromMyMeal(recipe_to_remove.id);
       this.localRecipes.splice(index, 1);
-      this.$emit('update:recipes', [...this.localRecipes]);
+      this.$emit("update:recipes", [...this.localRecipes]);
     },
     async clearMeal() {
       // Clears all recipes from the meal
-      for(const recipe of this.localRecipes) {
+      for (const recipe of this.localRecipes) {
         await removeFromMyMeal(recipe.id);
       }
       this.localRecipes = [];
-      this.$emit('update:recipes', []);
+      this.$emit("update:recipes", []);
     },
-  }
+  },
 };
 </script>
 

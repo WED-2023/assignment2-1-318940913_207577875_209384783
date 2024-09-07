@@ -1,31 +1,67 @@
 <template>
   <!-- Container with hover effects that toggle the isHovered state -->
-  <div class="recipe-preview-container" @mouseover="isHovered = true" @mouseleave="isHovered = false">
+  <div
+    class="recipe-preview-container"
+    @mouseover="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
     <!-- Link to specific recipe making or viewing page based on whether it's part of a meal plan -->
-    <router-link v-if="meal" :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }" class="recipe-preview">
+    <router-link
+      v-if="meal"
+      :to="{ name: 'RecipeMaking', params: { recipeId: recipe.id } }"
+      class="recipe-preview"
+    >
       <div class="recipe-image-container">
         <!-- Displays recipe image if it has successfully loaded -->
-        <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
+        <b-card
+          v-if="image_load"
+          :img-src="recipe.image"
+          img-alt="Recipe Image"
+          tag="article"
+          class="recipe-image"
+        ></b-card>
       </div>
       <div class="recipe-footer">
         <!-- Displays recipe title and conditionally styles if recipe has been viewed -->
-        <div class="recipe-title" :class="{ 'viewed': hasViewedRecipe }">{{ recipe.title }}</div>
+        <div class="recipe-title" :class="{ viewed: hasViewedRecipe }">
+          {{ recipe.title }}
+        </div>
         <!-- Displays recipe details like cooking time and likes -->
         <ul class="recipe-overview">
-          <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
-          <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
+          <li>
+            <i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes
+          </li>
+          <li>
+            <i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes
+          </li>
         </ul>
       </div>
     </router-link>
-    <router-link v-else :to="{ name: 'recipe', params: { recipeId: recipe.id } }" class="recipe-preview">
+    <router-link
+      v-else
+      :to="{ name: 'recipe', params: { recipeId: recipe.id } }"
+      class="recipe-preview"
+    >
       <div class="recipe-image-container">
-        <b-card v-if="image_load" :img-src="recipe.image" img-alt="Recipe Image" tag="article" class="recipe-image"></b-card>
+        <b-card
+          v-if="image_load"
+          :img-src="recipe.image"
+          img-alt="Recipe Image"
+          tag="article"
+          class="recipe-image"
+        ></b-card>
       </div>
       <div class="recipe-footer">
-        <div class="recipe-title" :class="{ 'viewed': hasViewedRecipe }">{{ recipe.title }}</div>
+        <div class="recipe-title" :class="{ viewed: hasViewedRecipe }">
+          {{ recipe.title }}
+        </div>
         <ul class="recipe-overview">
-          <li><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</li>
-          <li><i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes</li>
+          <li>
+            <i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes
+          </li>
+          <li>
+            <i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes
+          </li>
         </ul>
       </div>
     </router-link>
@@ -34,7 +70,11 @@
       <ul class="d-flex align-items-center list-unstyled mb-0">
         <!-- RecipeLike component handles liking functionality, passing hover state and handling liked changes -->
         <li class="like-container" v-if="$root.store.username">
-          <RecipeLike :recipe="recipe" :is-hovered="isHovered" @likedChanged="handleLikedChanged"></RecipeLike>
+          <RecipeLike
+            :recipe="recipe"
+            :is-hovered="isHovered"
+            @likedChanged="handleLikedChanged"
+          ></RecipeLike>
         </li>
         <li v-if="recipe.vegetarian" v-b-tooltip.hover title="Vegetarian">
           <i class="fas fa-seedling text-success"></i>
@@ -55,33 +95,33 @@ import RecipeLike from "@/components/RecipeLike.vue"; // Component for like func
 
 export default {
   components: {
-    RecipeLike
+    RecipeLike,
   },
   data() {
     return {
       image_load: true, // Flag to check if image is loaded
       isLiked: false, // State to track if the recipe is liked
       hasViewedRecipe: false, // State to track if the recipe has been viewed
-      isHovered: false // State to track if the recipe preview is being hovered
+      isHovered: false, // State to track if the recipe preview is being hovered
     };
   },
   props: {
     recipe: {
       type: Object,
-      required: true // Recipe object must be provided
+      required: true, // Recipe object must be provided
     },
     meal: {
       type: Boolean,
-      default: false // Indicates if the recipe is part of a meal
+      default: false, // Indicates if the recipe is part of a meal
     },
   },
   mounted() {
     this.checkIfViewed(); // Check if the recipe has been viewed on mount
   },
   watch: {
-    '$root.store.username': function() {
+    "$root.store.username": function() {
       this.checkIfViewed(); // Re-check viewed state when username changes
-    }
+    },
   },
   methods: {
     handleLikedChanged(recipeId, isLiked) {
@@ -90,13 +130,13 @@ export default {
     },
     async checkIfViewed() {
       // Checks if the recipe has been viewed by the current user
-      if(this.$root.store.username) {
+      if (this.$root.store.username) {
         const response = await checkLastViewedRecipesFromServer(this.recipe.id);
         this.hasViewedRecipe = response;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -113,9 +153,8 @@ export default {
   max-width: 150px; /* Maximum width for mobile views */
   min-width: 340px; /* Minimum width to ensure content fits */
 }
-  /* Adds a light gray background color on hover for visual feedback */
-.recipe-preview-container:hover
-{
+/* Adds a light gray background color on hover for visual feedback */
+.recipe-preview-container:hover {
   background-color: rgba(241, 240, 240);
 }
 
@@ -182,4 +221,3 @@ export default {
   padding: 0; /* Removes padding */
 }
 </style>
-

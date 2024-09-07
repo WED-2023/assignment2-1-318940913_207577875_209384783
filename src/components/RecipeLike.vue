@@ -1,60 +1,71 @@
 <template>
   <!-- Button that toggles the like status of a recipe, showing different icons based on the state -->
-  <b-button @click="toggleLike" class="custom-button" :class="{ 'hovered': isHovered }">
+  <b-button
+    @click="toggleLike"
+    class="custom-button"
+    :class="{ hovered: isHovered }"
+  >
     <i :class="isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
   </b-button>
 </template>
 
 <script>
-import { isRecipeInFavorites, markAsFavorite, unMarkAsFavorite } from "../services/user.js";
+import {
+  isRecipeInFavorites,
+  markAsFavorite,
+  unMarkAsFavorite,
+} from "../services/user.js";
 import { BButton } from "bootstrap-vue";
 
 export default {
-components: {
-  BButton,
-},
-props: {
-  recipe: {
-    type: Object,
-    required: true, // Recipe object must be passed to the component
+  components: {
+    BButton,
   },
-  isHovered: {
-    type: Boolean,
-    default: false, // Tracks if the button is hovered to change its style
+  props: {
+    recipe: {
+      type: Object,
+      required: true, // Recipe object must be passed to the component
+    },
+    isHovered: {
+      type: Boolean,
+      default: false, // Tracks if the button is hovered to change its style
+    },
   },
-},
-data() {
-  return {
-    isLiked: false, // Boolean indicating if the recipe is currently liked by the user
-  };
-},
-async mounted() {
-  // When component is mounted, check if the recipe is in user's favorites
-  try {
-    this.isLiked = await isRecipeInFavorites(this.recipe.id);
-  } catch (error) {
-    console.error(`Failed to check if recipe ${this.recipe.id} is in favorites:`, error);
-  }
-},
-methods: {
-  async toggleLike() {
-    // Toggles the like state of the recipe and updates it on the server
+  data() {
+    return {
+      isLiked: false, // Boolean indicating if the recipe is currently liked by the user
+    };
+  },
+  async mounted() {
+    // When component is mounted, check if the recipe is in user's favorites
     try {
-      if(!this.isLiked) {
-        // If the recipe is not liked, mark it as favorite
-        await markAsFavorite({ recipeId: this.recipe.id });
-      } else {
-        // If the recipe is liked, remove it from favorites
-        await unMarkAsFavorite(this.recipe.id);
-      }
-      this.isLiked = !this.isLiked; // Toggle the local like state
-      this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit an event to notify parent components of the change
-    } catch (err) {
-      console.error("Error toggling the like state of the recipe:", err);
-      this.isLiked = false; // Reset like state on error
+      this.isLiked = await isRecipeInFavorites(this.recipe.id);
+    } catch (error) {
+      console.error(
+        `Failed to check if recipe ${this.recipe.id} is in favorites:`,
+        error
+      );
     }
   },
-},
+  methods: {
+    async toggleLike() {
+      // Toggles the like state of the recipe and updates it on the server
+      try {
+        if (!this.isLiked) {
+          // If the recipe is not liked, mark it as favorite
+          await markAsFavorite({ recipeId: this.recipe.id });
+        } else {
+          // If the recipe is liked, remove it from favorites
+          await unMarkAsFavorite(this.recipe.id);
+        }
+        this.isLiked = !this.isLiked; // Toggle the local like state
+        this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit an event to notify parent components of the change
+      } catch (err) {
+        console.error("Error toggling the like state of the recipe:", err);
+        this.isLiked = false; // Reset like state on error
+      }
+    },
+  },
 };
 </script>
 
@@ -88,7 +99,10 @@ methods: {
 /* Specific style when the button is hovered to show a different background */
 .hovered .bi-heart,
 .hovered .bi-heart-fill {
-  background-color: rgb(241, 240, 240); /* Light grey background on hover to highlight the icon */
+  background-color: rgb(
+    241,
+    240,
+    240
+  ); /* Light grey background on hover to highlight the icon */
 }
 </style>
-

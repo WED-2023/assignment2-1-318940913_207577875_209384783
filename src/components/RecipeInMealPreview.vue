@@ -5,8 +5,8 @@
     <!-- Progress bar showing how many recipe instructions have been checked off -->
     <div class="recipe-preview mt-1">
       <b-progress
-        :value="checkedCount"  
-        :max="recipe.instructions.length"  
+        :value="checkedCount"
+        :max="recipe.instructions.length"
         variant="success"
         animated
         show-progress
@@ -49,7 +49,7 @@ export default {
   async mounted() {
     // Lifecycle hook to initialize the component
     this.checkedInstructions =
-      await getRecipeProgress(this.recipe.id) || // Tries to fetch saved progress
+      (await getRecipeProgress(this.recipe.id)) || // Tries to fetch saved progress
       this.recipe.instructions.map(() => false); // Defaults to false for each instruction if no progress saved
     if (this.checkedInstructions.length === 0)
       this.checkedInstructions = this.recipe.instructions.map(() => false); // Ensures all instructions are accounted for even if none are saved
@@ -57,10 +57,9 @@ export default {
 };
 </script>
 
-
 <style lang="scss" scoped>
 .recipe-preview {
   max-height: 340px;
-  max-width: 340px;  
+  max-width: 340px;
 }
 </style>
