@@ -49,7 +49,7 @@
             </b-col>
           </b-row>
           <!-- Display if no user recipes are available -->
-          <b-row v-if="lastUserRecipes.length === 0">
+          <b-row v-if="lastUserRecipes.length == 0">
           <!-- First Row: Two recipes -->
           <b-col v-for="recipe in firstRowRecipes" :key="recipe.id" lg="6">
             <RecipePreview :recipe="recipe" />
