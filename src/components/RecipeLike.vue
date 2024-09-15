@@ -21,6 +21,10 @@ export default {
   components: {
     BButton,
   },
+  async mounted() {
+    // When component is mounted, check if the recipe is in user's favorites
+    await this.fetchFavioritesStatus();
+  },
   props: {
     recipe: {
       type: Object,
@@ -36,9 +40,20 @@ export default {
       isLiked: false, // Boolean indicating if the recipe is currently liked by the user
     };
   },
-  async mounted() {
-    // When component is mounted, check if the recipe is in user's favorites
-    try {
+  watch: {
+    // Watch for changes in the recipe prop to fetch the like status again
+    recipe: {
+      handler() {
+        this.fetchFavioritesStatus(); // Refetch the like status when the recipe changes
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    async fetchFavioritesStatus() {
+      try {
+      const check =  await isRecipeInFavorites(this.recipe.id);
+      console.log("recipe like - 2.1 - line 56 check is liked = ",check);
       this.isLiked = await isRecipeInFavorites(this.recipe.id);
     } catch (error) {
       console.error(
@@ -46,17 +61,16 @@ export default {
         error
       );
     }
-  },
-  methods: {
+    },
     async toggleLike() {
       // Toggles the like state of the recipe and updates it on the server
       try {
         if (!this.isLiked) {
           // If the recipe is not liked, mark it as favorite
-          await markAsFavorite({ recipeId: this.recipe.id });
+          await markAsFavorite({recipeId: this.recipe.id});
         } else {
           // If the recipe is liked, remove it from favorites
-          await unMarkAsFavorite(this.recipe.id);
+          await unMarkAsFavorite({recipeId: this.recipe.id});
         }
         this.isLiked = !this.isLiked; // Toggle the local like state
         this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit an event to notify parent components of the change
@@ -91,18 +105,17 @@ export default {
 .btn.custom-button.btn-secondary:focus,
 .btn.custom-button.btn-secondary:active {
   border: none; /* Remove border on hover/focus/active states */
-  background: transparent; /* Set background to transparent to avoid color shift */
+  background-color: transparent; /* Set background to transparent to avoid color shift */
   box-shadow: none; /* Remove box shadow for a flat design */
   outline: none; /* Remove outline on focus for a cleaner look */
+  border-color: rgba(241, 240, 240);
 }
 
 /* Specific style when the button is hovered to show a different background */
 .hovered .bi-heart,
 .hovered .bi-heart-fill {
-  background-color: rgb(
-    241,
-    240,
-    240
-  ); /* Light grey background on hover to highlight the icon */
+  background-color: rgba(241, 240, 240);
+  border-color: rgba(241, 240, 240);
+ /* Light grey background on hover to highlight the icon */
 }
 </style>

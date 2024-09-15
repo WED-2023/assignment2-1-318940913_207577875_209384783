@@ -5,6 +5,7 @@
     @mouseover="isHovered = true"
     @mouseleave="isHovered = false"
   >
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Link to specific recipe making or viewing page based on whether it's part of a meal plan -->
     <router-link
       v-if="meal"
@@ -60,7 +61,9 @@
             <i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes
           </li>
           <li>
-            <i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes
+            <!-- <i class="bi bi-heart-fill"></i> {{ recipe.aggregateLikes }} likes -->
+            <i class="fas fa-heart"></i> {{ recipe.aggregateLikes }} likes
+
           </li>
         </ul>
       </div>
@@ -92,6 +95,10 @@
 
 <script>
 import RecipeLike from "@/components/RecipeLike.vue"; // Component for like functionality
+import { checkLastViewedRecipesFromServer } from '../services/recipes.js';
+
+// import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 export default {
   components: {
@@ -119,14 +126,15 @@ export default {
     this.checkIfViewed(); // Check if the recipe has been viewed on mount
   },
   watch: {
-    "$root.store.username": function() {
+    // "$root.store.username": function(newVal,oldVal) {
+      "$root.store.username": function() {
       this.checkIfViewed(); // Re-check viewed state when username changes
     },
   },
   methods: {
-    handleLikedChanged(recipeId, isLiked) {
+    handleLikedChanged(recipeId,isLiked) {
       // Handles liked state changes, emits an event for parent handling
-      this.$emit("likedChanged", recipeId, isLiked);
+      this.$emit("likedChanged", recipeId,isLiked);
     },
     async checkIfViewed() {
       // Checks if the recipe has been viewed by the current user
@@ -141,83 +149,113 @@ export default {
 
 <style scoped>
 /* Container styling for the recipe preview, including borders, shadow, and sizing */
+/* Container styling for the recipe preview */
 .recipe-preview-container {
-  width: 100%; /* Full width of the container */
-  padding: 10px; /* Padding around the content for spacing */
-  border: 1px solid #ddd; /* Light gray border for distinction */
-  border-radius: 8px; /* Rounded corners for a softer look */
+  width: 340px; /* Fixed width for consistency */
+  padding: 10px; /* Padding around the content */
+  border: 1px solid #ddd; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
   margin-bottom: 20px; /* Space below each recipe preview */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  max-height: 350px; /* Maximum height of the container */
-  min-height: 350px; /* Minimum height to maintain consistency */
-  max-width: 150px; /* Maximum width for mobile views */
-  min-width: 340px; /* Minimum width to ensure content fits */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  height: 350px; /* Fixed height for the container */
+  overflow: hidden; /* Ensure content does not overflow */
+  background-color: white; /* White background for better contrast */
+  display: flex; /* Flexbox to align items within the container */
+  flex-direction: column; /* Arrange children vertically */
+  justify-content: space-between; /* Space out items evenly */
 }
-/* Adds a light gray background color on hover for visual feedback */
+
 .recipe-preview-container:hover {
-  background-color: rgba(241, 240, 240);
+  background-color: rgba(241, 240, 240); /* Light gray background on hover */
 }
 
-/* Styling for the link element wrapping the recipe details */
 .recipe-preview {
-  display: block; /* Ensures it behaves as a block for better clickability */
-  text-decoration: none; /* Removes underline from the link */
-  color: inherit; /* Inherits the text color from parent elements */
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
-/* Container for the image to ensure it does not overflow its boundary */
 .recipe-image-container {
-  overflow: hidden; /* Hides anything outside the boundary of the container */
+  width: 100%;
   height: 200px; /* Fixed height for the image container */
+  overflow: hidden;
+  border-radius: 8px; /* Rounded corners for the image */
 }
 
-/* Styling for the image itself to ensure it covers the available space */
 .recipe-image {
-  width: 100%; /* Ensures the image covers the full width of its container */
-  height: 100%; /* Ensures the image covers the full height of its container */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the container without distortion */
 }
 
-/* Footer section containing the recipe title and overview */
 .recipe-footer {
-  padding: 10px 0; /* Vertical padding for spacing around the content */
+  padding: 10px 0; /* Padding for spacing */
+  flex-grow: 1; /* Allows the footer to grow within the container */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
 }
 
-/* Styling for the recipe title with emphasis */
 .recipe-title {
-  font-size: 18px; /* Larger font size for title */
-  font-weight: bold; /* Bold text for emphasis */
-  margin-bottom: 10px; /* Space below the title */
-  display: flex; /* Utilizes flexbox for alignment */
-  justify-content: center; /* Centers the title text horizontally */
+  font-size: 16px; /* Font size for the title */
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center; /* Center the title text */
+  color: #333; /* Darker text for better readability */
 }
 
-/* Styling for the recipe overview, containing icons and text */
+.recipe-title.viewed {
+  color: rgb(134, 129, 134); /* Grey color for viewed recipes */
+}
+
 .recipe-overview {
-  display: flex; /* Utilizes flexbox for layout */
-  justify-content: space-between; /* Distributes space evenly between items */
-  margin: 0 50px; /* Horizontal margins for padding from the container edges */
+  display: flex;
+  justify-content: center; /* Center items */
+  gap: 20px; /* Space between items */
+  margin: 0;
+  padding: 0;
+  list-style-type: none; /* Remove bullet points */
+  font-size: 14px; /* Smaller font size */
 }
 
-/* List items within the recipe overview */
 .recipe-overview li {
-  display: flex; /* Displays list items as flex containers */
-  align-items: center; /* Centers items vertically within the list item */
-  font-size: 14px; /* Smaller font size for subtlety */
+  display: flex;
+  align-items: center;
   gap: 4px; /* Space between icon and text */
 }
 
-/* Container for like icons and dietary preference indicators */
 .recipe-type-Like {
-  display: flex; /* Utilizes flexbox for layout */
-  justify-content: space-between; /* Distributes space evenly between items */
-  align-items: center; /* Aligns items vertically at the center */
+  margin-top: 5px; /* Space above the container */
+  display: flex;
+  justify-content: center; /* Center items */
+  align-items: center;
 }
 
-/* Styling for the unordered list within the like and dietary preferences container */
 .recipe-type-Like ul {
-  display: flex; /* Displays items in a row */
-  align-items: center; /* Centers items vertically */
-  list-style-type: none; /* Removes bullet points */
-  padding: 0; /* Removes padding */
+  display: flex;
+  align-items: center;
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+  margin: 0;
+}
+
+.recipe-type-Like li {
+  margin: 0 5px; /* Space between icons */
+}
+
+.like-container {
+  display: flex;
+  align-items: center;
+}
+
+.recipe-type-Like i {
+  font-size: 16px; /* Icon size */
+  color: #42b983; /* Consistent color for dietary icons */
+}
+
+.card-body {
+  margin: 0;
+  padding: 0;
 }
 </style>

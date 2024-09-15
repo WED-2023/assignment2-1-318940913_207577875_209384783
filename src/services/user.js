@@ -61,7 +61,7 @@ export async function getRecipeInFavorites(with_preview = true) {
 export async function isRecipeInFavorites(recipe_id) {
   try {
     const favorites = await getRecipeInFavorites(false);
-    return favorites.some((recipeId) => recipeId === recipe_id);
+    return favorites.some((recipeId) => recipeId === String(recipe_id) || recipeId === Number(recipe_id));
   } catch (error) {
     console.error("Error checking if recipe is favorite: ", error);
     throw error;
@@ -75,6 +75,12 @@ export async function isRecipeInFavorites(recipe_id) {
  */
 export async function markAsFavorite(credentials) {
   try {
+    const existiInFaviorites = await isRecipeInFavorites(credentials.recipeId);
+    if (existiInFaviorites)
+    {
+      console.log("Recipe is already in favorites.");
+      return;
+    }
     const response = await axios.post(`${API_URL}/users/FavoritesRecipes`, credentials, { withCredentials: true });
     return response.data;
   } catch (error) {
@@ -88,9 +94,9 @@ export async function markAsFavorite(credentials) {
  * @param {string} recipe_id - ID of the recipe to remove.
  * @returns {Promise<Object>} - The server response.
  */
-export async function unMarkAsFavorite(recipe_id) {
+export async function unMarkAsFavorite(credentials) {
   try {
-    const response = await axios.delete(`${API_URL}/users/FavoritesRecipes`, { data: { recipeId: recipe_id }, withCredentials: true });
+    const response = await axios.delete(`${API_URL}/users/FavoritesRecipes`, { data: credentials, withCredentials: true });
     return response.data;
   } catch (error) {
     console.error("Error unmarking recipe as favorite: ", error);

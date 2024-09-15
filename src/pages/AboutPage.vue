@@ -28,6 +28,9 @@
 </template>
 
 <script>
+import GuyImage from '@/assets/Guy.jpeg';
+import DanImage from '@/assets/Dan.jpeg';
+import YuvalImage from '@/assets/Yuval.jpeg';
 export default {
   name: "AboutPage",
   data() {
@@ -46,8 +49,7 @@ export default {
             "Cybersecurity",
             "Information Security Analysis",
           ],
-          image:
-            "https://media.licdn.com/dms/image/D4D03AQHYqOLuql5Ffg/profile-displayphoto-shrink_800_800/0/1671749110267?e=1724889600&v=beta&t=ILyhHbKBfL1mx-AZUeaGpZ3XMDs0KEo0xlijHn6GjtI",
+          image:GuyImage,
           pastJobs: "https://wed-2023.github.io/207577875/",
         },
         {
@@ -61,8 +63,7 @@ export default {
             "Java",
             "SQL",
           ],
-          image:
-            "https://media.licdn.com/dms/image/D4D03AQG3cXzCpoS-KA/profile-displayphoto-shrink_800_800/0/1719122077315?e=1724889600&v=beta&t=4-pxQZkvqpT9UgKzcZT5WCZVSHkEpvihY1IwygAv1hk",
+          image:DanImage,
           pastJobs: "https://wed-2023.github.io/318940913/",
         },
         {
@@ -77,8 +78,7 @@ export default {
             "Node.js",
             "Full Stack Development",
           ],
-          image:
-            "https://media.licdn.com/dms/image/C5603AQEuqef8lfwuFQ/profile-displayphoto-shrink_400_400/0/1564229526714?e=1724889600&v=beta&t=LCKsXIIUbFi8RKiJgLYk0m2Tn6fIEvSpz-iAwlH8NTI",
+          image:YuvalImage,
           pastJobs: "https://wed-2023.github.io/209384783/",
         },
       ],

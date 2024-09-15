@@ -4,8 +4,23 @@
     @hide="close"
     size="lg"
     hide-footer
-    title="Come on, let's add a new recipe"
+
   >
+  <!-- title="Come on, let's add a new recipe" -->
+  <template #modal-header>
+      <div class="custom-modal-header">
+        <h5 class="modal-title">Come on, let's add a new recipe</h5>
+        <b-button
+          size="sm"
+          variant="link"
+          @click="close"
+          aria-label="Close"
+          class="close-button"
+        >
+          ✕
+        </b-button>
+      </div>
+    </template>
     <!-- Main container for modal content -->
     <div class="modal-inner">
       <div class="modal-body">
@@ -268,14 +283,17 @@ export default {
       ], // Predefined cooking times for selection
       servingsOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // Predefined serving options for selection
       units: [
+        "Milligram",
         "Gram",
         "Kilogram",
         "Milliliter",
         "Liter",
         "Curt",
+        "Tablespoon",
         "Teaspoon",
         "Spoon",
         "Cup",
+        
       ], // Units of measurement for ingredients
       isFormSubmitted: false, // Flag to indicate if the form has been submitted (for validation purposes)
     };
@@ -348,7 +366,8 @@ export default {
             autoHideDelay: 2000,
             appendToast: true,
           });
-          this.modalActive = false;
+          // this.modalActive = false;
+          this.$emit('close'); /*dan change  */ 
           this.resetFields();
         } else {
           this.$root.$bvToast.toast(
@@ -402,16 +421,56 @@ export default {
 /* General styles for the modal form, with specific focus on the layout and functionality of the input fields and the modal itself. */
 .modal-body {
   display: flex;
+  flex-direction: column; /*  dan change */
   gap: 15px; /* Space between columns */
-  padding: 0.1rem;
-  height: 500px; /* Fixed height to maintain layout consistency */
+  padding: 0.5rem;/*  dan change */
+  max-height: 80vh;/*  dan change */
+  overflow-y: auto;/*  dan change */
+} 
+.custom-modal-headr{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border-bottom:1px solid #e62721 ;
+  position: relative;
 }
+.modal-inner {
+  display: flex;
+  flex-direction: column; /* Arrange columns vertically on smaller screens */
+  gap: 15px;
+  width: 100%;
+  max-width: 100%; /* Allow the modal to expand to full width on smaller screens */
+}
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #080808;
+  margin: 0;
+  padding-left: 10px; /* Adjust padding if needed */
+}
+
 
 .left-column,
 .right-column {
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   gap: 10px; /* Space between form elements */
+  width: 100%;/*  dan change */
+}
+@media (min-width: 768px) {
+  /* Styles for medium and larger screens */
+  .modal-inner {
+    flex-direction: row; /* Arrange columns side by side on larger screens */
+    align-items: flex-start;
+    gap:20px;
+  }
+  .right-column
+  .left-column{
+    width: 50%;
+    flex: 1;
+  }
 }
 
 .input-style,
@@ -422,6 +481,7 @@ export default {
   border: 1px solid #ccc; /* Consistent border styling */
   border-radius: 5px; /* Rounded borders */
   margin-bottom: 10px; /* Space below each input */
+  box-sizing: border-box;/*  dan change */
 }
 
 .input-error {
@@ -430,10 +490,11 @@ export default {
 
 .buttons-group {
   display: flex;
-  justify-content: flex-end; /* Align buttons to the right */
+  justify-content: space-between;/*  dan change */
   gap: 10px; /* Space between buttons */
+  margin-top: 10px;/*  dan change */
+  flex-wrap: wrap;/*  dan change */
 }
-
 .reset-button,
 button {
   padding: 10px 20px;
@@ -441,6 +502,8 @@ button {
   font-size: 16px;
   background-color: #42b983; /* Green background for primary action */
   color: white;
+  flex: 1;/*  dan change */
+  margin-bottom: 5px;/*  dan change */
   &:hover {
     background-color: #36a372; /* Darker green on hover */
   }
@@ -451,5 +514,35 @@ button {
   &:hover {
     background-color: #4f4c4c; /* Darker grey on hover */
   }
+}
+/* Align ingredient fields in a single row */
+.ingredients-group {
+  display: flex;
+  gap: 5px; /* Space between ingredient fields */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.ingredients-group input[type="text"],
+.ingredients-group input[type="number"],
+.ingredients-group select {
+  flex: 1; /* Allow each field to take equal space */
+  min-width: 0; /* Prevent fields from growing too large */
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0;
+  font-size: 1.2rem;
+  color: #6c7277;
+  line-height: 1;
+  border: none;
+  background-color: transparent;
+}
+
+.close-button:hover {
+  color: #dc3545; /* Color on hover for better accessibility */
+  background-color: #080808;
+  text-decoration: none;
 }
 </style>

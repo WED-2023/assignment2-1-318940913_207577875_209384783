@@ -14,19 +14,25 @@
           <b-nav-item :to="{ name: 'main' }">Main</b-nav-item> 
           <b-nav-item :to="{ name: 'search' }">Search</b-nav-item> 
           <b-nav-item :to="{ name: 'about' }">About</b-nav-item> 
-          
           <!-- Conditional link to add a new recipe if the user is logged in -->
-          <b-nav-item v-if="$root.store.username" @click="toggleModal">Add Recipe
-            <!-- Modal component for creating a new recipe -->
-            <CreateNewRecipe @close="toggleModal" :modalActive="modalActive"></CreateNewRecipe>
+          <b-nav-item v-if="$root.store.username" @click="openModal">Add Recipe
+
           </b-nav-item>
         </b-navbar-nav>
         
         <!-- Search bar and button -->
-        <b-navbar-nav>
+        <!-- <b-navbar-nav>
           <b-form-input v-model="searchText" placeholder="Search..." @keyup.enter="handleSearch" />
           <b-nav-item :to="{ name: 'search' }" size="sm" @click="handleSearch">Search</b-nav-item>
-        </b-navbar-nav>
+        </b-navbar-nav> -->
+        <b-form inline class="search-bar-form">
+          <b-input-group>
+            <b-form-input v-model="searchText" placeholder="Search..." @keyup.enter="handleSearch" />
+            <b-input-group-append>
+              <b-button @click="handleSearch">Search</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form>
 
         <!-- User section, shown when user is not logged in -->
         <b-navbar-nav class="ml-auto User-section" v-if="!$root.store.username">
@@ -42,7 +48,7 @@
           </b-nav-item>
 
           <!-- Dropdown menu for user actions -->
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right class="custom-dropdown position-static">
             <template #button-content>
               Hello {{ $root.store.username }}
             </template>
@@ -54,6 +60,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+    <CreateNewRecipe  :modalActive="isModalOpen" @close="closeModal"></CreateNewRecipe>
 
     <!-- Router view to display different components based on the current route -->
     <router-view @update:recipes="updateMealLength" />
@@ -68,16 +75,18 @@ import { getRecipesInMyMeal } from "@/services/user.js"; // Service to get recip
 import { ref } from "vue"; // Vue composition API for reactive references
 
 export default {
+  components: {
+    CreateNewRecipe, // Registering the CreateNewRecipe component
+  },
   data() {
     return {
       showDropdown: false, // Controls the visibility of the user dropdown
       searchText: '', // Stores the user's search input
-      mealRecipes: [] // Stores the list of recipes in the user's meal
+      mealRecipes: [], // Stores the list of recipes in the user's meal
+      isModalOpen: false,
     };
   },
-  components: {
-    CreateNewRecipe, // Registering the CreateNewRecipe component
-  },
+
   computed: {
     // Computed property to get the number of recipes in the meal
     mealLength() {
@@ -88,15 +97,15 @@ export default {
     // Fetch the meal recipes when the component is mounted
     this.fetchMealRecipes();
   },
-  setup() {
-    // Setup function using the Composition API
-    const modalActive = ref(false); // Reactive reference for controlling the modal's visibility
-    const toggleModal = () => {
-      modalActive.value = !modalActive.value; // Function to toggle the modal's state
-    };
+  // setup() {
+  //   // Setup function using the Composition API
+  //   const modalActive = ref(false); // Reactive reference for controlling the modal's visibility
+  //   const toggleModal = () => {
+  //     modalActive.value = !modalActive.value; // Function to toggle the modal's state
+  //   };
 
-    return { modalActive, toggleModal }; // Return reactive properties
-  },
+  //   return { modalActive, toggleModal }; // Return reactive properties
+  // },
   methods: {
     // Method to fetch the recipes in the user's meal
     async fetchMealRecipes() {
@@ -133,7 +142,15 @@ export default {
       if (this.$route.name !== 'main') {
         this.$router.push({ name: 'main' });
       }
-    }
+    },
+    openModal()
+    {
+      this.isModalOpen = true;
+    },
+    closeModal()
+    {
+      this.isModalOpen = false;
+    },
   },
 };
 </script>
@@ -160,15 +177,7 @@ export default {
   padding-top: 60px; /* Add top padding to prevent overlap with a fixed navbar */
   margin-top: 10px; /* Add some margin above the app */
   
-  /* Dropdown and navigation item styles */
-  .dropdown-item, .nav-item {
-    background-color: #2f2626; /* Dark background color for dropdown and nav items */
-    border-color: #2f2626; /* Same color for the border to blend with the background */
-  }
 
-  .dropdown-item:hover, .nav-item:hover {
-    color: #42b983; /* Highlight color on hover for dropdown and nav items */
-  }
 }
 
 /* Navbar styles */
@@ -183,11 +192,11 @@ export default {
 
 /* Logo styles in the navigation bar */
 .navbar-logo {
-  width: 60px; /* Set a fixed width for the logo */
-  height: 100%; /* Make the height of the logo fill its container */
-  object-fit: cover; /* Ensure the logo covers its container without distortion */
+  width: 50px; /* Set a fixed width for the logo */
+  height: auto; /* Make the height of the logo fill its container */
+  // object-fit: cover; /* Ensure the logo covers its container without distortion */
   margin-right: 25px; /* Add space to the right of the logo */
-  margin-left: 15px; /* Add space to the left of the logo */
+  margin-left: 10px; /* Add space to the left of the logo */
   border-radius: 8px; /* Round the corners of the logo */
 }
 
@@ -234,5 +243,36 @@ export default {
   margin-right: 5px; /* Add space to the right of the meal logo */
   margin-left: 15px; /* Add space to the left of the meal logo */
   border-radius: 8px; /* Round the corners of the meal logo */
+}
+.search-bar-form {
+  margin-left: auto;
+  margin-right: auto;
+  padding-right: 15px; /* Adjust padding to move the search bar left */
+  max-width: 350px; /* Optional: Set a max width for the search bar */
+}
+.custom-dropdown .dropdown-menu{
+  background-color: #2f2626;
+  color: white;
+  border:none;
+
+  min-width: 190px;
+  max-width: 200px;
+  overflow: auto;
+  white-space: nowrap;
+  right:auto ;
+  left:0 ;
+  transform: translateX(45%);
+}
+.custom-dropdown .dropdown-item
+{
+  color:white;
+  background-color: #2f2626;
+  border:none;
+}
+.custom-dropdown .dropdown-item:hover
+{
+  background-color: #42b983;
+  color:white;
+
 }
 </style>

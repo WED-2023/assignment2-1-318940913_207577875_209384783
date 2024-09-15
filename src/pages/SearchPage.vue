@@ -4,19 +4,16 @@
     <h1 class="mb-4 text-center">Search Recipes</h1>
 
     <!-- Search input and button -->
-    <div class="row mb-4">
-      <div>
-        <b-input-group
-          size="lg"
-          class="mb-3"
-          prepend="Search"
-          style="width: 800px;"
-        >
-          <b-form-input v-model="searchQuery"></b-form-input>
+
+      <div class="row mb-4">
+      <div class="search-bar d-flex align-items-center">
+        <span class="search-label">Search</span>
+        <b-input-group size="lg" style="flex: 1;">
+          <b-form-input v-model="searchQuery" placeholder="Enter recipe name..."></b-form-input>
           <b-input-group-append>
-            <b-button size="sm" variant="success" @click="performSearch"
-              ><i class="fas fa-search"></i
-            ></b-button>
+            <b-button size="lg" variant="success" @click="performSearch" class="search-icon-button">
+              <i class="fas fa-search"></i>
+            </b-button>
           </b-input-group-append>
         </b-input-group>
       </div>
@@ -30,9 +27,9 @@
 
       <!-- Sort and result count options -->
       <div
-        class="sort-options d-flex align-items-center justify-content-between mb-4"
+        class="sort-options d-flex align-items-center mb-4"
       >
-        <div class="form-group">
+        <div class="d-flex align-items-center me-3">
           <label for="resultsCount" class="me-2">Results per Page:</label>
           <select
             id="resultsCount"
@@ -44,7 +41,7 @@
             <option :value="15">15</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="d-flex align-items-center">
           <label for="sortBy" class="me-2">Sort by:</label>
           <select id="sortBy" v-model="sortBy" class="form-select-sort">
             <option value="time">Time</option>
@@ -57,7 +54,7 @@
     </div>
 
     <!-- Sidebar for filter options -->
-    <b-sidebar id="filters-sidebar" title="Filters" right>
+    <b-sidebar id="filters-sidebar" title="Filters" left>
       <div class="mb-3">
         <h5>Cuisines</h5>
         <div v-for="cuisine in cuisines" :key="cuisine">
@@ -124,8 +121,6 @@
 
 <script>
 import {
-  mockGetAllRecipesPreview,
-  mockGetRecipesPreview,
   getSearchResultsFromServer,
 } from "../services/recipes.js";
 import cuisines from "../assets/cuisines.json";
@@ -171,6 +166,15 @@ export default {
       this.recipes = response;
     },
   },
+  watch:{
+    '$route.query.q':{
+      immediate:true,
+      handler(newQuery){
+        this.searchQuery = newQuery || '';
+        if(this.searchQuery){this.performSearch();}
+      }
+    }
+  }
 };
 </script>
 
@@ -179,7 +183,39 @@ h1 {
   color: #333;
   font-weight: bold;
 }
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
+.search-label {
+  font-size: 1.5rem; /* Adjust the font size as needed */
+  padding-right: 10px;
+  height: 38px; /* Same height as the input field */
+  line-height: 38px; /* Aligns text vertically */
+}
+
+.search-icon-button {
+  height: 48px; /* Same height as the input field */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sort-options{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.form-select-sort{
+  width: auto;
+  padding: 2px 4px;
+}
+.form-select-result
+ {
+  width: auto;
+  margin-right: 10px;
+}
 .btn-primary {
   margin-left: 25px;
   background-color: gray;
@@ -216,10 +252,7 @@ h5,
   font-size: 1.4rem;
 }
 
-.form-select-result {
-  width: 50px;
-  margin-right: 20px;
-}
+
 
 .me-2 {
   margin-right: 15px;
