@@ -32,7 +32,7 @@
         >
           Username length should be between 3-8 characters long
         </b-form-invalid-feedback>
-        <b-form-invalid-feedback v-if="!$v.form.username.alpha">
+        <b-form-invalid-feedback v-if="$v.form.username.$dirty &&!$v.form.username.alpha">
           Username must only contain alphabetic characters
         </b-form-invalid-feedback>
       </b-form-group>
@@ -142,6 +142,7 @@
             v-model="$v.form.country.$model"
             :options="countries"
             :state="validateState('country')"
+            class="select-input"
           ></b-form-select>
         </b-input-group>
         <b-form-invalid-feedback> Country is required </b-form-invalid-feedback>
@@ -329,7 +330,9 @@ export default {
       }
     },
     onReset() {
-      this.form = {
+      if(confirm("Are tou sure you want to clear all fields ? "))
+      {
+        this.form = {
         username: "",
         firstName: "",
         lastName: "",
@@ -342,6 +345,7 @@ export default {
       this.$nextTick(() => {
         this.$v.$reset();
       });
+      }
     },
   },
 };
@@ -374,11 +378,21 @@ export default {
   border: none;
   border-radius: 0.25rem;
 }
+.select-input{
+  width: 91%;
+  background-color: #e9ecef;
+}
+.b-form-invalid-feedback{
+  display:block !important;
+  color: red !important;
+  
+}
 .btn-danger,
 .btn-primary {
   border-radius: 8px;
   font-size: 1.2rem;
   margin-top: 30px;
+  margin-left:30px;
 }
 .btn-danger {
   background-color: gray;
@@ -397,4 +411,5 @@ export default {
   background-color: rgb(2, 85, 2);
   border-color: rgb(2, 85, 2);
 }
+
 </style>

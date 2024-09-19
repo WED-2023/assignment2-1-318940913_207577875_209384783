@@ -232,11 +232,7 @@ import { BFormFile, BFormCheckbox, BModal, BToast } from "bootstrap-vue";
 import { createNewRecipe } from "../services/user.js";
 
 export default {
-  components: {
-    BFormFile,
-    BFormCheckbox,
-    BModal,
-    BToast,
+  components: {BFormFile,BFormCheckbox,BModal,BToast,
   },
   props: {
     modalActive: Boolean, // Receives the state of the modal (open or closed) from the parent component
@@ -253,48 +249,9 @@ export default {
       isGlutenFree: false, // Boolean indicating if the recipe is gluten-free
       ingredients: [{ name: "", quantity: "", unit: "" }], // Array to store ingredients with their details
       instructions: [{ name: "" }], // Array to store cooking instructions
-      cookingTimes: [
-        5,
-        10,
-        15,
-        20,
-        25,
-        30,
-        35,
-        40,
-        45,
-        50,
-        55,
-        60,
-        75,
-        90,
-        105,
-        120,
-        135,
-        150,
-        165,
-        180,
-        210,
-        240,
-        270,
-        300,
-        330,
-        360,
-      ], // Predefined cooking times for selection
+      cookingTimes: [5, 10, 15,20,25,30,35,40,45,50,55,60,75,90,105,120,135,150,165,180,210,240,270,300,330,360,], // Predefined cooking times for selection
       servingsOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // Predefined serving options for selection
-      units: [
-        "Milligram",
-        "Gram",
-        "Kilogram",
-        "Milliliter",
-        "Liter",
-        "Curt",
-        "Tablespoon",
-        "Teaspoon",
-        "Spoon",
-        "Cup",
-        
-      ], // Units of measurement for ingredients
+      units: ["Milligram","Gram","Kilogram","Milliliter","Liter","Curt","Tablespoon","Teaspoon","Spoon","Cup"], // Units of measurement for ingredients
       isFormSubmitted: false, // Flag to indicate if the form has been submitted (for validation purposes)
     };
   },
@@ -328,17 +285,21 @@ export default {
     },
     resetFields() {
       // Resets all form fields to their default values
-      this.title = "";
-      this.readyInMinutes = "";
-      this.summary = "";
-      this.servings = "";
-      this.vegan = false;
-      this.vegetarian = false;
-      this.isGlutenFree = false;
-      this.ingredients = [{ name: "", quantity: "", unit: "" }];
-      this.instructions = [{ name: "" }];
-      this.image = null;
-      this.isFormSubmitted = false;
+      if(confirm("Are tou sure you want to delete ? "))
+      {
+        this.title = "";
+        this.readyInMinutes = "";
+        this.summary = "";
+        this.servings = "";
+        this.vegan = false;
+        this.vegetarian = false;
+        this.isGlutenFree = false;
+        this.ingredients = [{ name: "", quantity: "", unit: "" }];
+        this.instructions = [{ name: "" }];
+        this.image = null;
+        this.isFormSubmitted = false;
+      }
+
     },
     async submitForm() {
       // Submits the form data to create a new recipe after validating the form
@@ -366,8 +327,7 @@ export default {
             autoHideDelay: 2000,
             appendToast: true,
           });
-          // this.modalActive = false;
-          this.$emit('close'); /*dan change  */ 
+          this.$emit('close'); 
           this.resetFields();
         } else {
           this.$root.$bvToast.toast(
@@ -421,11 +381,11 @@ export default {
 /* General styles for the modal form, with specific focus on the layout and functionality of the input fields and the modal itself. */
 .modal-body {
   display: flex;
-  flex-direction: column; /*  dan change */
+  flex-direction: column; 
   gap: 15px; /* Space between columns */
-  padding: 0.5rem;/*  dan change */
-  max-height: 80vh;/*  dan change */
-  overflow-y: auto;/*  dan change */
+  padding: 0.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
 } 
 .custom-modal-headr{
   display: flex;
@@ -457,7 +417,7 @@ export default {
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   gap: 10px; /* Space between form elements */
-  width: 100%;/*  dan change */
+  width: 100%;
 }
 @media (min-width: 768px) {
   /* Styles for medium and larger screens */
@@ -481,7 +441,7 @@ export default {
   border: 1px solid #ccc; /* Consistent border styling */
   border-radius: 5px; /* Rounded borders */
   margin-bottom: 10px; /* Space below each input */
-  box-sizing: border-box;/*  dan change */
+  box-sizing: border-box;
 }
 
 .input-error {
@@ -490,10 +450,10 @@ export default {
 
 .buttons-group {
   display: flex;
-  justify-content: space-between;/*  dan change */
+  justify-content: space-between;
   gap: 10px; /* Space between buttons */
-  margin-top: 10px;/*  dan change */
-  flex-wrap: wrap;/*  dan change */
+  margin-top: 10px;
+  flex-wrap: wrap;
 }
 .reset-button,
 button {
@@ -502,8 +462,8 @@ button {
   font-size: 16px;
   background-color: #42b983; /* Green background for primary action */
   color: white;
-  flex: 1;/*  dan change */
-  margin-bottom: 5px;/*  dan change */
+  flex: 1;
+  margin-bottom: 5px;
   &:hover {
     background-color: #36a372; /* Darker green on hover */
   }

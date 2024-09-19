@@ -150,6 +150,20 @@ export default {
       connectedUser: false,
     };
   },
+  mounted(){
+    const lastSearch = JSON.parse(localStorage.getItem("lastSearch"));
+    if(lastSearch)
+    {
+      this.searchQuery = lastSearch.searchQuery || "";
+      this.filters = lastSearch.filters || this.filters;
+      this.sortBy = lastSearch.sortBy || "time";
+      this.resultsCount = lastSearch.resultsCount || 5;
+      if(this.searchQuery)
+      {
+        this.performSearch();
+      }
+    }
+  },
   methods: {
     async performSearch() {
       const cuisines = this.filters.selectedCuisines.join(",");
@@ -164,6 +178,13 @@ export default {
         this.sortBy
       );
       this.recipes = response;
+      const lastSearch = {
+        searchQuery: this.searchQuery,
+        filters: this.filters,
+        sortBy: this.sortBy,
+        resultsCount: this.resultsCount
+      };
+      localStorage.setItem("lastSearch",JSON.stringify(lastSearch));
     },
   },
   watch:{
@@ -173,6 +194,12 @@ export default {
         this.searchQuery = newQuery || '';
         if(this.searchQuery){this.performSearch();}
       }
+    },
+    filters:{
+      handler: function(){
+        this.performSearch();
+      },
+      deep: true
     }
   }
 };
