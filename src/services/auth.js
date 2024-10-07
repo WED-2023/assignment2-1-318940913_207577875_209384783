@@ -1,7 +1,7 @@
 import axios from 'axios';
+import store from '../store.js';
+const API_URL = store.server_domain;
 
-// Base API URL configuration for making requests
-const API_URL = 'http://127.0.0.1:80';
 
 /**
  * Performs a login operation by sending the user's credentials to the server.

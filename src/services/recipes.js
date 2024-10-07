@@ -5,8 +5,9 @@ import multiple_recipes_full_view from "../assets/mocks/multiple_recipes_full_vi
 import multiple_recipe_preview from "../assets/mocks/multiple_recipe_preview.json";
 import family_recipes_full_view from "../assets/mocks/family_recipes_full_view.json";
 
-const API_URL = 'http://127.0.0.1:80';
-
+import store from '../store.js';
+const API_URL = store.server_domain;
+ 
 /**
  * Fetch a specific number of recipe previews.
  * @param {number} amount - Number of recipes to fetch.

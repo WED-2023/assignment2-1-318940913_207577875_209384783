@@ -1,5 +1,9 @@
 import axios from "axios";
-const API_URL = "http://127.0.0.1:80";
+import store from '../store.js';
+const API_URL = store.server_domain;
+
+
+
 
 /**
  * Sends a POST request to add a new recipe to the server.
@@ -8,7 +12,7 @@ const API_URL = "http://127.0.0.1:80";
  */
 export async function createNewRecipe(credentials) {
   try {
-    const response = await axios.post(`${API_URL}/users/addNewRecipe`, credentials, { withCredentials: true });
+    const response = await axios.post(API_URL +`/users/addNewRecipe`, credentials, { withCredentials: true });
     return response;
   } catch (error) {
     console.error("Error creating new recipe: ", error);

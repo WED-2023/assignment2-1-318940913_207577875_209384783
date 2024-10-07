@@ -104,8 +104,8 @@ Vue.config.productionTip = false;
 // Shared data object for managing user-specific data like recipes, favorites, and session status.
 const shared_data = {
   // Base URL for server interactions.
-  server_domain: "http://localhost:3000",
-
+  // server_domain: "http://localhost:3000",
+  server_domain: "https://rachelsrecipes.cs.bgu.ac.il",
   // Currently logged in user's username, retrieved from local storage.
   username: localStorage.username,
 
@@ -246,3 +246,4 @@ new Vue({
   },
   render: (h) => h(App),  // Render the root component
 }).$mount("#app");  // Mount the app to the #app div in index.html
+export default shared_data;
