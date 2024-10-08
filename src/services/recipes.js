@@ -78,7 +78,7 @@ export async function fetchRandomRecipesFromServer() {
 export async function fetchLastViewedRecipesFromServer() {
   try {
     const response = await axios.get(`${API_URL}/users/LastViewedRecipes`);
-    console.log("2-1 services recipes.js check response.data = " , response.data);
+    // console.log("2-1 services recipes.js check response.data = " , response.data);
     return { status: 200, data: { recipes: response.data } };
   } catch (error) {
     console.error('Error fetching last viewed recipes:', error);

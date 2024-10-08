@@ -82,7 +82,7 @@ export async function markAsFavorite(credentials) {
     const existiInFaviorites = await isRecipeInFavorites(credentials.recipeId);
     if (existiInFaviorites)
     {
-      console.log("Recipe is already in favorites.");
+      // console.log("Recipe is already in favorites.");
       return;
     }
     const response = await axios.post(`${API_URL}/users/FavoritesRecipes`, credentials, { withCredentials: true });
@@ -100,7 +100,7 @@ export async function markAsFavorite(credentials) {
  */
 export async function unMarkAsFavorite(credentials) {
   try {
-    console.log("credentials = ",credentials);
+    // console.log("credentials = ",credentials);
     const response = await axios.delete(`${API_URL}/users/FavoritesRecipes`, { data: credentials, withCredentials: true });
     return response.data;
   } catch (error) {

@@ -1,13 +1,7 @@
 <template>
-  <b-modal
-    v-model="modalActive"
-    @hide="close"
-    size="lg"
-    hide-footer
-
-  >
-  <!-- title="Come on, let's add a new recipe" -->
-  <template #modal-header>
+  <b-modal v-model="modalActive" @hide="close" size="lg" hide-footer>
+    <!-- title="Come on, let's add a new recipe" -->
+    <template #modal-header>
       <div class="custom-modal-header">
         <h5 class="modal-title">Come on, let's add a new recipe</h5>
         <b-button
@@ -232,8 +226,7 @@ import { BFormFile, BFormCheckbox, BModal, BToast } from "bootstrap-vue";
 import { createNewRecipe } from "../services/user.js";
 
 export default {
-  components: {BFormFile,BFormCheckbox,BModal,BToast,
-  },
+  components: { BFormFile, BFormCheckbox, BModal, BToast },
   props: {
     modalActive: Boolean, // Receives the state of the modal (open or closed) from the parent component
   },
@@ -249,9 +242,47 @@ export default {
       isGlutenFree: false, // Boolean indicating if the recipe is gluten-free
       ingredients: [{ name: "", quantity: "", unit: "" }], // Array to store ingredients with their details
       instructions: [{ name: "" }], // Array to store cooking instructions
-      cookingTimes: [5, 10, 15,20,25,30,35,40,45,50,55,60,75,90,105,120,135,150,165,180,210,240,270,300,330,360,], // Predefined cooking times for selection
+      cookingTimes: [
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        55,
+        60,
+        75,
+        90,
+        105,
+        120,
+        135,
+        150,
+        165,
+        180,
+        210,
+        240,
+        270,
+        300,
+        330,
+        360,
+      ], // Predefined cooking times for selection
       servingsOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // Predefined serving options for selection
-      units: ["Milligram","Gram","Kilogram","Milliliter","Liter","Curt","Tablespoon","Teaspoon","Spoon","Cup"], // Units of measurement for ingredients
+      units: [
+        "Milligram",
+        "Gram",
+        "Kilogram",
+        "Milliliter",
+        "Liter",
+        "Curt",
+        "Tablespoon",
+        "Teaspoon",
+        "Spoon",
+        "Cup",
+      ], // Units of measurement for ingredients
       isFormSubmitted: false, // Flag to indicate if the form has been submitted (for validation purposes)
     };
   },
@@ -283,10 +314,9 @@ export default {
         this.instructions.splice(index, 1);
       }
     },
-    resetFields() {
+    resetFields(confirmed = false) {
       // Resets all form fields to their default values
-      if(confirm("Are tou sure you want to delete ? "))
-      {
+      if (confirmed) {
         this.title = "";
         this.readyInMinutes = "";
         this.summary = "";
@@ -298,8 +328,21 @@ export default {
         this.instructions = [{ name: "" }];
         this.image = null;
         this.isFormSubmitted = false;
+      } else {
+        if (confirm("Are tou sure you want to delete ? ")) {
+          this.title = "";
+          this.readyInMinutes = "";
+          this.summary = "";
+          this.servings = "";
+          this.vegan = false;
+          this.vegetarian = false;
+          this.isGlutenFree = false;
+          this.ingredients = [{ name: "", quantity: "", unit: "" }];
+          this.instructions = [{ name: "" }];
+          this.image = null;
+          this.isFormSubmitted = false;
+        }
       }
-
     },
     async submitForm() {
       // Submits the form data to create a new recipe after validating the form
@@ -327,8 +370,8 @@ export default {
             autoHideDelay: 2000,
             appendToast: true,
           });
-          this.$emit('close'); 
-          this.resetFields();
+          this.$emit("close");
+          this.resetFields(true);
         } else {
           this.$root.$bvToast.toast(
             "Failed to add the recipe. Please try again.",
@@ -381,19 +424,19 @@ export default {
 /* General styles for the modal form, with specific focus on the layout and functionality of the input fields and the modal itself. */
 .modal-body {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 15px; /* Space between columns */
   padding: 0.5rem;
   max-height: 80vh;
   overflow-y: auto;
-} 
-.custom-modal-headr{
+}
+.custom-modal-headr {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   padding: 10px;
-  border-bottom:1px solid #e62721 ;
+  border-bottom: 1px solid #e62721;
   position: relative;
 }
 .modal-inner {
@@ -411,7 +454,6 @@ export default {
   padding-left: 10px; /* Adjust padding if needed */
 }
 
-
 .left-column,
 .right-column {
   display: flex;
@@ -424,10 +466,9 @@ export default {
   .modal-inner {
     flex-direction: row; /* Arrange columns side by side on larger screens */
     align-items: flex-start;
-    gap:20px;
+    gap: 20px;
   }
-  .right-column
-  .left-column{
+  .right-column .left-column {
     width: 50%;
     flex: 1;
   }
