@@ -155,7 +155,7 @@ export default {
         await addToMyMeal({ recipeId: this.recipeId });
         const recipes = await getRecipesInMyMeal();
         this.$emit("update:recipes", [...recipes]);
-        console.log("update:recipes event emitted", recipes);
+        // console.log("update:recipes event emitted", recipes);
       } catch (error) {
         console.error("Error handling add recipe to my meal:", error);
       }
@@ -165,7 +165,7 @@ export default {
         await addToMyMeal({ recipeId: this.recipeId });
         const recipes = await getRecipesInMyMeal();
         this.$emit("update:recipes", [...recipes]);
-        console.log("update:recipes event emitted", recipes);
+        // console.log("update:recipes event emitted", recipes);
         this.$router.push({
           name: "RecipeMaking",
           params: { recipeId: this.recipeId },

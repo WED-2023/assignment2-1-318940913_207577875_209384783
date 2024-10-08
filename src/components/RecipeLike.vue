@@ -53,7 +53,7 @@ export default {
     async fetchFavioritesStatus() {
       try {
         const check = await isRecipeInFavorites(this.recipe.id);
-        console.log("recipe like - 2.1 - line 56 check is liked = ", check);
+        // console.log("recipe like - 2.1 - line 56 check is liked = ", check);
         this.isLiked = await isRecipeInFavorites(this.recipe.id);
       } catch (error) {
         console.error(

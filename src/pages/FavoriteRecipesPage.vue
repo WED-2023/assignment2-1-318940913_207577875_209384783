@@ -40,7 +40,7 @@ export default {
     },
     async handleLikedChanged(recipeId, isLiked) {
       try {
-        console.log("Event Triggered At Favorites");
+        // console.log("Event Triggered At Favorites");
         if (!isLiked) {
           await unMarkAsFavorite(recipeId); // Remove recipe from favorites
           this.favRecipes = this.favRecipes.filter(

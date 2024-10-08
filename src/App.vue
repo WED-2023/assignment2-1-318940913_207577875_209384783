@@ -93,9 +93,9 @@ export default {
       return this.mealRecipes.length;
     },
   },
-  mounted() {
+  async mounted() {
     // Fetch the meal recipes when the component is mounted
-    this.fetchMealRecipes();
+    await this.fetchMealRecipes();
   },
   // setup() {
   //   // Setup function using the Composition API
