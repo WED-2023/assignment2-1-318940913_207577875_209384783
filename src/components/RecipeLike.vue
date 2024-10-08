@@ -52,25 +52,25 @@ export default {
   methods: {
     async fetchFavioritesStatus() {
       try {
-      const check =  await isRecipeInFavorites(this.recipe.id);
-      console.log("recipe like - 2.1 - line 56 check is liked = ",check);
-      this.isLiked = await isRecipeInFavorites(this.recipe.id);
-    } catch (error) {
-      console.error(
-        `Failed to check if recipe ${this.recipe.id} is in favorites:`,
-        error
-      );
-    }
+        const check = await isRecipeInFavorites(this.recipe.id);
+        console.log("recipe like - 2.1 - line 56 check is liked = ", check);
+        this.isLiked = await isRecipeInFavorites(this.recipe.id);
+      } catch (error) {
+        console.error(
+          `Failed to check if recipe ${this.recipe.id} is in favorites:`,
+          error
+        );
+      }
     },
     async toggleLike() {
       // Toggles the like state of the recipe and updates it on the server
       try {
         if (!this.isLiked) {
           // If the recipe is not liked, mark it as favorite
-          await markAsFavorite({recipeId: this.recipe.id});
+          await markAsFavorite({ recipeId: this.recipe.id });
         } else {
           // If the recipe is liked, remove it from favorites
-          await unMarkAsFavorite({recipeId: this.recipe.id});
+          await unMarkAsFavorite({ recipeId: this.recipe.id });
         }
         this.isLiked = !this.isLiked; // Toggle the local like state
         this.$emit("likedChanged", this.recipe.id, this.isLiked); // Emit an event to notify parent components of the change
@@ -116,6 +116,6 @@ export default {
 .hovered .bi-heart-fill {
   background-color: rgba(241, 240, 240);
   border-color: rgba(241, 240, 240);
- /* Light grey background on hover to highlight the icon */
+  /* Light grey background on hover to highlight the icon */
 }
 </style>

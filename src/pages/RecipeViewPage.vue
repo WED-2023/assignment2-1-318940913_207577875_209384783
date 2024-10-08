@@ -100,8 +100,8 @@
 </template>
 
 <script>
-import { updateLastViewedRecipesServer } from "@/services/user.js";
-import { addToMyMeal } from "../services/user.js";
+import { addToMyMeal, getRecipesInMyMeal, updateLastViewedRecipesServer } from "@/services/user.js";
+// import { addToMyMeal } from "../services/user.js";
 import { getRecipeFullPage } from "@/services/recipes.js";
 
 export default {
@@ -153,6 +153,9 @@ export default {
     async addToMeal() {
       try {
         await addToMyMeal({ recipeId: this.recipeId });
+        const recipes = await getRecipesInMyMeal();
+        this.$emit("update:recipes", [...recipes]);
+        console.log("update:recipes event emitted", recipes);
       } catch (error) {
         console.error("Error handling add recipe to my meal:", error);
       }
@@ -160,6 +163,9 @@ export default {
     async makeRecipe() {
       try {
         await addToMyMeal({ recipeId: this.recipeId });
+        const recipes = await getRecipesInMyMeal();
+        this.$emit("update:recipes", [...recipes]);
+        console.log("update:recipes event emitted", recipes);
         this.$router.push({
           name: "RecipeMaking",
           params: { recipeId: this.recipeId },

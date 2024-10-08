@@ -122,7 +122,9 @@ export default {
         if (response.success) {
           this.form.submitSuccess = true; // Set success state
           this.$root.store.login(this.form.username); // Perform login action
-          this.$router.push("/"); // Redirect to home page
+          this.$router.push("/").catch(() => {
+            this.$forceUpdate(); // Force component to update in case of navigation failure
+          });
         } else {
           this.form.submitError = response.message; // Display error message
         }

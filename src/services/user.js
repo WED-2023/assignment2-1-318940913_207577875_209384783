@@ -100,6 +100,7 @@ export async function markAsFavorite(credentials) {
  */
 export async function unMarkAsFavorite(credentials) {
   try {
+    console.log("credentials = ",credentials);
     const response = await axios.delete(`${API_URL}/users/FavoritesRecipes`, { data: credentials, withCredentials: true });
     return response.data;
   } catch (error) {

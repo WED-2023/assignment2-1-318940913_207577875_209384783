@@ -117,8 +117,14 @@ export default {
       }
     },
     // Method to update the meal length when the recipe list changes
-    updateMealLength(updatedRecipes) {
-      this.mealRecipes = updatedRecipes;
+    async updateMealLength(updatedRecipes = null) {
+      console.log("updateMealLength called", updatedRecipes);
+      if(!updatedRecipes)
+      {
+        await this.fetchMealRecipes();
+      } else {
+        this.mealRecipes = updatedRecipes;
+      }
     },
     // Method to log out the user
     async Logout() {
